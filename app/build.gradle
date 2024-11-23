@@ -142,6 +142,7 @@ android {
 
     // https://developer.android.com/build/jdks
     compileOptions {
+        encoding "UTF-8"
         // 代码 的 java 编译版本
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

@@ -3,6 +3,13 @@
 buildscript {
     apply from: "config_sign.gradle"
 
+    // 1.3.72 | 1.3.x last version
+    // 1.4.32 | 1.4.x last version
+    // 1.5.32 | 1.5.x last version
+    // 1.6.21 | 1.6.x last version
+    // 1.7.21 | 1.7.x last version
+    // 1.8.22 | 1.8.x last version
+    // 1.9.25 | 1.9.x last version
     ext.kotlin_version = "1.9.25"
 
     dependencies {
@@ -14,6 +21,7 @@ plugins {
     //
     // AGP 与 Gradle 对应版本, AGP 与 Android Studio 对应版本
     // AGP https://developer.android.com/build/releases/gradle-plugin
+    // AGP Older Versions https://developer.android.com/build/releases/gradle-plugin#expandable-1
     // AS                               --> AGP
     // Giraffe | 2022.3.1               --> 3.2-8.1
     // Hedgehog | 2023.1.1              --> 3.2-8.2
@@ -29,6 +37,11 @@ plugins {
     // 35  --> KFD          --> 8.6.0
     // 34  --> H            --> 8.1.1
     // 33  --> F            --> 7.2
+    //
+    // 3.6.4 | 3.x.x last version
+    // 4.2.2 | 4.x.x last version
+    // 7.4.2 | 7.x.x last version | 从 AGP 7.0.0 开始，构建 AAR 时不支持模块直接依赖本地 .aar 文件（不支持子模块包含本地 aar，请使用 maven 远程依赖）
+    // 8.1.4 | 支持 AS G 的最高版本
     //
     id "com.android.application" version "8.6.1" apply false
     id "com.android.library" version "8.6.1" apply false
