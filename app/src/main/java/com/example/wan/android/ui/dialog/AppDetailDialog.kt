@@ -101,11 +101,11 @@ class AppDetailDialog(context: Context?, val env: String = "", val uid: String =
             - App.Build -
             [commit] ${BuildConfig.COMMIT_ID}
             [gradle] ${BuildConfig.GRADLE_VERSION}
-            [gr_jdk] ${BuildConfig.GRADLE_JDK}
-            [ja_jvm] ${BuildConfig.JAVA_JVM}
-            [kt_jvm] ${BuildConfig.KOTLIN_JVM}
-            [kt_ver] ${BuildConfig.KOTLIN_VERSION}
-            [co_ver] ${BuildConfig.COMPOSE_VERSION}
+            [gradle_jdk] ${BuildConfig.GRADLE_JDK}
+            [java_jvm] ${BuildConfig.JAVA_JVM}
+            [kotlin_jvm] ${BuildConfig.KOTLIN_JVM}
+            [kotlin_ver] ${BuildConfig.KOTLIN_VERSION}
+            [compose_ver] ${BuildConfig.COMPOSE_VERSION}
             [arch  ] ${BuildConfig.OS_ARCH}
             [host  ] ${BuildConfig.OS_NAME}
             [by    ] ${BuildConfig.USER_NAME}
