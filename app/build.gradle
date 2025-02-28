@@ -10,7 +10,7 @@ plugins {
 
 apply from: "../config_source.gradle"
 
-String composeBoMVersion = "2024.11.00"
+String composeBoMVersion = "2024.12.01"
 
 def time = new Date()
 
@@ -144,6 +144,7 @@ android {
 
     // https://developer.android.com/build/jdks
     compileOptions {
+        encoding "UTF-8"
         // 代码 的 java 编译版本
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -188,9 +189,9 @@ android {
         // baseline 忽略已有的 Lint 问题，Lint 只会报告自上次生成基准文件之后新增的
         // 如果要创建新基准，请手动删除该文件并再次运行 lint
         baseline = file("lint-baseline.xml")
-        ignoreWarnings = true // 忽略警告
-        abortOnError false // 遇到错误不停止
-        textReport true // 输出lint报告
+        ignoreWarnings = true // true 忽略警告
+        abortOnError false // false 遇到错误不停止
+        textReport true // true 输出lint报告
     }
 */
 }
@@ -235,17 +236,20 @@ dependencies {
     // Compose BoM
     // https://developer.android.com/jetpack/compose/bom
     // https://developer.android.com/develop/ui/compose/bom/bom-mapping
-//    val composeBoMVersion = "2023.10.01"
-//    val composeBoMVersion = "2024.01.00"
-//    val composeBoMVersion = "2024.02.02"
-//    val composeBoMVersion = "2024.03.00"
-//    val composeBoMVersion = "2024.04.01"
-//    val composeBoMVersion = "2024.05.00"
-//    val composeBoMVersion = "2024.06.00"
+//    def composeBoMVersion = "2023.10.01"
+//    def composeBoMVersion = "2024.01.00"
+//    def composeBoMVersion = "2024.02.02"
+//    def composeBoMVersion = "2024.03.00"
+//    def composeBoMVersion = "2024.04.01"
+//    def composeBoMVersion = "2024.05.00"
+//    def composeBoMVersion = "2024.06.00"
 //    def composeBoMVersion = "2024.08.00"
 //    def composeBoMVersion = "2024.09.03"
 //    def composeBoMVersion = "2024.10.01"
 //    def composeBoMVersion = "2024.11.00"
+//    def composeBoMVersion = "2024.12.01"
+//    def composeBoMVersion = "2025.01.01"
+//    def composeBoMVersion = "2025.02.00"
     implementation(platform("androidx.compose:compose-bom:${composeBoMVersion}"))
     androidTestImplementation(platform("androidx.compose:compose-bom:${composeBoMVersion}"))
     implementation("androidx.compose.runtime:runtime")
