@@ -244,6 +244,8 @@ dependencies {
 //    def composeBoMVersion = "2024.10.01"
 //    def composeBoMVersion = "2024.11.00"
 //    def composeBoMVersion = "2024.12.01"
+//    def composeBoMVersion = "2025.01.01"
+//    def composeBoMVersion = "2025.02.00"
     implementation(platform("androidx.compose:compose-bom:${composeBoMVersion}"))
     androidTestImplementation(platform("androidx.compose:compose-bom:${composeBoMVersion}"))
     implementation("androidx.compose.runtime:runtime")

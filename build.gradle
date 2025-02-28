@@ -30,10 +30,12 @@ plugins {
     // Koala | 2024.1.1                 --> 3.2-8.5
     // Koala Feature Drop | 2024.1.2    --> 3.2-8.6
     // Ladybug | 2024.2.1               --> 3.2-8.7
+    // Ladybug Feature Drop | 2024.2.2  --> 3.2-8.8
     //
     // API 与 AGP 对应版本
     // API Level https://developer.android.com/build/releases/gradle-plugin#api-level-support
     // API --> minimum AS   --> minimum AGP
+    // 36  --> M            --> 8.9.0
     // 35  --> KFD          --> 8.6.0
     // 34  --> H            --> 8.1.1
     // 33  --> F            --> 7.2
