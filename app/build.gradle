@@ -246,6 +246,8 @@ dependencies {
 //    def composeBoMVersion = "2024.12.01"
 //    def composeBoMVersion = "2025.01.01"
 //    def composeBoMVersion = "2025.02.00"
+//    def composeBoMVersion = "2025.03.01"
+//    def composeBoMVersion = "2025.04.00"
     implementation(platform("androidx.compose:compose-bom:${composeBoMVersion}"))
     androidTestImplementation(platform("androidx.compose:compose-bom:${composeBoMVersion}"))
     implementation("androidx.compose.runtime:runtime")
@@ -305,6 +307,7 @@ dependencies {
     implementation platform("org.jetbrains.kotlin:kotlin-bom:${kotlin_version}")
     implementation "com.google.android.material:material:1.12.0"
     implementation "androidx.appcompat:appcompat:1.7.0"
+    // 1.16.0 -> AGP 8.6.0
     implementation "androidx.core:core-ktx:1.15.0"
     implementation "androidx.core:core-splashscreen:1.0.1"
     implementation "androidx.activity:activity-ktx:1.9.3"
