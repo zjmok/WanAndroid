@@ -19,7 +19,7 @@ buildscript {
 
 plugins {
     //
-    // AGP 与 Gradle 对应版本, AGP 与 Android Studio 对应版本
+    // AGP 与 Gradle 对应版本, AGP 与 Android Studio 对应版本（另外 AGP 与 Gradle 对应版本见 `gradle-wrapper.properties`）
     // AGP https://developer.android.com/build/releases/gradle-plugin
     // AGP Older Versions https://developer.android.com/build/releases/gradle-plugin#expandable-1
     // AS                               --> AGP
@@ -31,6 +31,10 @@ plugins {
     // Koala Feature Drop | 2024.1.2    --> 3.2-8.6
     // Ladybug | 2024.2.1               --> 3.2-8.7
     // Ladybug Feature Drop | 2024.2.2  --> 3.2-8.8
+    // Meerkat | 2024.3.1               --> 3.2-8.9
+    // Meerkat Feature Drop | 2024.3.2	--> 3.2-8.10
+    // Narwhal | 2025.1.1               --> 3.2-8.11
+    // Narwhal Feature Drop | 2025.1.2	--> 4.0-8.12
     //
     // API 与 AGP 对应版本
     // API Level https://developer.android.com/build/releases/gradle-plugin#api-level-support
@@ -45,8 +49,10 @@ plugins {
     // 7.4.2 | 7.x.x last version | 从 AGP 7.0.0 开始，构建 AAR 时不支持模块直接依赖本地 .aar 文件（不支持子模块包含本地 aar，请使用 maven 远程依赖）
     // 8.1.4 | 支持 AS G 的最高版本
     //
-    id "com.android.application" version "8.6.1" apply false
-    id "com.android.library" version "8.6.1" apply false
+    id "com.android.application" version "8.1.4" apply false
+    id "com.android.library" version "8.1.4" apply false
+//    id "com.android.application" version "8.6.1" apply false
+//    id "com.android.library" version "8.6.1" apply false
 
     // KGP https://kotlinlang.org/docs/gradle-configure-project.html
     // KGP 要对应 android.composeOptions.kotlinCompilerExtensionVersion
