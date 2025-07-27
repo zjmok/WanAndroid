@@ -30,9 +30,9 @@ dependencies {
 
 //    // 3x.x.x 版本，maven 镜像仓库里没有，google maven 代理也下载不下来
 //    // https://mvnrepository.com/artifact/com.android.tools.lint/lint-api
-//    implementation "com.android.tools.lint:lint-api:31.7.2"
+//    implementation "com.android.tools.lint:lint-api:31.11.1"
 //    // https://mvnrepository.com/artifact/com.android.tools.lint/lint-checks
-//    implementation "com.android.tools.lint:lint-checks:31.7.2"
+//    implementation "com.android.tools.lint:lint-checks:31.11.1"
 
 //    // 3x.x.x 版本，jar 方式
 //    // https://mvnrepository.com/artifact/com.android.tools.lint/lint-api
