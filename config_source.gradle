@@ -2,12 +2,12 @@ android {
     sourceSets {
         main {
             res.srcDirs = [
+                    // 多语言
+                    'src/main/res-language',
+
                     // 拆分存放各模块的资源
                     'src/main/res-splash',
                     'src/main/res-setting',
-
-                    // 多语言
-                    'src/main/res-language',
 
                     // 以下两个目录不能动
                     'src/main/res/layouts',

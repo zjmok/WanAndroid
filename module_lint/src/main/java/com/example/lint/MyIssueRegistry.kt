@@ -11,6 +11,13 @@ import com.example.lint.detector.UtilcodeToastDetector
 @Suppress("unused", "UnstableApiUsage")
 class MyIssueRegistry : IssueRegistry() {
 
+    // 3.x
+//    override val vendor: Vendor = Vendor(
+//        vendorName = "zjmok",
+//        feedbackUrl = "https://github.com/zjmok/WanAndroid/issues",
+//        contact = "dev.mzx@gmail.com"
+//    )
+//
     override val issues: List<Issue> = listOf(
         GlideDetector.ISSUE,
         LogDetector.ISSUE,

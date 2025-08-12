@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="values">values-zh-rHK</string>
+    <string name="values">zh-rHK</string>
     <string name="language">語言</string>
 </resources>
