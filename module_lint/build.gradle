@@ -11,7 +11,7 @@ java {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(8)
 }
 
 // 定义 lintJarOutput，在 module_lint_aar 中被调用
