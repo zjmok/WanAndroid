@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="values">values-ko</string>
+    <string name="values">ko</string>
     <string name="language">언어</string>
 </resources>

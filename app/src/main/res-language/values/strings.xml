@@ -16,6 +16,6 @@
     <string name="app_name" translatable="false">WanAndroid</string>
     <string name="email" translatable="false">dev.zxmo@gmail.com</string>
     <string name="repo_url" translatable="false">https://github.com/zjmok/WanAndroid</string>
-    <string name="values">values</string>
+    <string name="values">default</string>
     <string name="language">语言</string>
 </resources>
