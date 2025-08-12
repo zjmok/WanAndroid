@@ -11,6 +11,7 @@ import android.transition.TransitionInflater
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.AppUtils
+import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.ConvertUtils
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
@@ -29,11 +30,13 @@ import com.example.wan.android.utils.MyAppUtils
 import com.example.wan.android.utils.UserUtils
 import com.example.wan.android.utils.ext.alert
 import com.example.wan.android.utils.ext.cancel
+import com.example.wan.android.utils.ext.neutral
 import com.example.wan.android.utils.ext.ok
 import com.example.wan.android.utils.ext.visible
 import com.example.wan.android.utils.getUri
 import com.example.wan.android.utils.getViewModel
 import com.example.wan.android.utils.toast
+import com.example.wan.android.utils.toastLong
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -181,8 +184,18 @@ class SettingActivity : VVMBaseActivity<SettingViewModel, ActivitySettingBinding
             }
         }
         binding.llSource.onClick {
-            alert("APP 源码", "心急食唔到热豆腐") {
-                ok {}
+            val url = getString(R.string.repo_url)
+            alert("APP 源码", "打开 URL: \n$url") {
+                ok {
+                    WebActivity.start(url)
+                }
+                cancel {
+
+                }
+                neutral("复制 URL") {
+                    ClipboardUtils.copyText(url)
+                    toastLong("复制成功:\n${url}")
+                }
             }.show()
         }
         binding.llVersion.onClick {
