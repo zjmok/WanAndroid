@@ -1,0 +1,42 @@
+name: Build APK and Release
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: zjmok.jks # 指定环境，对应仓库 Settings Environments 中的 environment 名称
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      # https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets#storing-base64-binary-blobs-as-secrets
+      # 解码 Base64 签名
+      - name: Decode Keystore
+        # 输出路径对应 app/build.gradle 脚本中的 storeFile 路径
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > zjmok.jks
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew assembleGithubRelease
+        env:
+          # 将 Environment Secrets 注入到 Gradle 可读取的环境变量
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Upload APK to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: app/build/outputs/apk/github/release/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

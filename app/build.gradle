@@ -15,7 +15,7 @@ String composeBoMVersion = "2024.12.01"
 def time = new Date()
 
 def gitCommitCount = executeCmd("git rev-list --count HEAD")?.toInteger() ?: 1
-def gitLastTag = executeCmd("git describe --tags --always") ?: "1.0"
+def gitLastTag = executeCmd("git describe --tags --always") ?: "v0.0.0"
 def gitCommitId = executeCmd("git rev-parse --short HEAD") ?: "nocommitid"
 
 static def executeCmd(String cmd) {
@@ -28,6 +28,29 @@ static def executeCmd(String cmd) {
         println(e)
         return null
     }
+}
+
+// 兼容本地开发和 workflow 脚本
+def getEnvOrLocal(String key) {
+    def value = System.getenv(key) // github secrets >  CI > gradle
+    if (value == null || value.isEmpty()) {
+        // 尝试从 local.properties 中获取
+        def localProperties = new Properties()
+        def localPropertiesFile = file("../local.properties")
+        if (localPropertiesFile.exists()) {
+            localPropertiesFile.withInputStream { stream ->
+                localProperties.load(stream)
+            }
+        } else {
+            throw new FileNotFoundException("local.properties 文件不存在，请求队友助攻")
+        }
+        // 获取 key 的 value
+        value = localProperties.getProperty(key)
+    }
+    if (value == null || value.isEmpty()) {
+        throw new IllegalArgumentException("环境变量 或 local.properties 中缺少 ${key} 的值，请求队友助攻")
+    }
+    return value
 }
 
 android {
@@ -75,11 +98,18 @@ android {
 
     signingConfigs {
         // https://developer.android.com/studio/publish/app-signing#secure_key
-        config {
-            storeFile file(rootProject.ext.sign.filePath)
-            storePassword rootProject.ext.sign.storePassword
-            keyAlias rootProject.ext.sign.keyAlias
-            keyPassword rootProject.ext.sign.keyPassword
+        release {
+            storeFile file("../zjmok.jks") // 密钥库文件路径，本地开发直接放到此路径，CI 环境脚本解密输出到此路径
+            storePassword getEnvOrLocal("KEYSTORE_PASSWORD")
+            keyAlias getEnvOrLocal("KEY_ALIAS")
+            keyPassword getEnvOrLocal("KEY_PASSWORD")
+        }
+        // Android 自动生成的 debug.keystore 签名
+        debugAsRelease {
+            storeFile file("${System.getenv('ANDROID_SDK_HOME') ?: System.getProperty('user.home')}/.android/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
         }
     }
 
@@ -89,45 +119,38 @@ android {
             debuggable true // 可调试
             minifyEnabled false // 代码压缩 (R8/ProGuard)
             shrinkResources false // 资源压缩 (shrinkResources)
-            signingConfig signingConfigs.config
         }
         release {
             debuggable false
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
+//            signingConfig signingConfigs.debugAsRelease
+            signingConfig signingConfigs.release
         }
     }
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            def flavorType = variant.productFlavors.collect { it.name.capitalize() }.join() + variant.buildType.name.capitalize() // 格式 GithubRelease
-            def name
-            if (variant.productFlavors[0].name == "github") {
-                // 与 github actions 脚本获取的名称对应
-                name = ("${model.name}" +
-                        "-${variant.buildType.name}" +
-                        ".apk")
-            } else {
-                name = ("${model.name}" +
-                        "_${variant.versionName}" +
-                        "_${variant.versionCode}" +
-//                        "_${variant.buildType.name}" +
-                        "_${flavorType}" +
-                        "_${gitCommitId}" +
-                        "_${time.time}" +
-                        ".apk")
-            }
+            def flavorType = variant.productFlavors.collect {
+                it.name.capitalize()
+            }.join() + variant.buildType.name.capitalize() // 格式 GithubRelease
+            def name = ("WanAndroid" +
+                    "_${variant.versionName}" +
+//                    "_${variant.versionCode}" +
+//                    "_${variant.buildType.name}" +
+//                    "_${flavorType}" +
+                    "_${gitCommitId}" +
+//                    "_${time.time}" +
+                    ".apk")
             println("${flavorType} outputFileName = ${name}")
             outputFileName = name
         }
     }
-    // 变体、维度
+    // 维度、风味，组合生成最终变体
     // https://developer.android.com/build/build-variants
-    flavorDimensions += ["channel"] // 可以使用多个维度，最终构建的安装包会包含每个维度的一个变体
-    productFlavors {
-        // 维度1 渠道
-        normal {
+    flavorDimensions += ["channel"] // 维度
+    productFlavors { // 风味
+        app {
             dimension "channel"
             manifestPlaceholders = [app_channel: "\"${name}\""]
             buildConfigField "String", "APP_CHANNEL", "\"${name}\""
@@ -136,7 +159,7 @@ android {
             // github
             dimension "channel"
             applicationIdSuffix ".github"
-            versionNameSuffix ".github"
+            versionNameSuffix "_github"
             manifestPlaceholders = [app_channel: "\"${name}\""]
             buildConfigField "String", "APP_CHANNEL", "\"${name}\""
         }
