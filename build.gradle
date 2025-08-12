@@ -49,10 +49,10 @@ plugins {
     // 7.4.2 | 7.x.x last version | 从 AGP 7.0.0 开始，构建 AAR 时不支持模块直接依赖本地 .aar 文件（不支持子模块包含本地 aar，请使用 maven 远程依赖）
     // 8.1.4 | 支持 AS G 的最高版本
     //
-    id "com.android.application" version "8.1.4" apply false
+    id "com.android.application" version "8.1.4" apply false // 8.1 需要 AS G+
     id "com.android.library" version "8.1.4" apply false
-//    id "com.android.application" version "8.6.1" apply false
-//    id "com.android.library" version "8.6.1" apply false
+//    id "com.android.application" version "8.10.1" apply false // 8.10 需要 AS MFD+
+//    id "com.android.library" version "8.10.1" apply false
 
     // KGP https://kotlinlang.org/docs/gradle-configure-project.html
     // KGP 要对应 android.composeOptions.kotlinCompilerExtensionVersion

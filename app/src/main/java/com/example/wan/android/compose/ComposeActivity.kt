@@ -1,6 +1,10 @@
 package com.example.wan.android.compose
 
+import android.app.LocaleConfig
+import android.app.LocaleManager
+import android.os.Build
 import android.os.Bundle
+import android.os.LocaleList
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -33,12 +37,17 @@ import androidx.compose.ui.unit.sp
 import com.blankj.utilcode.util.ActivityUtils
 import com.example.wan.android.R
 import com.example.wan.android.compose.ui.theme.WanAndroidTheme
+import com.example.wan.android.constant.AppConst
 import com.example.wan.android.index.person.BookmarkActivity
 import com.example.wan.android.index.person.HistoryActivity
 import com.example.wan.android.index.setting.ManageSpaceActivity
+import com.example.wan.android.ui.dialog.AppDetailDialog
+import com.example.wan.android.utils.UserUtils
+import com.example.wan.android.utils.logi
 import com.example.wan.android.utils.px2dp
 import com.example.wan.android.utils.startBrowser
 import com.example.wan.android.utils.startUrl
+import com.example.wan.android.utils.toJson
 import com.example.wan.android.utils.toast
 
 class ComposeActivity : ComponentActivity() {
@@ -90,6 +99,48 @@ fun PageList(name: String, modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.size(1.px2dp()))
         }
         item {
+            // Test
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorResource(id = R.color.wx_foreground))
+                    .clickable {
+                        // 测试
+                        toast("测试")
+
+                    }
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "测试",
+                    fontSize = 18.sp,
+                    color = colorResource(id = R.color.primaryText)
+                )
+            }
+            Spacer(modifier = Modifier.size(1.px2dp()))
+            // DetailActivity
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorResource(id = R.color.wx_foreground))
+                    .clickable {
+                        AppDetailDialog(
+                            context = context,
+                            env = AppConst.BASE_URL,
+                            uid = "${UserUtils.getSuperUserInfo()?.userInfo?.id ?: "null"}",
+                        ).show()
+                    }
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "AppDetailDialog",
+                    fontSize = 18.sp,
+                    color = colorResource(id = R.color.primaryText)
+                )
+            }
+            Spacer(modifier = Modifier.size(1.px2dp()))
             // AccountActivity
             Row(
                 horizontalArrangement = Arrangement.Center,

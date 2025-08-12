@@ -11,7 +11,7 @@ java {
 }
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(17)
 }
 
 // 定义 lintJarOutput，在 module_lint_aar 中被调用
@@ -39,7 +39,7 @@ dependencies {
 //    implementation files('libs/lint-api-31.7.2.jar')
 //    // https://mvnrepository.com/artifact/com.android.tools.lint/lint-checks
 //    implementation files('libs/lint-checks-31.7.2.jar')
-//    // jar 方式 还需要依赖其他库
+//    // jar 方式 还需要依赖其它库
 //    // https://mvnrepository.com/artifact/com.android.tools.external.com-intellij/intellij-core
 //    implementation files('libs/intellij-core-31.7.2.jar')
 //    // https://mvnrepository.com/artifact/com.android.tools.external.org-jetbrains/uast

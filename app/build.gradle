@@ -48,7 +48,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-//        resConfigs "zh"
+        resConfigs "zh", "zh-rHK"//, "zh-rTW"
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
         }
@@ -74,6 +74,7 @@ android {
 //    ndkVersion project.properties.ndkVersion
 
     signingConfigs {
+        // https://developer.android.com/studio/publish/app-signing#secure_key
         config {
             storeFile file(rootProject.ext.sign.filePath)
             storePassword rootProject.ext.sign.storePassword
@@ -85,9 +86,9 @@ android {
     // https://developer.android.com/build/build-variants
     buildTypes {
         debug {
-            debuggable true
-            minifyEnabled false
-            shrinkResources false
+            debuggable true // 可调试
+            minifyEnabled false // 代码压缩 (R8/ProGuard)
+            shrinkResources false // 资源压缩 (shrinkResources)
             signingConfig signingConfigs.config
         }
         release {

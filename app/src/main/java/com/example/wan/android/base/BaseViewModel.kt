@@ -133,7 +133,7 @@ abstract class BaseViewModel : ViewModel(),
                         }
                         onLogout()
                     }
-                    // 其他错误
+                    // 其它错误
                     else -> {
                         if (showErrorToast) {
                             toast(exception.message)
