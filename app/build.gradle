@@ -14,9 +14,10 @@ String composeBoMVersion = "2024.12.01"
 
 def time = new Date()
 
-def gitCommitCount = executeCmd("git rev-list --count HEAD")?.toInteger() ?: 1
-def gitLastTag = executeCmd("git describe --tags --always") ?: "v0.0.0"
-def gitCommitId = executeCmd("git rev-parse --short HEAD") ?: "nocommitid"
+def gitCommitCount = executeCmd("git rev-list --count HEAD")?.toInteger() ?: 0
+def gitCommitId = executeCmd("git rev-parse --short HEAD") ?: "v0.0.0" //
+def gitTag = executeCmd("git tag --points-at HEAD").split('\n')
+def gitLastTag = executeCmd("git describe --tags --always").split("-").first() ?: "v0.0.0"
 
 static def executeCmd(String cmd) {
     try {
@@ -65,7 +66,7 @@ android {
         // 指定应用在运行时目标的 Android 版本。不影响可以使用的 API，而是影响应用在运行时的行为
         targetSdk 35
         versionCode gitCommitCount
-        versionName gitLastTag // 假如每个 tag 都是一个 release
+        versionName gitLastTag
 
         multiDexEnabled true
 
@@ -116,6 +117,7 @@ android {
     // https://developer.android.com/build/build-variants
     buildTypes {
         debug {
+            versionNameSuffix ".${gitCommitId}"
             debuggable true // 可调试
             minifyEnabled false // 代码压缩 (R8/ProGuard)
             shrinkResources false // 资源压缩 (shrinkResources)
@@ -139,7 +141,7 @@ android {
 //                    "_${variant.versionCode}" +
 //                    "_${variant.buildType.name}" +
 //                    "_${flavorType}" +
-                    "_${gitCommitId}" +
+//                    "_${gitCommitId}" +
 //                    "_${time.time}" +
                     ".apk")
             println("${flavorType} outputFileName = ${name}")
@@ -159,7 +161,7 @@ android {
             // github
             dimension "channel"
             applicationIdSuffix ".github"
-            versionNameSuffix "_github"
+            versionNameSuffix ".github"
             manifestPlaceholders = [app_channel: "\"${name}\""]
             buildConfigField "String", "APP_CHANNEL", "\"${name}\""
         }
