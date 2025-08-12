@@ -111,7 +111,7 @@ fun Context.startBrowser(url: String) {
             // 阿猫阿狗都说自己是浏览器（淘宝、京东、WPS...），不要系统默认解析的
 //            addAll(resolvePkgList)
         }
-        // TODO: 小米 MIUI 12 有 bug，魔改它自己的默认浏览器到推荐位置后导致后面其他方式的索引差了一位
+        // TODO: 小米 MIUI 12 有 bug，魔改它自己的默认浏览器到推荐位置后导致后面其它方式的索引差了一位
         // TODO: 受不了 过滤掉
         .filter {
             it != AppPkg.Browser.pkg

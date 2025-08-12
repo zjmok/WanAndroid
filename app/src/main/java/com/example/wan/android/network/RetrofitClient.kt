@@ -48,7 +48,7 @@ object RetrofitClient {
 //        .addNetworkInterceptor(CacheInterceptor())
         // 先添加的拦截器，会先处理请求，最后处理响应
         // 日志拦截器通常放在最前面，以便记录所有请求和响应的详细信息。
-        // 缓存拦截器通常放在靠前的位置，以便在其他拦截器之前处理缓存逻辑。
+        // 缓存拦截器通常放在靠前的位置，以便在其它拦截器之前处理缓存逻辑。
         .addInterceptor(LoggingInterceptor())
         .addInterceptor(CacheInterceptor())
 //        .addInterceptor(HeaderInterceptor())

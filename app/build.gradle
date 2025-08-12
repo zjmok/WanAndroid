@@ -34,6 +34,7 @@ android {
     namespace 'com.example.wan.android'
     // 确定编译应用时，项目代码可以使用哪些 API。不影响应用运行时的行为，只影响编译时可以访问到哪些类和方法
     compileSdk 35
+//    compileSdkExtension 15
 
     defaultConfig {
         applicationId "com.example.wan.android"
@@ -47,7 +48,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-//        resConfigs "zh"
+        resConfigs "zh", "zh-rHK"//, "zh-rTW"
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
         }
@@ -74,6 +75,7 @@ android {
 
 /*
     signingConfigs {
+        // https://developer.android.com/studio/publish/app-signing#secure_key
         config {
             storeFile file(rootProject.ext.sign.filePath)
             storePassword rootProject.ext.sign.storePassword
@@ -86,9 +88,9 @@ android {
     // https://developer.android.com/build/build-variants
     buildTypes {
         debug {
-            debuggable true
-            minifyEnabled false
-            shrinkResources false
+            debuggable true // 可调试
+            minifyEnabled false // 代码压缩 (R8/ProGuard)
+            shrinkResources false // 资源压缩 (shrinkResources)
             signingConfig signingConfigs.debug
         }
         release {
@@ -250,6 +252,11 @@ dependencies {
 //    def composeBoMVersion = "2024.12.01"
 //    def composeBoMVersion = "2025.01.01"
 //    def composeBoMVersion = "2025.02.00"
+//    def composeBoMVersion = "2025.03.01"
+//    def composeBoMVersion = "2025.04.01"
+//    def composeBoMVersion = "2025.05.01"
+//    def composeBoMVersion = "2025.06.01"
+//    def composeBoMVersion = "2025.07.01"
     implementation(platform("androidx.compose:compose-bom:${composeBoMVersion}"))
     androidTestImplementation(platform("androidx.compose:compose-bom:${composeBoMVersion}"))
     implementation("androidx.compose.runtime:runtime")
@@ -309,9 +316,11 @@ dependencies {
     implementation platform("org.jetbrains.kotlin:kotlin-bom:${kotlin_version}")
     implementation "com.google.android.material:material:1.12.0"
     implementation "androidx.appcompat:appcompat:1.7.0"
+    // 1.16.0 需要 AGP 8.6.0+
     implementation "androidx.core:core-ktx:1.15.0"
     implementation "androidx.core:core-splashscreen:1.0.1"
     implementation "androidx.activity:activity-ktx:1.9.3"
+    // 2.9.0 需要 AGP 8.6.0+
     def lifecycleVersion = "2.8.7"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:${lifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:${lifecycleVersion}"
@@ -322,10 +331,11 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-service:${lifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:${lifecycleVersion}"
     implementation "androidx.constraintlayout:constraintlayout:2.2.0"
+    // viewpager2 1.1 新特性 registerFragmentTransactionCallback
     implementation "androidx.viewpager2:viewpager2:1.1.0"
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:${lifecycleVersion}") // compose
-    // 1.1 新特性 registerFragmentTransactionCallback
-    def navigationVersion = "2.8.4"
+    // 2.9.0 需要 AGP 8.6.0+
+    def navigationVersion = "2.8.9"
     implementation "androidx.navigation:navigation-fragment-ktx:${navigationVersion}"
     implementation "androidx.navigation:navigation-ui-ktx:${navigationVersion}"
     implementation("androidx.navigation:navigation-compose:${navigationVersion}") // compose

@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import com.example.wan.android.BuildConfig
+import com.example.wan.android.R
 import com.example.wan.android.utils.dp2pxInt
 import com.example.wan.android.utils.ext.setTypeface
 import java.text.SimpleDateFormat
@@ -98,6 +99,7 @@ class AppDetailDialog(context: Context?, val env: String = "", val uid: String =
             [flavor] ${BuildConfig.FLAVOR}${if (BuildConfig.DEBUG) "Debug" else "Release"}
             [env   ] $env
             [uid   ] $uid
+            [lang  ] ${(context.getString(R.string.values))}
             - App.Build -
             [commit] ${BuildConfig.COMMIT_ID}
             [gradle] ${BuildConfig.GRADLE_VERSION}
@@ -116,13 +118,20 @@ class AppDetailDialog(context: Context?, val env: String = "", val uid: String =
             [model ] ${Build.MODEL}
             [ver   ] Android ${Build.VERSION.RELEASE}
             [api   ] ${Build.VERSION.SDK_INT}
-            [lang  ] ${Locale.getDefault().language}
+            [lang_t] ${Locale.getDefault().toLanguageTag()}
+            [lang_n] ${Locale.getDefault().displayName}
             - System.Build -
             [host  ] ${Build.HOST}
             [by    ] ${Build.USER}
             [time  ] ${SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault()).format(Build.TIME)}
         """.trimIndent()
         // @formatter:on
+
+        // 语言-文字-地区
+        // language-script-country
+//            [lang  ] ${Locale.getDefault().language}
+//            [script] ${Locale.getDefault().script}
+//            [area  ] ${Locale.getDefault().country}
     }
 
 }

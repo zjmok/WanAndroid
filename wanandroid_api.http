@@ -1,0 +1,16 @@
+
+## 使用 Http Client 插件执行
+## （AS M 才开始支持，IDEA Ultimate 低版本也自带插件）
+## <https://plugins.jetbrains.com/plugin/13121-http-client>
+
+### 登录
+POST https://www.wanandroid.com/user/login
+Content-Type: application/x-www-form-urlencoded
+
+username=yourusername&password=yourpassword
+
+### 获取用户信息
+GET https://www.wanandroid.com/user/lg/userinfo/json
+Cookie: JSESSIONID=99999999999999999999999999999999
+
+###

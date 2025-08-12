@@ -1,0 +1,129 @@
+
+## 使用 Http Client 插件执行
+## （AS M 才开始支持，IDEA Ultimate 低版本也自带插件）
+## <https://plugins.jetbrains.com/plugin/13121-http-client>
+
+## `#` 是普通注释，不会影响执行逻辑
+## `###` 是请求分隔符，用来分隔多个 HTTP 请求
+
+## Run with 环境，变量可以用于 header、query、body、URL 等任何部分
+
+### 测试 插件的 `Run with` 环境
+GET {{baseUrl}}/testRunWith
+Authorization: Bearer {{token}}
+
+# 环境指令，只是提示或默认指示，真正运行哪个环境，由 IDE 的环境切换按钮决定
+### @env dev
+GET {{baseUrl}}/v1/status
+Authorization: Bearer {{token}}
+
+# 测试，以下 API 在 KMP 项目
+
+### get
+GET http://127.0.0.1:8080
+
+### 测试
+GET http://127.0.0.1:8080/test
+
+### 测试
+GET http://127.0.0.1:8080/notfound404
+
+### 测试
+GET http://127.0.0.1:8080/test1
+
+### 测试 query 参数
+GET http://localhost:8080/testGet?userId=99
+
+### 测试 路径参数
+GET http://localhost:8080/testGet/1234
+
+### 测试 Headers
+GET http://127.0.0.1:8080/testHeaders
+# Headers 可以多次设置，每一次设置一个值，不是以 `,` 或 `;` 来分隔单词传入。
+# 可以理解为 Map<String, List<String>>
+# name 会忽略大小写，值不会忽略大小写
+HeaderName1: HeaderValue1 # 设置一个值
+HeaderName1: HeaderValue11 # 再设置一个值，不会覆盖
+HeaderName2: HeaderValue2, HeaderValue22 # 这里是一个值
+HeaderName3: HeaderValue3; HeaderValue33 # 这里是一个值
+
+### 测试 post json
+POST http://localhost:8080/testPost/json
+Content-Type: application/json
+
+{
+  "title": "My New Post",
+  "desc": "123456",
+  "userId": 2
+}
+
+### 测试 post 表单
+POST http://localhost:8080/testPost/form
+Content-Type: application/x-www-form-urlencoded
+
+title=qwer&body=23456
+
+### 测试 post 多表单, 上传文件（当前路径是相对本http文件路径）（在这里不要选择 http 文件，上传 http 文件时会有 bug，会执行文件中的 `<` 命令）
+POST http://localhost:8080/testPost/multi-form
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="test.http"
+
+< ./.gitignore
+# < ./test_api.http # 会出问题
+--WebAppBoundary--
+
+### 测试 post 多表单, 参数 + 上传文件（当前路径是相对本http文件路径）（在这里不要选择 http 文件，上传 http 文件时会有 bug，会执行文件中的 `<` 命令）
+POST http://localhost:8080/testPost/multi-form
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="title"
+
+title1234
+--WebAppBoundary
+Content-Disposition: form-data; name="desc"
+
+description1234
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="test.http"
+
+< ./.gitignore
+# < ./test_api.http # 会出问题
+--WebAppBoundary--
+
+## 测试 GET POST PUT DELETE
+
+### test 获取列表
+GET http://127.0.0.1:8080/task/list
+
+### test 找不到对象
+GET http://127.0.0.1:8080/task/find/123
+
+### test GET 获取对象
+GET http://127.0.0.1:8080/task/find/cleaning
+
+### test POST 新增
+POST http://localhost:8080/task/add
+Content-Type: application/json
+
+{
+  "name": "cleaning",
+  "description": "Clean the house",
+  "priority": "Low"
+}
+
+### test PUT 更新
+PUT http://127.0.0.1:8080/task/update/cleaning
+Content-Type: application/json
+
+{
+  "name": "NewCleaning",
+  "description": "Clean the house, Again",
+  "priority": "High"
+}
+
+### test DELETE 删除
+DELETE http://localhost:8080/task/delete/NewCleaning
+Content-Type: application/json

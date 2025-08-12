@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- 系统语言，使用现代标准，格式：`语言-文字-地区`，例如 `zh-Hans-CN` -->
+<!-- 应用语言，兼容格式（旧版规则），在 `values-` 后加，格式：`values-语言-r地区`，例如 `values-zh` -->
+
+<!-- 在 App 中获取系统语言相关值， -->
+<!-- `Locale.getDefault().toLanguageTag()` 值 `zh-Hans-CN`， -->
+<!-- `Locale.getDefault().displayName` 值 `中文 (简体中文,中国)`， -->
+
+<!-- 系统会自动匹配最接近的资源目录（例如 `zh-Hant-HK` 会匹配 `values-zh-rHK`） -->
+<!-- 除了 values，在 drawable 也可以本地化 -->
+<!-- 资源目录中 locale 本地化资源对比尺寸资源等优先级更高 -->
+
+<!-- 可以使用 IDE 的 translations editor 来管理 -->
+<resources>
+    <string name="app_name" translatable="false">WanAndroid</string>
+    <string name="email" translatable="false">dev.zxmo@gmail.com</string>
+    <string name="repo_url" translatable="false">https://github.com/zjmok/WanAndroid</string>
+    <string name="values">values</string>
+    <string name="language">语言</string>
+</resources>
