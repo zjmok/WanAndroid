@@ -31,6 +31,13 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
+import com.blankj.utilcode.util.ActivityUtils;
+import com.example.wan.android.compose.ComposeActivity;
+import com.example.wan.android.constant.AppConst;
+import com.example.wan.android.data.model.SuperUserInfo;
+import com.example.wan.android.ui.dialog.AppDetailDialog;
+import com.example.wan.android.utils.UserUtils;
+
 import java.lang.reflect.Field;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
@@ -105,6 +112,42 @@ public class FloatButtonService extends Service {
             hideKeyboard();
 
             setDebugWindow();
+        });
+
+        // feature1
+        Button btnFeature1 = debugWindow.findViewById(R.id.btn_feature1);
+        btnFeature1.setText("应用详情");
+        btnFeature1.setOnClickListener(v -> {
+            hideDebugWindow();
+
+            SuperUserInfo superUserInfo = UserUtils.INSTANCE.getSuperUserInfo();
+            String id = "null";
+            if (superUserInfo != null) {
+                id = superUserInfo.getUserInfo().getId() + "";
+            }
+            AppDetailDialog dialog = new AppDetailDialog(getTopActivity(), AppConst.BASE_URL, id);
+            dialog.show();
+        });
+
+        // feature2
+        Button btnFeature2 = debugWindow.findViewById(R.id.btn_feature2);
+        btnFeature2.setText("Compose");
+        btnFeature2.setOnClickListener(v -> {
+            hideDebugWindow();
+
+            ActivityUtils.startActivity(ComposeActivity.class);
+        });
+
+        // feature3
+        Button btnFeature3 = debugWindow.findViewById(R.id.btn_feature3);
+        btnFeature3.setOnClickListener(v -> {
+
+        });
+
+        // feature4
+        Button btnFeature4 = debugWindow.findViewById(R.id.btn_feature4);
+        btnFeature4.setOnClickListener(v -> {
+
         });
 
     }
