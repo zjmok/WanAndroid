@@ -21,7 +21,7 @@ import kotlinx.coroutines.SupervisorJob
 import org.litepal.LitePal
 import java.text.SimpleDateFormat
 
-class App : MultiDexApplication() {
+open class App : MultiDexApplication() {
 
     companion object {
 

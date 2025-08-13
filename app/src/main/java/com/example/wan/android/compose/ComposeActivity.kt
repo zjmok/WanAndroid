@@ -1,10 +1,6 @@
 package com.example.wan.android.compose
 
-import android.app.LocaleConfig
-import android.app.LocaleManager
-import android.os.Build
 import android.os.Bundle
-import android.os.LocaleList
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -43,11 +39,9 @@ import com.example.wan.android.index.person.HistoryActivity
 import com.example.wan.android.index.setting.ManageSpaceActivity
 import com.example.wan.android.ui.dialog.AppDetailDialog
 import com.example.wan.android.utils.UserUtils
-import com.example.wan.android.utils.logi
 import com.example.wan.android.utils.px2dp
 import com.example.wan.android.utils.startBrowser
 import com.example.wan.android.utils.startUrl
-import com.example.wan.android.utils.toJson
 import com.example.wan.android.utils.toast
 
 class ComposeActivity : ComponentActivity() {
@@ -108,7 +102,6 @@ fun PageList(name: String, modifier: Modifier = Modifier) {
                     .clickable {
                         // 测试
                         toast("测试")
-
                     }
                     .padding(16.dp)
             ) {

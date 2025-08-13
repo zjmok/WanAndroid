@@ -53,6 +53,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import splitties.activities.start
 import splitties.views.onClick
 import kotlin.math.roundToInt
+import androidx.core.graphics.toColorInt
 
 class MainActivity : VBaseActivity<ActivityMainBinding>() {
 
@@ -181,21 +182,6 @@ class MainActivity : VBaseActivity<ActivityMainBinding>() {
         }
     }
 
-    private val testView by lazy {
-        AppCompatImageView(App.INSTANCE).apply {
-            loadCircle(R.drawable.icon_conan_selected)
-            onClick {
-                start<ComposeActivity> {}
-            }
-        }
-    }
-
-    private val testViewDisposableObserver = LifecycleEventObserver { _, event ->
-        if (event == Lifecycle.Event.ON_DESTROY) {
-            window.windowManager.removeView(testView)
-        }
-    }
-
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
@@ -210,17 +196,6 @@ class MainActivity : VBaseActivity<ActivityMainBinding>() {
                 DraggableViewHelper.intrude(floatView)
                 // 解决 特殊情况导致 activity 销毁重新创建时导致的 内存泄漏
                 lifecycle.addObserver(floatViewDisposableObserver)
-            }
-            if (testView.isAttachedToWindow.not()) {
-                val sizeDp = 75
-                FloatViewHelper.showInWindow(
-                    window, testView, loc = Point(
-                        (0),
-                        (ScreenUtils.getScreenHeight() * (3 / 4f) - (sizeDp / 2f).dp2px).roundToInt()
-                    ), sizeDp = sizeDp
-                )
-                DraggableViewHelper.intrude(testView)
-                lifecycle.addObserver(testViewDisposableObserver)
             }
         }
     }
@@ -247,7 +222,7 @@ class MainActivity : VBaseActivity<ActivityMainBinding>() {
                 tab.customView?.let {
                     it.findViewById<ImageView>(R.id.tab_icon).loadRes(tabSelectedIcons[position])
                     it.findViewById<TextView>(R.id.tab_text)
-                        .setTextColor(Color.parseColor("#d4237a"))
+                        .setTextColor("#d4237a".toColorInt())
                 }
                 onPageChanged(position)
             }
@@ -257,7 +232,7 @@ class MainActivity : VBaseActivity<ActivityMainBinding>() {
                 tab.customView?.let {
                     it.findViewById<ImageView>(R.id.tab_icon).loadRes(tabIcons[position])
                     it.findViewById<TextView>(R.id.tab_text)
-                        .setTextColor(Color.parseColor("#8a8a8a"))
+                        .setTextColor("#8a8a8a".toColorInt())
                 }
             }
 
