@@ -17,7 +17,7 @@ def time = new Date()
 
 def gitCommitCount = executeCmd("git rev-list --count HEAD")?.toInteger() ?: 0
 def gitCommitId = executeCmd("git rev-parse --short HEAD") ?: "v0.0.0" //
-def gitTag = executeCmd("git tag --points-at HEAD").split('\n')
+def gitTag = executeCmd("git tag --points-at HEAD").split("\n")
 def gitLastTag = executeCmd("git describe --tags --always").split("-").first() ?: "v0.0.0"
 
 static def executeCmd(String cmd) {
@@ -56,7 +56,7 @@ def getEnvOrLocal(String key) {
 }
 
 android {
-    namespace 'com.example.wan.android'
+    namespace "com.example.wan.android"
     // 确定编译应用时，项目代码可以使用哪些 API。不影响应用运行时的行为，只影响编译时可以访问到哪些类和方法
     compileSdk 36
 //    compileSdkExtension 15
@@ -75,7 +75,7 @@ android {
 
         resConfigs "zh", "zh-rHK"//, "zh-rTW"
         ndk {
-            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86_64"
         }
 
         buildConfigField "String", "COMMIT_ID", "\"${gitCommitId}\""
@@ -108,7 +108,7 @@ android {
         }
         // Android 自动生成的 debug.keystore 签名
         debugAsRelease {
-            storeFile file("${System.getenv('ANDROID_SDK_HOME') ?: System.getProperty('user.home')}/.android/debug.keystore")
+            storeFile file("${System.getenv("ANDROID_SDK_HOME") ?: System.getProperty("user.home")}/.android/debug.keystore")
             storePassword "android"
             keyAlias "androiddebugkey"
             keyPassword "android"
@@ -152,7 +152,7 @@ android {
             debuggable false
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
 //            signingConfig signingConfigs.debugAsRelease
             signingConfig signingConfigs.release
         }
@@ -187,7 +187,7 @@ android {
     }
     kotlinOptions {
         // 代码 的 kotlin 编译版本
-        jvmTarget = '1.8'
+        jvmTarget = "1.8"
     }
     kotlin {
         // gradle 项目构建的 java 和 kotlin 编译版本
@@ -205,7 +205,7 @@ android {
         // 指定在构建 APK 或 AAR 时要排除的文件或路径
         // `AL2.0` 和 `LGPL2.1` 通常是许可证文件，可能在某些情况下不需要打包进最终的 APK 或 AAR 中
         resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
 
@@ -236,8 +236,8 @@ dependencies {
         resolutionStrategy {
             // 强制指定版本
             // emoji2 1.4.0 需要 compileSdk 34
-//            force 'androidx.emoji2:emoji2:1.3.0'
-//            force 'androidx.emoji2:emoji2-views-helper:1.3.0'
+//            force "androidx.emoji2:emoji2:1.3.0"
+//            force "androidx.emoji2:emoji2-views-helper:1.3.0"
         }
     }
     // 依赖项配置
@@ -246,17 +246,17 @@ dependencies {
 //    implementation project(":module_common")
     // Lib
     // `fileTree` 使用指定目录，libs 下所有的 jar aar
-    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'], exclude: [
-//            'module_lint_aar-debug.aar' // 排除 lint 文件, 另外使用 lintChecks 引用
+    implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"], exclude: [
+//            "module_lint_aar-debug.aar" // 排除 lint 文件, 另外使用 lintChecks 引用
     ])
     // `files` 使用指定文件
-//    implementation files('libs/module_lint_aar-debug.aar')
-//    lintChecks files('libs/module_lint_aar-debug.aar')
-//    implementation files('libs/module_lint_lib.jar')
+//    implementation files("libs/module_lint_aar-debug.aar")
+//    lintChecks files("libs/module_lint_aar-debug.aar")
+//    implementation files("libs/module_lint_lib.jar")
     // `project` 使用指定模块
     // `lintChecks` 是 lint-checks 库的，Lint 专用
     //noinspection DependencyNotationArgument
-//    lintChecks project(':module_lint')
+//    lintChecks project(":module_lint")
 
     // Test
     testImplementation "junit:junit:4.13.2"
@@ -288,6 +288,7 @@ dependencies {
 //    def composeBoMVersion = "2025.05.01"
 //    def composeBoMVersion = "2025.06.01"
 //    def composeBoMVersion = "2025.07.01"
+//    def composeBoMVersion = "2025.08.00"
     implementation(platform("androidx.compose:compose-bom:${composeBoMVersion}"))
     androidTestImplementation(platform("androidx.compose:compose-bom:${composeBoMVersion}"))
     implementation("androidx.compose.runtime:runtime")
