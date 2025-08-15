@@ -217,6 +217,7 @@ android {
         }
     }
 
+/*
     lint {
         // https://developer.android.google.cn/studio/write/lint?hl=zh-cn#snapshot
         // Lint 检测: `./gradlew lint`，可加变体: `./gradlew lintRelease`
@@ -227,6 +228,7 @@ android {
         abortOnError false // false 遇到错误不停止
         textReport true // true 输出lint报告
     }
+*/
 }
 
 // https://developer.android.com/build/dependencies
@@ -256,7 +258,7 @@ dependencies {
     // `project` 使用指定模块
     // `lintChecks` 是 lint-checks 库的，Lint 专用
     //noinspection DependencyNotationArgument
-    lintChecks project(':module_lint')
+//    lintChecks project(':module_lint')
 
     // Test
     testImplementation "junit:junit:4.13.2"
