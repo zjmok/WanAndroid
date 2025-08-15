@@ -114,6 +114,29 @@ android {
         }
     }
 
+    // flavorDimensions（维度） + productFlavors（风味） + buildTypes（构建类型），最终组合生成变体
+    // https://developer.android.com/build/build-variants
+    flavorDimensions = ["channel"/*, "debug"*/] // 维度，每个风味都需要指定一个维度名称，不同维度的风味可以组合，再加上 buildTypes，
+    productFlavors { // 风味
+        app {
+            dimension "channel"
+            manifestPlaceholders = [app_channel: "\"${name}\""]
+            buildConfigField "String", "APP_CHANNEL", "\"${name}\""
+        }
+        github {
+            // github
+            dimension "channel"
+            applicationIdSuffix ".github"
+            versionNameSuffix ".github"
+            manifestPlaceholders = [app_channel: "\"${name}\""]
+            buildConfigField "String", "APP_CHANNEL", "\"${name}\""
+        }
+//        floatButton {
+//            dimension "debug"
+//        }
+    }
+
+    // 构建类型 buildTypes
     // https://developer.android.com/build/build-variants
     buildTypes {
         debug {
@@ -133,8 +156,11 @@ android {
             signingConfig signingConfigs.release
         }
     }
-    android.applicationVariants.all { variant ->
-        variant.outputs.all {
+
+    // variant 变体，由 flavorDimensions + productFlavors + buildTypes 组合而成
+    // 配置优先级 main < flavorDimensions < productFlavors < buildTypes < variant，因为后者会覆盖前者
+    android.applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach {
             def flavorType = variant.productFlavors.collect {
                 it.name.capitalize()
             }.join() + variant.buildType.name.capitalize() // 格式 GithubRelease
@@ -148,24 +174,6 @@ android {
                     ".apk")
             println("${flavorType} outputFileName = ${name}")
             outputFileName = name
-        }
-    }
-    // 维度、风味，组合生成最终变体
-    // https://developer.android.com/build/build-variants
-    flavorDimensions += ["channel"] // 维度
-    productFlavors { // 风味
-        app {
-            dimension "channel"
-            manifestPlaceholders = [app_channel: "\"${name}\""]
-            buildConfigField "String", "APP_CHANNEL", "\"${name}\""
-        }
-        github {
-            // github
-            dimension "channel"
-            applicationIdSuffix ".github"
-            versionNameSuffix ".github"
-            manifestPlaceholders = [app_channel: "\"${name}\""]
-            buildConfigField "String", "APP_CHANNEL", "\"${name}\""
         }
     }
 

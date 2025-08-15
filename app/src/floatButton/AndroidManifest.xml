@@ -5,7 +5,7 @@
 
     <!-- 主清单声明 tools:replace 表示允许被覆盖，其它清单 tools:replace 表示请求要覆盖，必须双方都要声明 -->
     <application
-        android:name=".DebugApp"
+        android:name=".FloatButtonApp"
         tools:ignore="MissingApplicationIcon"
         tools:replace="android:name">
 
