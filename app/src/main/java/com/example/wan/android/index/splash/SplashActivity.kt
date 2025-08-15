@@ -15,6 +15,7 @@ import com.example.wan.android.utils.MyAppUtils
 import com.example.wan.android.utils.ext.alert
 import com.example.wan.android.utils.ext.cancel
 import com.example.wan.android.utils.ext.ok
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -151,7 +152,8 @@ class SplashActivity : VBaseActivity<ActivitySplashBinding>() {
         }
     }.flowOn(Dispatchers.Main)
         .onEach { onTick.invoke(it) }
-        .onCompletion { cause -> if (cause == null) onFinish?.invoke() }
+        // Kotlin 2.x 的 Flow 正常取消时 onCompletion 的 cause 返回 JobCancellationException，而 1.9 返回 null
+        .onCompletion { cause -> if (cause == null || cause is CancellationException) onFinish?.invoke() }
         .launchIn(scope) //保证在一个协程中执行
 
 }
