@@ -11,7 +11,8 @@ plugins {
 
 apply from: "../config_source.gradle"
 
-String composeBoMVersion = "2024.12.01"
+//String composeBoMVersion = "2024.12.01"
+String composeBoMVersion = "2025.08.00"
 
 def time = new Date()
 
