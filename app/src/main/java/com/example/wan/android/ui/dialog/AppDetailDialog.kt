@@ -101,10 +101,11 @@ class AppDetailDialog(context: Context?, val env: String = "", val uid: String =
             [env   ] $env
             [uid   ] $uid
             [lang  ] ${(context.getString(R.string.values))}
+            [signer] ${context.getSigningCertificateCN()}
             - App.Build -
             [commit] ${BuildConfig.COMMIT_ID}
-            [gradle] ${BuildConfig.GRADLE_VERSION}
             [gradle_jdk] ${BuildConfig.GRADLE_JDK}
+            [gradle] ${BuildConfig.GRADLE_VERSION}
             [java_jvm] ${BuildConfig.JAVA_JVM}
             [kotlin_jvm] ${BuildConfig.KOTLIN_JVM}
             [kotlin_ver] ${BuildConfig.KOTLIN_VERSION}
@@ -112,7 +113,6 @@ class AppDetailDialog(context: Context?, val env: String = "", val uid: String =
             [arch  ] ${BuildConfig.OS_ARCH}
             [host  ] ${BuildConfig.OS_NAME}
             [by    ] ${BuildConfig.USER_NAME}
-            [signer] ${context.getSigningCertificateCN()}
             [time  ] ${SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault()).format(BuildConfig.BUILD_TIME.toLong())}
             - System -
             [abi   ] ${Build.SUPPORTED_ABIS.joinToString(", ")}
