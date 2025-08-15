@@ -74,6 +74,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         resConfigs "zh", "zh-rHK"//, "zh-rTW"
+
         ndk {
             abiFilters "armeabi-v7a", "arm64-v8a", "x86_64"
         }
@@ -117,9 +118,10 @@ android {
 
     // flavorDimensions（维度） + productFlavors（风味） + buildTypes（构建类型），最终组合生成变体
     // https://developer.android.com/build/build-variants
-    flavorDimensions = ["channel"/*, "debug"*/] // 维度，每个风味都需要指定一个维度名称，不同维度的风味可以组合，再加上 buildTypes，
+    flavorDimensions = ["channel"/*, "debug"*//*, "abi"*/] // 维度，每个风味都需要指定一个维度名称，不同维度的风味可以组合，再加上 buildTypes，
     productFlavors { // 风味
         app {
+            isDefault = true
             dimension "channel"
             manifestPlaceholders = [app_channel: "\"${name}\""]
             buildConfigField "String", "APP_CHANNEL", "\"${name}\""
@@ -135,12 +137,42 @@ android {
 //        floatButton {
 //            dimension "debug"
 //        }
+        // 国内 aab 支持有限
+//        arm32 {
+//            dimension "abi"
+//            ndk {
+//                //noinspection ChromeOsAbiSupport
+//                abiFilters "armeabi-v7a"
+//            }
+//        }
+//        arm64 {
+//            dimension "abi"
+//            ndk {
+//                //noinspection ChromeOsAbiSupport
+//                abiFilters "arm64-v8a"
+//            }
+//        }
+//        arm {
+//            isDefault = true
+//            dimension "abi"
+//            ndk {
+//                //noinspection ChromeOsAbiSupport
+//                abiFilters "armeabi-v7a", "arm64-v8a"
+//            }
+//        }
+//        x86 {
+//            dimension "abi"
+//            ndk {
+//                abiFilters "x86_64"
+//            }
+//        }
     }
 
     // 构建类型 buildTypes
     // https://developer.android.com/build/build-variants
     buildTypes {
         debug {
+            isDefault = true
             versionNameSuffix ".${gitCommitId}"
             debuggable true // 可调试
             minifyEnabled false // 代码压缩 (R8/ProGuard)
