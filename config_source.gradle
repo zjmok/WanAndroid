@@ -1,18 +1,36 @@
 android {
     sourceSets {
         main {
-            res.srcDirs = [
+            // `+=` 追加目录，`=` 会覆盖默认目录
+            res.srcDirs += [
                     // 多语言
                     'src/main/res-language',
 
                     // 拆分存放各模块的资源
                     'src/main/res-splash',
                     'src/main/res-setting',
-
-                    // 以下两个目录不能动
-                    'src/main/res/layouts',
-                    'src/main/res'
             ]
         }
+        // 这些最终会合并到 main
+        // 可以指定不同的 buildTypes / productFlavors 使用不同的资源目录
+        debug {
+            java.srcDirs += ['src/floatButton/java']
+            res.srcDirs += ['src/floatButton/res']
+            manifest.srcFile 'src/floatButton/AndroidManifest.xml'
+        }
+        release {
+
+        }
+        app {
+
+        }
+        github {
+
+        }
+//        floatButton {
+//            java.srcDirs += ['src/floatButton/java']
+//            res.srcDirs += ['src/floatButton/res']
+//            manifest.srcFile 'src/floatButton/AndroidManifest.xml'
+//        }
     }
 }

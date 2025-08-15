@@ -13,6 +13,7 @@ import com.example.wan.android.BuildConfig
 import com.example.wan.android.R
 import com.example.wan.android.utils.dp2pxInt
 import com.example.wan.android.utils.ext.setTypeface
+import com.example.wan.android.utils.getSigningCertificateCN
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -111,6 +112,7 @@ class AppDetailDialog(context: Context?, val env: String = "", val uid: String =
             [arch  ] ${BuildConfig.OS_ARCH}
             [host  ] ${BuildConfig.OS_NAME}
             [by    ] ${BuildConfig.USER_NAME}
+            [signer] ${context.getSigningCertificateCN()}
             [time  ] ${SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault()).format(BuildConfig.BUILD_TIME.toLong())}
             - System -
             [abi   ] ${Build.SUPPORTED_ABIS.joinToString(", ")}

@@ -2,7 +2,7 @@ package com.example.wan.android
 
 import android.content.Intent
 
-class DebugApp : App() {
+class FloatButtonApp : App() {
 
     override fun onCreate() {
         super.onCreate()

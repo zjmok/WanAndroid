@@ -28,19 +28,22 @@
             android:id="@+id/btn_profile1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="预设1" />
+            android:text="预设1"
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/btn_profile2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="预设2" />
+            android:text="预设2"
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/btn_profile3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="预设3" />
+            android:text="预设3"
+            android:textAllCaps="false" />
 
     </LinearLayout>
 
@@ -88,7 +91,8 @@
             android:id="@+id/btn_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="保存" />
+            android:text="保存"
+            android:textAllCaps="false" />
 
     </LinearLayout>
 
@@ -107,25 +111,29 @@
             android:id="@+id/btn_feature1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="功能1" />
+            android:text="功能1"
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/btn_feature2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="功能2" />
+            android:text="功能2"
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/btn_feature3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="功能3" />
+            android:text="功能3"
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/btn_feature4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="功能4" />
+            android:text="功能4"
+            android:textAllCaps="false" />
 
     </LinearLayout>
 
@@ -147,14 +155,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:text="关闭工具" />
+            android:text="关闭工具"
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/btn_close_dialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:text="关闭窗口" />
+            android:text="关闭窗口"
+            android:textAllCaps="false" />
 
     </LinearLayout>
 

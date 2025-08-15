@@ -6,6 +6,7 @@ plugins {
     id "kotlin-parcelize"
     id "kotlin-kapt"
     id "com.google.devtools.ksp"
+    id "org.jetbrains.kotlin.plugin.compose" version "${kotlin_version}"
 }
 
 apply from: "../config_source.gradle"
@@ -57,14 +58,14 @@ def getEnvOrLocal(String key) {
 android {
     namespace 'com.example.wan.android'
     // 确定编译应用时，项目代码可以使用哪些 API。不影响应用运行时的行为，只影响编译时可以访问到哪些类和方法
-    compileSdk 35
+    compileSdk 36
 //    compileSdkExtension 15
 
     defaultConfig {
         applicationId "com.example.wan.android"
         minSdk 21
         // 指定应用在运行时目标的 Android 版本。不影响可以使用的 API，而是影响应用在运行时的行为
-        targetSdk 35
+        targetSdk 36
         versionCode gitCommitCount
         versionName gitLastTag
 
@@ -114,43 +115,9 @@ android {
         }
     }
 
+    // flavorDimensions（维度） + productFlavors（风味） + buildTypes（构建类型），最终组合生成变体
     // https://developer.android.com/build/build-variants
-    buildTypes {
-        debug {
-            versionNameSuffix ".${gitCommitId}"
-            debuggable true // 可调试
-            minifyEnabled false // 代码压缩 (R8/ProGuard)
-            shrinkResources false // 资源压缩 (shrinkResources)
-        }
-        release {
-            debuggable false
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-//            signingConfig signingConfigs.debugAsRelease
-            signingConfig signingConfigs.release
-        }
-    }
-    android.applicationVariants.all { variant ->
-        variant.outputs.all {
-            def flavorType = variant.productFlavors.collect {
-                it.name.capitalize()
-            }.join() + variant.buildType.name.capitalize() // 格式 GithubRelease
-            def name = ("WanAndroid" +
-                    "_${variant.versionName}" +
-//                    "_${variant.versionCode}" +
-//                    "_${variant.buildType.name}" +
-//                    "_${flavorType}" +
-//                    "_${gitCommitId}" +
-//                    "_${time.time}" +
-                    ".apk")
-            println("${flavorType} outputFileName = ${name}")
-            outputFileName = name
-        }
-    }
-    // 维度、风味，组合生成最终变体
-    // https://developer.android.com/build/build-variants
-    flavorDimensions += ["channel"] // 维度
+    flavorDimensions = ["channel"/*, "debug"*/] // 维度，每个风味都需要指定一个维度名称，不同维度的风味可以组合，再加上 buildTypes，
     productFlavors { // 风味
         app {
             dimension "channel"
@@ -164,6 +131,50 @@ android {
             versionNameSuffix ".github"
             manifestPlaceholders = [app_channel: "\"${name}\""]
             buildConfigField "String", "APP_CHANNEL", "\"${name}\""
+        }
+//        floatButton {
+//            dimension "debug"
+//        }
+    }
+
+    // 构建类型 buildTypes
+    // https://developer.android.com/build/build-variants
+    buildTypes {
+        debug {
+            versionNameSuffix ".${gitCommitId}"
+            debuggable true // 可调试
+            minifyEnabled false // 代码压缩 (R8/ProGuard)
+            shrinkResources false // 资源压缩 (shrinkResources)
+//            signingConfig signingConfigs.debugAsRelease
+            signingConfig signingConfigs.release
+        }
+        release {
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//            signingConfig signingConfigs.debugAsRelease
+            signingConfig signingConfigs.release
+        }
+    }
+
+    // variant 变体，由 flavorDimensions + productFlavors + buildTypes 组合而成
+    // 配置优先级 main < flavorDimensions < productFlavors < buildTypes < variant，因为后者会覆盖前者
+    android.applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach {
+            def flavorType = variant.productFlavors.collect {
+                it.name.capitalize()
+            }.join() + variant.buildType.name.capitalize() // 格式 GithubRelease
+            def name = ("WanAndroid" +
+                    "_${variant.versionName}" +
+//                    "_${variant.versionCode}" +
+//                    "_${variant.buildType.name}" +
+//                    "_${flavorType}" +
+//                    "_${gitCommitId}" +
+//                    "_${time.time}" +
+                    ".apk")
+            println("${flavorType} outputFileName = ${name}")
+            outputFileName = name
         }
     }
 
@@ -189,16 +200,7 @@ android {
         viewBinding true
         compose = true
     }
-    composeOptions {
-        // KGP 要对应 android.composeOptions.kotlinCompilerExtensionVersion
-        // compose-kotlin https://developer.android.com/jetpack/androidx/releases/compose-kotlin
-        // 1.3.2 -> kotlin 1.7.20
-        // 1.4.8 -> kotlin 1.8.22
-        // 1.5.15 -> kotlin 1.9.25
-        // Compose Compiler Gradle plugin -> kotlin 2.0.0+
-        // https://developer.android.com/develop/ui/compose/compiler
-        kotlinCompilerExtensionVersion = "1.5.15"
-    }
+
     packagingOptions { // 这个块定义了打包相关的配置
         // 指定在构建 APK 或 AAR 时要排除的文件或路径
         // `AL2.0` 和 `LGPL2.1` 通常是许可证文件，可能在某些情况下不需要打包进最终的 APK 或 AAR 中
@@ -219,6 +221,12 @@ android {
         textReport true // true 输出lint报告
     }
 */
+}
+
+// kotlin 2.x+ 的 compose 配置
+composeCompiler {
+    reportsDestination = layout.buildDirectory.dir("compose_compiler")
+    stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")
 }
 
 // https://developer.android.com/build/dependencies
@@ -252,8 +260,8 @@ dependencies {
 
     // Test
     testImplementation "junit:junit:4.13.2"
-    androidTestImplementation "androidx.test.ext:junit:1.2.1"
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.6.1"
+    androidTestImplementation "androidx.test.ext:junit:1.3.0"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.7.0"
 
     implementation "androidx.multidex:multidex:2.0.1"
 
@@ -338,13 +346,13 @@ dependencies {
     // KTX https://developer.android.com/kotlin/ktx
     implementation platform("org.jetbrains.kotlin:kotlin-bom:${kotlin_version}")
     implementation "com.google.android.material:material:1.12.0"
-    implementation "androidx.appcompat:appcompat:1.7.0"
+    implementation "androidx.appcompat:appcompat:1.7.1"
     // 1.16.0 需要 AGP 8.6.0+
-    implementation "androidx.core:core-ktx:1.15.0"
+    implementation "androidx.core:core-ktx:1.17.0"
     implementation "androidx.core:core-splashscreen:1.0.1"
-    implementation "androidx.activity:activity-ktx:1.9.3"
+    implementation "androidx.activity:activity-ktx:1.10.1"
     // 2.9.0 需要 AGP 8.6.0+
-    def lifecycleVersion = "2.8.7"
+    def lifecycleVersion = "2.9.2"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:${lifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:${lifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${lifecycleVersion}"
@@ -353,30 +361,32 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-process:${lifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-service:${lifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:${lifecycleVersion}"
-    implementation "androidx.constraintlayout:constraintlayout:2.2.0"
+    implementation "androidx.constraintlayout:constraintlayout:2.2.1"
     // viewpager2 1.1 新特性 registerFragmentTransactionCallback
     implementation "androidx.viewpager2:viewpager2:1.1.0"
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:${lifecycleVersion}") // compose
     // 2.9.0 需要 AGP 8.6.0+
-    def navigationVersion = "2.8.9"
+    def navigationVersion = "2.9.3"
     implementation "androidx.navigation:navigation-fragment-ktx:${navigationVersion}"
     implementation "androidx.navigation:navigation-ui-ktx:${navigationVersion}"
     implementation("androidx.navigation:navigation-compose:${navigationVersion}") // compose
     implementation "androidx.palette:palette-ktx:1.0.0"
-    implementation "androidx.sqlite:sqlite-ktx:2.4.0"
+    implementation "androidx.sqlite:sqlite-ktx:2.5.2"
     // https://developer.android.com/jetpack/androidx/releases/datastore
-    implementation("androidx.datastore:datastore:1.1.1") // datastore
-    implementation("androidx.datastore:datastore-preferences:1.1.1") // preferences datastore
+    def datastoreVersion = "1.1.7"
+    implementation("androidx.datastore:datastore:${datastoreVersion}") // datastore
+    implementation("androidx.datastore:datastore-preferences:${datastoreVersion}") // preferences datastore
     // https://developer.android.com/jetpack/androidx/releases/room
-    def roomVersion = "2.6.1"
+    def roomVersion = "2.7.2"
     implementation("androidx.room:room-runtime:${roomVersion}")
     implementation("androidx.room:room-ktx:${roomVersion}")
 //    kapt("androidx.room:room-compiler:${roomVersion}")
     ksp("androidx.room:room-compiler:${roomVersion}")
     testImplementation("androidx.room:room-testing:${roomVersion}")
-    implementation "androidx.work:work-runtime-ktx:2.10.0"
-    implementation("androidx.paging:paging-runtime-ktx:3.3.4")
-    implementation("androidx.paging:paging-compose:3.3.4") // paging compose
+    implementation "androidx.work:work-runtime-ktx:2.10.3"
+    def pagingVersion = "3.3.6"
+    implementation("androidx.paging:paging-runtime-ktx:${pagingVersion}")
+    implementation("androidx.paging:paging-compose:${pagingVersion}") // paging compose
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     // 快乐库 - 扩展
     // https://github.com/LouisCAD/Splitties
@@ -395,7 +405,7 @@ dependencies {
     implementation "com.geyifeng.immersionbar:immersionbar:3.2.2"
     implementation "com.geyifeng.immersionbar:immersionbar-ktx:3.2.2"
     // gson
-    implementation "com.google.code.gson:gson:2.10.1"
+    implementation "com.google.code.gson:gson:2.11.0"
     // 网络
     // https://github.com/square/okhttp
     implementation "com.squareup.okhttp3:okhttp:4.12.0"
