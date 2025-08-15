@@ -121,6 +121,8 @@ android {
             debuggable true // 可调试
             minifyEnabled false // 代码压缩 (R8/ProGuard)
             shrinkResources false // 资源压缩 (shrinkResources)
+//            signingConfig signingConfigs.debugAsRelease
+            signingConfig signingConfigs.release
         }
         release {
             debuggable false
