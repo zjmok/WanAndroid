@@ -11,8 +11,32 @@ plugins {
 
 apply from: "../config_source.gradle"
 
-//String composeBoMVersion = "2024.12.01"
-String composeBoMVersion = "2025.08.00"
+// Compose
+// Compose BoM
+// https://developer.android.com/jetpack/compose/bom
+// https://developer.android.com/develop/ui/compose/bom/bom-mapping
+//    def composeBoMVersion = "2023.10.01"
+//    def composeBoMVersion = "2024.01.00"
+//    def composeBoMVersion = "2024.02.02"
+//    def composeBoMVersion = "2024.03.00"
+//    def composeBoMVersion = "2024.04.01"
+//    def composeBoMVersion = "2024.05.00"
+//    def composeBoMVersion = "2024.06.00"
+//    def composeBoMVersion = "2024.08.00"
+//    def composeBoMVersion = "2024.09.03"
+//    def composeBoMVersion = "2024.10.01"
+//    def composeBoMVersion = "2024.11.00"
+//    def composeBoMVersion = "2024.12.01"
+//    def composeBoMVersion = "2025.01.01"
+//    def composeBoMVersion = "2025.02.00"
+//    def composeBoMVersion = "2025.03.01"
+//    def composeBoMVersion = "2025.04.01"
+//    def composeBoMVersion = "2025.05.01"
+//    def composeBoMVersion = "2025.06.01"
+//    def composeBoMVersion = "2025.07.01"
+//    def composeBoMVersion = "2025.08.00"
+//
+def composeBoMVersion = "2025.08.00"
 
 def time = new Date()
 
@@ -60,7 +84,7 @@ android {
     namespace "com.example.wan.android"
     // 确定编译应用时，项目代码可以使用哪些 API。不影响应用运行时的行为，只影响编译时可以访问到哪些类和方法
     compileSdk 36
-//    compileSdkExtension 15
+//    compileSdkExtension 19 // 36.0-ext19
 
     defaultConfig {
         applicationId "com.example.wan.android"
@@ -74,7 +98,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        resConfigs "zh", "zh-rHK"//, "zh-rTW"
+        resConfigs "zh", "zh-rHK", "zh-rTW"
 
         ndk {
             abiFilters "armeabi-v7a", "arm64-v8a", "x86_64"
@@ -298,30 +322,6 @@ dependencies {
 
     implementation "androidx.multidex:multidex:2.0.1"
 
-    // Compose
-    // Compose BoM
-    // https://developer.android.com/jetpack/compose/bom
-    // https://developer.android.com/develop/ui/compose/bom/bom-mapping
-//    def composeBoMVersion = "2023.10.01"
-//    def composeBoMVersion = "2024.01.00"
-//    def composeBoMVersion = "2024.02.02"
-//    def composeBoMVersion = "2024.03.00"
-//    def composeBoMVersion = "2024.04.01"
-//    def composeBoMVersion = "2024.05.00"
-//    def composeBoMVersion = "2024.06.00"
-//    def composeBoMVersion = "2024.08.00"
-//    def composeBoMVersion = "2024.09.03"
-//    def composeBoMVersion = "2024.10.01"
-//    def composeBoMVersion = "2024.11.00"
-//    def composeBoMVersion = "2024.12.01"
-//    def composeBoMVersion = "2025.01.01"
-//    def composeBoMVersion = "2025.02.00"
-//    def composeBoMVersion = "2025.03.01"
-//    def composeBoMVersion = "2025.04.01"
-//    def composeBoMVersion = "2025.05.01"
-//    def composeBoMVersion = "2025.06.01"
-//    def composeBoMVersion = "2025.07.01"
-//    def composeBoMVersion = "2025.08.00"
     implementation(platform("androidx.compose:compose-bom:${composeBoMVersion}"))
     androidTestImplementation(platform("androidx.compose:compose-bom:${composeBoMVersion}"))
     implementation("androidx.compose.runtime:runtime")

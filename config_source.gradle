@@ -14,7 +14,7 @@ android {
         // 这些最终会合并到 main
         // 可以指定不同的 buildTypes / productFlavors 使用不同的资源目录
         debug {
-            java.srcDirs += ["src/floatButton/java", "src/other/java"]
+            java.srcDirs += ["src/floatButton/java", "src/another/java"]
             res.srcDirs += ["src/floatButton/res"]
             manifest.srcFile "src/floatButton/AndroidManifest.xml"
         }
