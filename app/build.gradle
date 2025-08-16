@@ -508,4 +508,8 @@ dependencies {
     // https://github.com/hongyangAndroid/FlowLayout
     implementation "com.hyman:flowlayout-lib:1.1.2"
 
+    // 日志调试框架
+    // https://github.com/getActivity/Logcat
+    debugImplementation "com.github.getActivity:Logcat:12.3"
+
 }
