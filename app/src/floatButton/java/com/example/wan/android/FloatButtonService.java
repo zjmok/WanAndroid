@@ -125,7 +125,11 @@ public class FloatButtonService extends Service {
             if (superUserInfo != null) {
                 id = superUserInfo.getUserInfo().getId() + "";
             }
-            AppDetailDialog dialog = new AppDetailDialog(getTopActivity(), AppConst.BASE_URL, id);
+            Activity topActivity = getTopActivity();
+            if (topActivity == null || topActivity.isFinishing()) {
+                return;
+            }
+            AppDetailDialog dialog = new AppDetailDialog(topActivity, AppConst.BASE_URL, id);
             dialog.show();
         });
 
