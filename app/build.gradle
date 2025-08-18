@@ -63,7 +63,7 @@ def getEnvOrLocal(String key) {
     if (value == null || value.isEmpty()) {
         // 尝试从 local.properties 中获取
         def localProperties = new Properties()
-        def localPropertiesFile = file("../local.properties")
+        def localPropertiesFile = rootProject.file("local.properties")
         if (localPropertiesFile.exists()) {
             localPropertiesFile.withInputStream { stream ->
                 localProperties.load(stream)
@@ -127,7 +127,7 @@ android {
     signingConfigs {
         // https://developer.android.com/studio/publish/app-signing#secure_key
         release {
-            storeFile file("../zjmok.jks") // 密钥库文件路径，本地开发直接放到此路径，CI 环境脚本解密输出到此路径
+            storeFile rootProject.file("zjmok.jks") // 密钥库文件路径，本地开发直接放到此路径，CI 环境脚本解密输出到此路径
             storePassword getEnvOrLocal("KEYSTORE_PASSWORD")
             keyAlias getEnvOrLocal("KEY_ALIAS")
             keyPassword getEnvOrLocal("KEY_PASSWORD")

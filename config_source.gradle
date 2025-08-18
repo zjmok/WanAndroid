@@ -10,6 +10,12 @@ android {
                     "src/main/res-splash",
                     "src/main/res-setting",
             ]
+
+//            java.srcDirs += ["src/main/kotlin"]
+//            res.srcDirs += ["src/main/res"]
+//            assets.srcDirs += ["src/main/assets"]
+//            jniLibs.srcDirs += ["src/main/jniLibs"]
+//            manifest.srcFile "src/main/AndroidManifest.xml"
         }
         // 这些最终会合并到 main
         // 可以指定不同的 buildTypes / productFlavors 使用不同的资源目录
