@@ -6,10 +6,7 @@ class FloatButtonApp : App() {
 
     override fun onCreate() {
         super.onCreate()
-
-        if (BuildConfig.DEBUG) {
-            startService(Intent(this, FloatButtonService::class.java))
-        }
+        startService(Intent(this, FloatButtonService::class.java))
     }
 
 }

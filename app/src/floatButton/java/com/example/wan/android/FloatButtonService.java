@@ -1,5 +1,7 @@
 package com.example.wan.android;
 
+import static com.example.wan.android.utils.ToastUtilsKt.toast;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -35,10 +37,14 @@ import com.blankj.utilcode.util.ActivityUtils;
 import com.example.wan.android.compose.ComposeActivity;
 import com.example.wan.android.constant.AppConst;
 import com.example.wan.android.data.model.SuperUserInfo;
+import com.example.wan.android.index.MainActivity;
+import com.example.wan.android.index.setting.SettingActivity;
 import com.example.wan.android.ui.dialog.AppDetailDialog;
+import com.example.wan.android.utils.GsonUtilsExtKt;
 import com.example.wan.android.utils.UserUtils;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class FloatButtonService extends Service {
@@ -121,12 +127,20 @@ public class FloatButtonService extends Service {
             hideDebugWindow();
 
             SuperUserInfo superUserInfo = UserUtils.INSTANCE.getSuperUserInfo();
-            String id = "null";
+            String id;
             if (superUserInfo != null) {
                 id = superUserInfo.getUserInfo().getId() + "";
+            } else {
+                id = "null";
             }
             Activity topActivity = getTopActivity();
             if (topActivity == null || topActivity.isFinishing()) {
+                ActivityUtils.startActivity(MainActivity.class);
+                new Handler().postDelayed(() -> {
+                    Activity newTopActivity = getTopActivity();
+                    AppDetailDialog dialog = new AppDetailDialog(newTopActivity, AppConst.BASE_URL, id);
+                    dialog.show();
+                }, 1000);
                 return;
             }
             AppDetailDialog dialog = new AppDetailDialog(topActivity, AppConst.BASE_URL, id);
@@ -150,7 +164,57 @@ public class FloatButtonService extends Service {
 
         // feature4
         Button btnFeature4 = debugWindow.findViewById(R.id.btn_feature4);
+        btnFeature4.setText("Setting");
         btnFeature4.setOnClickListener(v -> {
+            hideDebugWindow();
+
+            ActivityUtils.startActivity(SettingActivity.class);
+        });
+
+        // feature5
+        Button btnFeature5 = debugWindow.findViewById(R.id.btn_feature5);
+        btnFeature5.setText("AtyList");
+        btnFeature5.setOnClickListener(v -> {
+            List<Activity> activityList = ActivityUtils.getActivityList();
+            String[] list = activityList.stream()
+                    .map(activity -> activity.getClass().getName())
+                    .toArray(String[]::new);
+            toast("activityList size: " + activityList.size() + "\n" +
+                    "activityList: " + GsonUtilsExtKt.toJson(list, false, true));
+        });
+
+        // feature6
+        Button btnFeature6 = debugWindow.findViewById(R.id.btn_feature6);
+        btnFeature6.setOnClickListener(v -> {
+            // 在后台时，
+            Activity a = getTopActivity(); // null
+            Activity b = ActivityUtils.getTopActivity(); // 有值
+            toast("TopActivity: \n" +
+                    a + "\n" +
+                    "ActivityUtils.getTopActivity: \n" +
+                    b + "\n" +
+                    "isActivityAlive = " + ActivityUtils.isActivityAlive(b));
+            AppDetailDialog dialog = new AppDetailDialog(b, AppConst.BASE_URL, "null");
+            dialog.show();
+        });
+
+        // feature7
+        Button btnFeature7 = debugWindow.findViewById(R.id.btn_feature7);
+        btnFeature7.setOnClickListener(v -> {
+            Activity a = getTopActivity();
+            Activity b = ActivityUtils.getTopActivity();
+            toast("TopActivity: \n" +
+                    a + "\n" +
+                    "ActivityUtils.getTopActivity: \n" +
+                    b + "\n" +
+                    "isActivityAlive = " + ActivityUtils.isActivityAlive(b));
+            AppDetailDialog dialog = new AppDetailDialog(b, AppConst.BASE_URL, "null");
+            dialog.show();
+        });
+
+        // feature8
+        Button btnFeature8 = debugWindow.findViewById(R.id.btn_feature8);
+        btnFeature8.setOnClickListener(v -> {
 
         });
 
@@ -408,6 +472,8 @@ public class FloatButtonService extends Service {
 
     /**
      * 获取栈顶 Activity 的工具方法
+     * AndroidUtilCode 的 ActivityUtils.getTopActivity 应用无论是在前台还是后台时都会返回 topActivity
+     * getTopActivity 应用在后台返回 null，应用在前台返回 topActivity
      */
     private Activity getTopActivity() {
         try {

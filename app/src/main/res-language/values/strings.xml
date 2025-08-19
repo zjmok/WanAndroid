@@ -15,7 +15,10 @@
 <resources>
     <string name="app_name" translatable="false">WanAndroid</string>
     <string name="email" translatable="false">dev.zxmo@gmail.com</string>
+    <string name="source" translatable="false">zjmok/WanAndroid</string>
     <string name="repo_url" translatable="false">https://github.com/zjmok/WanAndroid</string>
+
     <string name="values">default</string>
-    <string name="language">语言</string>
+    <string name="language">Language</string>
+    <string name="follow_system">Follow the system</string>
 </resources>

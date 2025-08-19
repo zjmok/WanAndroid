@@ -60,4 +60,13 @@
         <item name="android:windowExitAnimation">@anim/message_fade_out</item>
     </style>
 
+    <style name="LeftAlignDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- 强制文本从左到右排列 -->
+        <item name="android:layoutDirection">ltr</item>
+        <!-- 列表项左对齐 -->
+        <item name="android:textAlignment">viewStart</item>
+        <!-- 对话框整体左对齐 -->
+        <item name="android:textDirection">ltr</item>
+    </style>
+
 </resources>

@@ -98,7 +98,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        resConfigs "zh", "zh-rHK", "zh-rTW"
+//        resConfigs "en", "zh", "zh-rHK", "zh-rTW"
 
         ndk {
             abiFilters "armeabi-v7a", "arm64-v8a", "x86_64"

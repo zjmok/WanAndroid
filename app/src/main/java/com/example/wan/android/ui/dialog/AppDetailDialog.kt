@@ -13,6 +13,7 @@ import com.example.wan.android.BuildConfig
 import com.example.wan.android.R
 import com.example.wan.android.utils.dp2pxInt
 import com.example.wan.android.utils.ext.setTypeface
+import com.example.wan.android.utils.getCurrentLocale
 import com.example.wan.android.utils.getSigningCertificateCN
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -101,6 +102,8 @@ class AppDetailDialog(context: Context?, val env: String = "", val uid: String =
             [env   ] $env
             [uid   ] $uid
             [lang  ] ${(context.getString(R.string.values))}
+            [lang_t] ${context.getCurrentLocale().toLanguageTag()}
+            [lang_n] ${context.getCurrentLocale().displayName}
             [signer] ${context.getSigningCertificateCN()}
             - App.Build -
             [commit] ${BuildConfig.COMMIT_ID}
@@ -131,6 +134,7 @@ class AppDetailDialog(context: Context?, val env: String = "", val uid: String =
 
         // 语言-文字-地区
         // language-script-country
+        // zh-Hans-CN
 //            [lang  ] ${Locale.getDefault().language}
 //            [script] ${Locale.getDefault().script}
 //            [area  ] ${Locale.getDefault().country}

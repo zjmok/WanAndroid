@@ -1,5 +1,6 @@
 package com.example.wan.android.base.activity
 
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
@@ -10,11 +11,15 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.blankj.utilcode.util.SPUtils
 import com.example.wan.android.R
 import com.example.wan.android.base.dialog.LoadingDialog
+import com.example.wan.android.constant.EventBus
 import com.example.wan.android.databinding.CustomActionbarTitleBinding
 import com.example.wan.android.utils.ext.hideSoftInput
+import com.example.wan.android.utils.observeEvent
 import com.example.wan.android.utils.toast
+import com.example.wan.android.utils.userLocale
 import com.gyf.immersionbar.ktx.immersionBar
 import splitties.views.onClick
+import java.util.Locale
 
 abstract class BaseActivity(@LayoutRes layoutId: Int = 0) : AppCompatActivity(layoutId) {
 
@@ -85,7 +90,9 @@ abstract class BaseActivity(@LayoutRes layoutId: Int = 0) : AppCompatActivity(la
     }
 
     protected open fun observeBus() {
-
+        observeEvent<Locale>(EventBus.REFRESH_LANGUAGE) {
+            recreate()
+        }
     }
 
     protected open fun showLoading() {
@@ -99,5 +106,10 @@ abstract class BaseActivity(@LayoutRes layoutId: Int = 0) : AppCompatActivity(la
     }
 
     val activity get() = this
+
+    override fun attachBaseContext(newBase: Context) {
+        val config = newBase.resources.configuration.apply { setLocale(newBase.userLocale) }
+        super.attachBaseContext(newBase.createConfigurationContext(config))
+    }
 
 }

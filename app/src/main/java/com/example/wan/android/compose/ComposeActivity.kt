@@ -36,6 +36,7 @@ import com.example.wan.android.compose.ui.theme.WanAndroidTheme
 import com.example.wan.android.constant.AppConst
 import com.example.wan.android.index.person.BookmarkActivity
 import com.example.wan.android.index.person.HistoryActivity
+import com.example.wan.android.index.search.SearchActivity
 import com.example.wan.android.index.setting.ManageSpaceActivity
 import com.example.wan.android.ui.dialog.AppDetailDialog
 import com.example.wan.android.utils.UserUtils
@@ -107,6 +108,24 @@ fun PageList(name: String, modifier: Modifier = Modifier) {
             ) {
                 Text(
                     text = "测试",
+                    fontSize = 18.sp,
+                    color = colorResource(id = R.color.primaryText)
+                )
+            }
+            Spacer(modifier = Modifier.size(1.px2dp()))
+            // SearchActivity
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorResource(id = R.color.wx_foreground))
+                    .clickable {
+                        ActivityUtils.startActivity(SearchActivity::class.java)
+                    }
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "SearchActivity",
                     fontSize = 18.sp,
                     color = colorResource(id = R.color.primaryText)
                 )

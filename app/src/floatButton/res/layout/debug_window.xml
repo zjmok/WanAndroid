@@ -137,6 +137,41 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_feature5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="功能5"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btn_feature6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="功能6"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btn_feature7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="功能7"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btn_feature8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="功能8"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
