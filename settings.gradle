@@ -5,6 +5,9 @@ pluginManagement {
         maven { url "https://maven.aliyun.com/repository/public" } // central + jcenter
         maven { url "https://maven.aliyun.com/repository/central" }
         maven { url "https://repo.huaweicloud.com/repository/maven" }
+        maven { url "https://mirrors.huaweicloud.com/repository/maven" }
+        maven { url "https://mirrors.tencent.com/nexus/repository/maven-public" }
+        maven { url "https://mirrors.163.com/maven/repository/maven-central" }
         maven { url "https://maven.aliyun.com/repository/gradle-plugin" } // gradle-plugin
         maven { url "https://repo1.maven.org/maven2/" }
         maven { url "https://jitpack.io" }
@@ -22,6 +25,9 @@ dependencyResolutionManagement {
         maven { url "https://maven.aliyun.com/repository/public" } // central + jcenter
         maven { url "https://maven.aliyun.com/repository/central" }
         maven { url "https://repo.huaweicloud.com/repository/maven" }
+        maven { url "https://mirrors.huaweicloud.com/repository/maven" }
+        maven { url "https://mirrors.tencent.com/nexus/repository/maven-public" }
+        maven { url "https://mirrors.163.com/maven/repository/maven-central" }
         maven { url "https://repo1.maven.org/maven2/" }
         maven { url "https://jitpack.io" }
         google()
