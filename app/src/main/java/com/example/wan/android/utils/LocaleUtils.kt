@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.core.os.LocaleListCompat
 import com.example.wan.android.constant.AppConst
 import java.util.Locale
+import androidx.core.content.edit
 
 var Context.userLocale
     get(): Locale {
@@ -22,15 +23,16 @@ var Context.userLocale
         val prefs = context.getSharedPreferences("Settings", MODE_PRIVATE)
         if (locale.toLanguageTag() == AppConst.SUPPORTED_LOCALE_LIST.first().toLanguageTag()) {
             // 如果设置为系统默认语言，则删除 SharedPreferences 中的设置
-            prefs.edit().remove("app_language").apply()
+            prefs.edit { remove("app_language") }
         } else {
-            prefs.edit().putString("app_language", locale.toLanguageTag()).apply()
+            prefs.edit { putString("app_language", locale.toLanguageTag()) }
         }
     }
 
 // 当前 Locale，用户选择的，resources.configuration.setLocale 的
 fun Context.getCurrentLocale(): Locale {
     val context = this
+    @Suppress("DEPRECATION")
     val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         context.resources.configuration.locales.get(0)
     } else {

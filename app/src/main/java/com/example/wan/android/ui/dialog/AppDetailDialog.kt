@@ -101,9 +101,9 @@ class AppDetailDialog(context: Context?, val env: String = "", val uid: String =
             [flavor] ${BuildConfig.FLAVOR}${if (BuildConfig.DEBUG) "Debug" else "Release"}
             [env   ] $env
             [uid   ] $uid
-            [lang  ] ${(context.getString(R.string.values))}
+            [lang_s] ${(context.getString(R.string.values))}
             [lang_t] ${context.getCurrentLocale().toLanguageTag()}
-            [lang_n] ${context.getCurrentLocale().displayName}
+            [lang_n] ${context.getCurrentLocale().displayName} | ${context.getCurrentLocale().getDisplayName(context.getCurrentLocale())}
             [signer] ${context.getSigningCertificateCN()}
             - App.Build -
             [commit] ${BuildConfig.COMMIT_ID}
@@ -124,7 +124,7 @@ class AppDetailDialog(context: Context?, val env: String = "", val uid: String =
             [ver   ] Android ${Build.VERSION.RELEASE}
             [api   ] ${Build.VERSION.SDK_INT}
             [lang_t] ${Locale.getDefault().toLanguageTag()}
-            [lang_n] ${Locale.getDefault().displayName}
+            [lang_n] ${Locale.getDefault().displayName} | ${Locale.getDefault().getDisplayName(Locale.getDefault())}
             - System.Build -
             [host  ] ${Build.HOST}
             [by    ] ${Build.USER}
