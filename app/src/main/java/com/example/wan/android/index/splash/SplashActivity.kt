@@ -15,6 +15,7 @@ import com.example.wan.android.utils.MyAppUtils
 import com.example.wan.android.utils.ext.alert
 import com.example.wan.android.utils.ext.cancel
 import com.example.wan.android.utils.ext.ok
+import com.example.wan.android.utils.loge
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,7 +56,11 @@ class SplashActivity : VBaseActivity<ActivitySplashBinding>() {
     private fun preRequest() {
         // todo 网络请求 第一次需要较长时间（一般要 1+ 秒） 为了进入 MainActivity 后能快速加载完成 在这里尝试提前随便请求一个接口
         lifecycleScope.launch {
-            WanRepository.getBanner()
+            try {
+                WanRepository.getBanner()
+            } catch (e: Exception) {
+                loge(e.message, "SplashActivity")
+            }
         }
     }
 
