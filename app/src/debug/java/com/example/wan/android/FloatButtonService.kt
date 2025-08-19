@@ -31,7 +31,6 @@ import com.example.wan.android.databinding.DebugWindowBinding
 import com.example.wan.android.index.MainActivity
 import com.example.wan.android.index.setting.SettingActivity
 import com.example.wan.android.ui.dialog.AppDetailDialog
-import com.example.wan.android.utils.UserUtils.getSuperUserInfo
 import com.example.wan.android.utils.toJson
 import com.example.wan.android.utils.toast
 import kotlinx.coroutines.CoroutineScope
@@ -66,79 +65,85 @@ class FloatButtonService : Service() {
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
 
+    private fun saveUrl(scheme: String, host: String, port: String = "") {
+        prefs.edit { putString("scheme", scheme) }
+        prefs.edit { putString("host", host) }
+        prefs.edit { putString("port", port) }
+    }
+
     @SuppressLint("SetTextI18n")
     private fun setDebugWindow() {
-        val scheme = prefs.getString("scheme", "https")
-        val ip = prefs.getString("ip", "192.168.1.1")
-        val port = prefs.getString("port", "8080")
+        val defaultUri = AppConst.BASE_URL.toUri()
+        val scheme = prefs.getString("scheme", defaultUri.scheme)
+        val host = prefs.getString("host", defaultUri.host)
+        val port = prefs.getString("port", "${defaultUri.port.takeIf { it > 0 } ?: ""}")
 
         debugWindowBinding.etScheme.setText(scheme)
-        debugWindowBinding.etIp.setText(ip)
+        debugWindowBinding.etHost.setText(host)
         debugWindowBinding.etPort.setText(port)
 
         debugWindowBinding.btnSave.setOnClickListener {
             val resultScheme = debugWindowBinding.etScheme.text.toString().trim()
-            val resultIp = debugWindowBinding.etIp.text.toString().trim()
+            val resultIp = debugWindowBinding.etHost.text.toString().trim()
             val resultPort = debugWindowBinding.etPort.text.toString().trim()
 
-            prefs.edit { putString("scheme", resultScheme) }
-            prefs.edit { putString("ip", resultIp) }
-            prefs.edit { putString("port", resultPort) }
+            saveUrl(resultScheme, resultIp, resultPort)
 
             hideKeyboard()
             toast("已保存")
         }
 
-        // profile1
-        debugWindowBinding.btnProfile1.setOnClickListener {
-            prefs.edit { putString("scheme", "https") }
-            prefs.edit { putString("ip", "192.168.1.1") }
-            prefs.edit { putString("port", "8443") }
+        // Clear
+        debugWindowBinding.btnClear.setOnClickListener {
+            saveUrl("", "")
             hideKeyboard()
             setDebugWindow()
+            toast("已清除修改")
+        }
+
+        // profile1
+        debugWindowBinding.btnProfile1.setOnClickListener {
+            saveUrl("https", "www.wanandroid.com", "")
+            hideKeyboard()
+            setDebugWindow()
+            toast("已切换到 Profile1")
         }
 
         // profile2
         debugWindowBinding.btnProfile2.setOnClickListener {
-            prefs.edit { putString("scheme", "http") }
-            prefs.edit { putString("ip", "192.168.1.2") }
-            prefs.edit { putString("port", "8080") }
+            saveUrl("http", "192.168.1.1", "8080")
             hideKeyboard()
             setDebugWindow()
+            toast("已切换到 Profile2")
         }
 
         // profile3
         debugWindowBinding.btnProfile3.setOnClickListener {
-            prefs.edit { putString("scheme", "ssh") }
-            prefs.edit { putString("ip", "192.168.1.254") }
-            prefs.edit { putString("port", "2222") }
+            saveUrl("https", "192.168.1.254", "8443")
             hideKeyboard()
             setDebugWindow()
+            toast("已切换到 Profile3")
         }
 
         // feature1
         debugWindowBinding.btnFeature1.text = "应用详情"
         debugWindowBinding.btnFeature1.setOnClickListener {
             hideDebugWindow()
-            val superUserInfo = getSuperUserInfo()
-            val id = if (superUserInfo != null) {
-                superUserInfo.userInfo.id.toString() + ""
-            } else {
-                "null"
-            }
-            if (topActivity == null || topActivity?.isFinishing == true) {
+            val activity = topActivity
+            if (activity == null || activity.isFinishing) {
                 // 如果当前应用在后台，直接跳转到 MainActivity
                 // 并在 1 秒后显示 AppDetailDialog
 
                 ActivityUtils.startActivity(MainActivity::class.java)
                 serviceScope.launch {
                     delay(1000)
-                    val dialog = AppDetailDialog(this@FloatButtonService.topActivity, AppConst.BASE_URL, id)
-                    dialog.show()
+                    val newActivity = topActivity
+                    if (newActivity != null) {
+                        AppDetailDialog(newActivity).show()
+                    }
                 }
             } else {
-                val dialog = AppDetailDialog(this@FloatButtonService.topActivity, AppConst.BASE_URL, id)
-                dialog.show()
+                AppDetailDialog(activity).show()
             }
         }
 
@@ -168,12 +173,7 @@ class FloatButtonService : Service() {
             val list = activityList.map {
                 it.javaClass.simpleName
             }.toList()
-            toast(
-                """
-                activityList size: ${activityList.size}
-                activityList: ${list.toJson()}
-            """.trimIndent()
-            )
+            toast("activityList size: ${activityList.size}\n${list.toJson()}")
         }
 
         // feature6
@@ -190,8 +190,7 @@ class FloatButtonService : Service() {
                     isActivityAlive = ${ActivityUtils.isActivityAlive(b)}
                     """.trimIndent()
             )
-            val dialog = AppDetailDialog(b, AppConst.BASE_URL, "null")
-            dialog.show()
+            AppDetailDialog(b).show()
         }
 
         // feature7
@@ -207,8 +206,7 @@ class FloatButtonService : Service() {
                     isActivityAlive = ${ActivityUtils.isActivityAlive(b)}
                     """.trimIndent()
             )
-            val dialog = AppDetailDialog(b, AppConst.BASE_URL, "null")
-            dialog.show()
+            AppDetailDialog(b).show()
         }
 
         // feature8
@@ -442,8 +440,12 @@ class FloatButtonService : Service() {
         // 取消所有协程
         serviceJob.cancel()
 
-        windowManager.removeView(floatButton)
-        windowManager.removeView(debugWindow)
+        if (floatButton.isAttachedToWindow) {
+            windowManager.removeView(floatButton)
+        }
+        if (debugWindow.isAttachedToWindow) {
+            windowManager.removeView(debugWindow)
+        }
 
         super.onDestroy()
     }

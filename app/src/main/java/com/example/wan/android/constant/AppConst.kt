@@ -24,7 +24,6 @@ object AppConst {
     const val noMore = 8
 
     val SUPPORTED_LOCALE_LIST = listOf(
-//        Locale(""), // default
         Locale(""), // default
         // 简体中文
         Locale("zh"),

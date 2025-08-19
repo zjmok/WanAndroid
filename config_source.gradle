@@ -20,12 +20,13 @@ android {
         // 这些最终会合并到 main
         // 可以指定不同的 buildTypes / productFlavors 使用不同的资源目录
         debug {
-            java.srcDirs += ["src/floatButton/java", "src/another/java"]
-            res.srcDirs += ["src/floatButton/res"]
-            manifest.srcFile "src/floatButton/AndroidManifest.xml"
+            java.srcDirs += ["src/debug/java"]
+            res.srcDirs += ["src/debug/res"]
+            manifest.srcFile "src/debug/AndroidManifest.xml"
         }
         release {
-
+            // 这些是 引用占位，空壳代码，因为 main 使用到对应的 debug 代码，加上只为不报错
+            java.srcDirs += ["src/placeholders/java/"]
         }
         app {
 

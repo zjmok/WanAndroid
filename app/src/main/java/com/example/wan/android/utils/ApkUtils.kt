@@ -38,7 +38,7 @@ fun Context.getSigningCertificateCN(): String? {
         // 生成证书对象 cert，包含完整证书信息
         val certFactory = CertificateFactory.getInstance("X.509")
         val cert = certFactory.generateCertificate(
-            ByteArrayInputStream(getSignature()?.toByteArray())
+            ByteArrayInputStream(this.getSignature()?.toByteArray())
         ) as X509Certificate
 
         // 解析证书的 Subject DN 中的 CN 字段
@@ -58,11 +58,24 @@ fun Context.getSigningCertificateCN(): String? {
 fun Context.getSignatureHashCheck(algorithm: String = "SHA256"): String? {
     try {
         val md = MessageDigest.getInstance(algorithm)
-        getSignature()?.toByteArray()?.let { md.update(it) }
+        this.getSignature()?.toByteArray()?.let { md.update(it) }
         val digest = md.digest()
         return digest.joinToString("") { "%02x".format(it) }
     } catch (e: Exception) {
         e.printStackTrace()
     }
     return null
+}
+
+fun Context.getAppTargetSdk(): Int {
+    val context = this
+    return try {
+        val packageInfo = context.packageManager.getPackageInfo(
+            context.packageName,
+            PackageManager.GET_ACTIVITIES
+        )
+        packageInfo.applicationInfo?.targetSdkVersion ?: -1
+    } catch (e: PackageManager.NameNotFoundException) {
+        -1
+    }
 }

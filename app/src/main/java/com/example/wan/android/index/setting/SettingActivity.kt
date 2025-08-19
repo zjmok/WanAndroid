@@ -4,11 +4,11 @@ import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
 import android.transition.TransitionInflater
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.ClipboardUtils
@@ -48,7 +48,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.views.onClick
 import java.io.File
-import java.util.Locale
 
 class SettingActivity : VVMBaseActivity<SettingViewModel, ActivitySettingBinding>() {
 
@@ -128,36 +127,42 @@ class SettingActivity : VVMBaseActivity<SettingViewModel, ActivitySettingBinding
             val languageNameArray = localeList.map { locale ->
                 locale.getCustomDisplayName() to locale
             }.map { it.first }.toTypedArray()
-
             // 持久化读取
-            val savedLocale = userLocale
-            val index = try {
-                localeList.map { it.toLanguageTag() }.indexOf(savedLocale.toLanguageTag())
-            } catch (e: Exception) {
+            val index = if (userLocale.first) {
                 0
+            } else {
+                try {
+                    localeList.map { it.toLanguageTag() }.indexOf(userLocale.second.toLanguageTag())
+                } catch (e: Exception) {
+                    0
+                }
             }
-            var selectLangTag = savedLocale.toLanguageTag()
+            var selectedIndex = 0
             alert("选择语言") {
                 setSingleChoiceItems(languageNameArray, index) { dialog, which ->
-                    selectLangTag = localeList.map { it.toLanguageTag() }[which]
+                    selectedIndex = which
                 }
                 cancel {}
                 ok {
-                    val selectLocale = Locale.forLanguageTag(selectLangTag)
-                    if (selectLangTag == savedLocale.toLanguageTag()) {
+                    if (selectedIndex == index) {
                         // 未修改 return
                         return@ok
                     }
+
+                    val selectLocale = localeList[selectedIndex]
                     // 持久化保存
-                    userLocale = selectLocale
+                    userLocale = (selectedIndex == 0) to selectLocale
 
                     // 通知其他 context 语言已更改
                     postEvent(EventBus.REFRESH_LANGUAGE, selectLocale)
                 }
             }.show()
         }
-        binding.tvLanguage.text = getCurrentLocale().getCustomDisplayName() +
-                " (${getString(R.string.values)})"
+        binding.tvLanguage.text = if (userLocale.first) {
+            AppConst.SUPPORTED_LOCALE_LIST.first().getCustomDisplayName()
+        } else {
+            getCurrentLocale().getCustomDisplayName()
+        }// + " (${getString(R.string.values)})"
         binding.llWebSite.onClick {
             val url = "https://wanandroid.com/"
             alert("WanAndroid", "打开 URL: \n$url") {
@@ -176,7 +181,7 @@ class SettingActivity : VVMBaseActivity<SettingViewModel, ActivitySettingBinding
                 ok("发送邮件") {
                     val email = getString(R.string.email)
                     val intent = Intent(Intent.ACTION_SENDTO).apply {
-                        data = Uri.parse("mailto:")
+                        data = "mailto:".toUri()
                         putExtra(
                             Intent.EXTRA_EMAIL,
                             arrayOf(email)
@@ -233,12 +238,7 @@ class SettingActivity : VVMBaseActivity<SettingViewModel, ActivitySettingBinding
                         // Gmail、Mail.ru、Outlook、厂商自带邮件APP 都能正常识别。
                         putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
                         putExtra(Intent.EXTRA_SUBJECT, "${getString(R.string.app_name)}-崩溃日志上报")
-                        putExtra(
-                            Intent.EXTRA_TEXT, MyAppUtils.getAppInfo(
-                                "null",
-                                UserUtils.getSuperUserInfo()?.userInfo?.username ?: "null"
-                            )
-                        )
+                        putExtra(Intent.EXTRA_TEXT, MyAppUtils.getMyAppInfo(activity))
                         putExtra(Intent.EXTRA_STREAM, File(zipFilePath).getUri())
                         type = "application/octet-stream"
                     }
@@ -269,11 +269,7 @@ class SettingActivity : VVMBaseActivity<SettingViewModel, ActivitySettingBinding
             onMultiClick({ i ->
                 toast("快速再按 $i 次 查看更多")
             }) {
-                AppDetailDialog(
-                    context = activity,
-                    env = AppConst.BASE_URL,
-                    uid = "${UserUtils.getSuperUserInfo()?.userInfo?.id ?: "null"}",
-                ).show()
+                AppDetailDialog(context = activity).show()
             }
         }
         binding.tvVersion.text = "Version ${AppUtils.getAppVersionName()}"

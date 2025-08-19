@@ -1,6 +1,7 @@
 package com.example.wan.android.network
 
 import com.example.wan.android.App
+import com.example.wan.android.BaseUrlInterceptor
 import com.example.wan.android.constant.AppConst
 import com.example.wan.android.network.interceptors.CacheInterceptor
 import com.example.wan.android.network.interceptors.LoggingInterceptor
@@ -49,6 +50,7 @@ object RetrofitClient {
         // 先添加的拦截器，会先处理请求，最后处理响应
         // 日志拦截器通常放在最前面，以便记录所有请求和响应的详细信息。
         // 缓存拦截器通常放在靠前的位置，以便在其它拦截器之前处理缓存逻辑。
+        .addInterceptor(BaseUrlInterceptor()) // release 和 debug 使用不同的资源，debug 提供修改 baseUrl 功能，release 是 引用占位，空壳代码
         .addInterceptor(LoggingInterceptor())
         .addInterceptor(CacheInterceptor())
 //        .addInterceptor(HeaderInterceptor())

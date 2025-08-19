@@ -3,29 +3,32 @@ package com.example.wan.android.utils
 import android.content.Context
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
-import androidx.core.os.LocaleListCompat
-import com.example.wan.android.constant.AppConst
-import java.util.Locale
 import androidx.core.content.edit
+import androidx.core.os.LocaleListCompat
+import java.util.Locale
 
 var Context.userLocale
-    get(): Locale {
+    get(): Pair<Boolean, Locale> {
         val context = this
         // 从 SharedPreferences 中获取用户选择的语言
         val prefs = context.getSharedPreferences("Settings", MODE_PRIVATE)
+        val langDefault = prefs.getBoolean("app_language_default", true)
         val langCode = prefs.getString("app_language", null)
-        val locale = langCode?.let { Locale.forLanguageTag(it) } ?: AppConst.SUPPORTED_LOCALE_LIST.first()
-        return locale
+        val locale = langCode?.let { Locale.forLanguageTag(it) } ?: Locale.getDefault()
+        return langDefault to locale
     }
-    set(locale) {
+    set(pair) {
         val context = this
         // 保存用户选择的语言到 SharedPreferences
         val prefs = context.getSharedPreferences("Settings", MODE_PRIVATE)
-        if (locale.toLanguageTag() == AppConst.SUPPORTED_LOCALE_LIST.first().toLanguageTag()) {
+        // 如果设置为系统默认语言，则将 app_language_default 设置为 true，并删除 app_language
+        // 否则将 app_language_default 设置为 false，并保存 app_language
+        prefs.edit { putBoolean("app_language_default", pair.first) }
+        if (pair.first) {
             // 如果设置为系统默认语言，则删除 SharedPreferences 中的设置
             prefs.edit { remove("app_language") }
         } else {
-            prefs.edit { putString("app_language", locale.toLanguageTag()) }
+            prefs.edit { putString("app_language", pair.second.toLanguageTag()) }
         }
     }
 

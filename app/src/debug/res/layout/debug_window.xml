@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/darker_gray"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="8dp"
+    tools:ignore="ButtonStyle">
 
     <TextView
         android:id="@+id/tv_app_info"
@@ -23,6 +25,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="清除修改"
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/btn_profile1"
@@ -50,13 +59,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        tools:ignore="Autofill,TextFields">
 
         <EditText
             android:id="@+id/et_scheme"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:hint="https"
+            android:hint="scheme"
             android:maxLines="1"
             android:singleLine="true" />
 
@@ -66,11 +76,11 @@
             android:text="://" />
 
         <EditText
-            android:id="@+id/et_ip"
+            android:id="@+id/et_host"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="192.168.1.1"
+            android:hint="host"
             android:maxLines="1"
             android:singleLine="true" />
 
@@ -83,7 +93,7 @@
             android:id="@+id/et_port"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:hint="8443"
+            android:hint="prot"
             android:maxLines="1"
             android:singleLine="true" />
 

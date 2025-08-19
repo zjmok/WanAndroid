@@ -108,7 +108,7 @@ abstract class BaseActivity(@LayoutRes layoutId: Int = 0) : AppCompatActivity(la
     val activity get() = this
 
     override fun attachBaseContext(newBase: Context) {
-        val config = newBase.resources.configuration.apply { setLocale(newBase.userLocale) }
+        val config = newBase.resources.configuration.apply { setLocale(newBase.userLocale.second) }
         super.attachBaseContext(newBase.createConfigurationContext(config))
     }
 

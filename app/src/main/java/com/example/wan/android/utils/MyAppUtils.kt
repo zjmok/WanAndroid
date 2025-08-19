@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.core.content.ContextCompat
 import com.blankj.utilcode.util.SPUtils
 import com.example.wan.android.BuildConfig
+import com.example.wan.android.R
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -71,41 +72,68 @@ object MyAppUtils {
         return activityManager.largeMemoryClass
     }
 
-    fun getAppInfo(env: String = "", uid: String = ""): String {
+    fun getMyAppInfo(context: Context): String {
+        val currentLocale = context.getCurrentLocale()
+        val currentLocaleName = currentLocale.getDisplayName(currentLocale)
+        val languageName =
+            if (currentLocaleName != "" && currentLocale.toLanguageTag() != Locale.getDefault().toLanguageTag()) {
+                // 若当前语言不是默认语言，追加以当前语言方式显示，如 "英文 | English"
+                " | $currentLocaleName"
+            } else {
+                ""
+            }
+
+        val format = SimpleDateFormat(
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                "yyyy/MM/dd HH:mm:ss"
+            } else {
+                "yyyy/MM/dd HH:mm:ss XXX"
+            }, Locale.getDefault()
+        )
         // 请打开设置 --> Editor --> Code Style --> Formatter --> 勾上 `Turn formatter on/off ...`
         // @formatter:off
         return """
             - App -
             [id    ] ${BuildConfig.APPLICATION_ID}
             [ver   ] ${BuildConfig.VERSION_NAME}_${BuildConfig.VERSION_CODE}
-            [flavor] ${BuildConfig.FLAVOR}${if (BuildConfig.DEBUG) "Debug" else "Release"}
-            [env   ] $env
-            [uid   ] $uid
+            [var   ] ${BuildConfig.FLAVOR}${if (BuildConfig.DEBUG) "Debug" else "Release"}
+            [target] API ${context.getAppTargetSdk()}
+            [source] ${(context.getString(R.string.values))}
+            [lang  ] ${currentLocale.toLanguageTag()}
+            [locate] ${currentLocale.displayName}${languageName}
+            [signer] ${context.getSigningCertificateCN()}
             - App.Build -
             [commit] ${BuildConfig.COMMIT_ID}
-            [gradle] ${BuildConfig.GRADLE_VERSION}
-            [gradle_jdk] ${BuildConfig.GRADLE_JDK}
-            [java_jvm] ${BuildConfig.JAVA_JVM}
-            [kotlin_jvm] ${BuildConfig.KOTLIN_JVM}
-            [kotlin_ver] ${BuildConfig.KOTLIN_VERSION}
-            [compose_ver] ${BuildConfig.COMPOSE_VERSION}
+            [gradle] Gradle ${BuildConfig.GRADLE_VERSION}
+            [kotlin] Kotlin ${BuildConfig.KOTLIN_VERSION}
+            [tchain] JDK ${BuildConfig.JVM_TOOLCHAIN}
+            [target] Java ${BuildConfig.JVM_TARGET}
+            [compos] Compose ${BuildConfig.COMPOSE_VERSION}
             [arch  ] ${BuildConfig.OS_ARCH}
             [host  ] ${BuildConfig.OS_NAME}
             [by    ] ${BuildConfig.USER_NAME}
-            [time  ] ${SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault()).format(BuildConfig.BUILD_TIME.toLong())}
+            [time  ] ${format.format(BuildConfig.BUILD_TIME.toLong())}
             - System -
             [abi   ] ${Build.SUPPORTED_ABIS.joinToString(", ")}
             [brand ] ${Build.BRAND}
             [model ] ${Build.MODEL}
             [ver   ] Android ${Build.VERSION.RELEASE}
-            [api   ] ${Build.VERSION.SDK_INT}
-            [lang  ] ${Locale.getDefault().language}
+            [api   ] API ${Build.VERSION.SDK_INT}
+            [lang  ] ${Locale.getDefault().toLanguageTag()}
+            [locale] ${Locale.getDefault().displayName}
             - System.Build -
             [host  ] ${Build.HOST}
             [by    ] ${Build.USER}
-            [time  ] ${SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault()).format(Build.TIME)}
+            [time  ] ${format.format(Build.TIME)}
         """.trimIndent()
         // @formatter:on
+
+        // 语言-文字-地区
+        // language-script-country
+        // zh-Hans-CN
+//            [lang  ] ${Locale.getDefault().language}
+//            [script] ${Locale.getDefault().script}
+//            [area  ] ${Locale.getDefault().country}
     }
 
 }

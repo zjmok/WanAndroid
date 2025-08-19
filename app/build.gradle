@@ -111,10 +111,9 @@ android {
         buildConfigField "String", "OS_NAME", "\"${System.properties['os.name']}\""
         buildConfigField "String", "USER_NAME", "\"${System.properties['user.name']}\""
         buildConfigField "String", "GRADLE_VERSION", "\"${gradle.gradleVersion}\""
-        buildConfigField "String", "GRADLE_JDK", "\"${System.properties['java.version']}\""
-        buildConfigField "String", "JAVA_JVM", "\"1.8\"" // 对应 compileOptions
-        buildConfigField "String", "KOTLIN_JVM", "\"1.8\"" // 对应 kotlinOptions
         buildConfigField "String", "KOTLIN_VERSION", "\"${kotlin_version}\""
+        buildConfigField "String", "JVM_TOOLCHAIN", "\"17\""
+        buildConfigField "String", "JVM_TARGET", "\"1.8\"" // 对应 compileOptions kotlinOptions
         buildConfigField "String", "COMPOSE_VERSION", "\"${composeBoMVersion}\""
 
         vectorDrawables {
@@ -236,19 +235,38 @@ android {
     }
 
     // https://developer.android.com/build/jdks
+    // 编译器版本：互相独立，Java 编译器版本由 Gradle 版本决定，Kotlin 编译器版本就是 Kotlin 版本（例如 Kotlin 1.9.25）
+    // 编译环境版本：建议统一，避免工具链不一致导致的奇怪问题
+    // 字节码的版本：必须统一
+    // 编译：用 Kotlin 1.9.25 编译器 + JDK 17 环境 → 生成 Java 8 字节码
+    // 输出 Java 字节码 版本 👇
+    // Java 编译器 (javac) 选项，AGP 提供
     compileOptions {
         encoding "UTF-8"
-        // 代码 的 java 编译版本
+        // Java 源码语法，兼容版本
         sourceCompatibility JavaVersion.VERSION_1_8
+        // 输出的 java 字节码 目标版本，兼容版本
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    // Kotlin 编译器 (kotlinc) 选项，KGP 提供
     kotlinOptions {
-        // 代码 的 kotlin 编译版本
+        // 输出 Kotlin 字节码 目标版本，兼容版本
         jvmTarget = "1.8"
     }
+    // 编译环境 JDK 版本 👇
+    // Gradle 7 require JDK 11+
+    // Gradle 8 require JDK 17+
+    // 编译环境 Java
+    java {
+        // 工具链，使用的 JDK 版本
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+    // 编译环境 Kotlin
     kotlin {
-        // gradle 项目构建的 java 和 kotlin 编译版本
-        jvmToolchain(17) // 最低版本与 Gradle 版本有关
+        // 工具链，使用的 JDK 版本
+        jvmToolchain(17)
     }
 
     buildFeatures {
