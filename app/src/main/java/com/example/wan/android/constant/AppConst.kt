@@ -28,23 +28,24 @@ object AppConst {
         // 简体中文
         Locale("zh"),
 //        Locale("zh", "CN"),
-        // 传统中文
+        // 繁體中文 传统中文
         Locale("zh", "HK"),
         Locale("zh", "MO"),
         Locale("zh", "TW"),
         //
-        Locale("en"), // 英语
+        Locale("en"), // English
         //
-        Locale("yue"), // 粤语 繁体
-        Locale("yue", "CN"), // 粤语 简体
+        Locale("yue"), // 粵語
+        Locale("yue", "CN"), // 粤语
         //
         Locale("ug"), // 维吾尔语
         Locale("bo"), // 藏语
         Locale("hmn"), // 苗语
         Locale("ii"), // 彝语
         Locale("za"), // 壮语
-        Locale("ja"), // 日语
         Locale("ko"), // 韩语
+        //
+        Locale("ja"), // 日语
         Locale("ru"), // 俄语
         Locale("fr"), // 法语
         Locale("de"), // 德语

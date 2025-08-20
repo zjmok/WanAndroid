@@ -5,6 +5,8 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.core.content.edit
 import androidx.core.os.LocaleListCompat
+import com.example.wan.android.App
+import com.example.wan.android.R
 import java.util.Locale
 
 var Context.userLocale
@@ -68,6 +70,9 @@ fun Locale.getCustomDisplayName(): String {
 //            else -> "中文"
 //        }
 //        "zh" -> when (this.country) {
+////            "HK" -> "繁體中文 (香港)"
+////            "MO" -> "繁體中文 (澳門)"
+////            "TW" -> "繁體中文 (台灣)"
 //            "HK" -> "傳統中文 (香港)"
 //            "MO" -> "傳統中文 (澳門)"
 //            "TW" -> "傳統中文 (台灣)"
@@ -85,7 +90,7 @@ fun Locale.getCustomDisplayName(): String {
             val defaultLocale = LocaleListCompat.getDefault().get(0)
             var name = defaultLocale?.getDisplayLanguage(defaultLocale)
             defaultLocale?.getCustomDisplayCountry().takeIf { it.isNullOrBlank().not() }?.let { name += ", $it" }
-            "跟随系统 ($name)"
+            "${App.INSTANCE.getString(R.string.follow_system)} ($name)"
         }
 
 //        else -> this.displayName
@@ -98,6 +103,9 @@ fun Locale.getCustomDisplayLanguage(): String {
     return when (this.language) {
 //        "zh" -> "中文"
         "zh" -> when (this.country) {
+//            "HK" -> "繁體中文"
+//            "MO" -> "繁體中文"
+//            "TW" -> "繁體中文"
             "HK" -> "傳統中文"
             "MO" -> "傳統中文"
             "TW" -> "傳統中文"

@@ -18,6 +18,7 @@
     <string name="source" translatable="false">zjmok/WanAndroid</string>
     <string name="repo_url" translatable="false">https://github.com/zjmok/WanAndroid</string>
 
+    <!-- values 值默认是 default，其它是对应目录，例如 `zh-rCN` 对应 `values-zh-rCN` 目录 -->
     <string name="values">default</string>
     <string name="language">Language</string>
     <string name="follow_system">Follow the system</string>

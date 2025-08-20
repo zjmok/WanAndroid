@@ -106,7 +106,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="多语言"
+                android:text="@string/language"
                 android:textColor="@color/primaryText"
                 android:textSize="16sp" />
 
@@ -120,7 +120,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
-                android:text="跟随系统"
+                android:text="@string/follow_system"
                 android:textColor="@color/secondaryText"
                 android:textSize="14sp" />
 

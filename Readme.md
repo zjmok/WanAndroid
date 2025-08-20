@@ -48,7 +48,7 @@ MVVM 架构, 基于 Kotlin + JetPack 组件: Lifecycle + LiveData + ViewModel + 
 
 - [x] 深色模式, 跟随系统 + 手动模式
 
-- [x] 多语言, 跟随系统 + 手动模式
+- [x] 多语言, 跟随系统 + 手动模式。加了功能，没有翻译
 
 - [x] Splash 页面适配, 仿 bilibili, 无缝衔接
 
