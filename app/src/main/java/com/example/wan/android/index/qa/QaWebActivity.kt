@@ -64,6 +64,7 @@ class QaWebActivity : VVMBaseActivity<QaWebViewModel, ActivityQaWebBinding>() {
         val data = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("data", WebData::class.java)
         } else {
+            @Suppress("DEPRECATION")
             intent.getParcelableExtra("data")
         }
         if (data == null) {

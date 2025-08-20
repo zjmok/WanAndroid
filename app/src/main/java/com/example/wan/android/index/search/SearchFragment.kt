@@ -127,6 +127,7 @@ class SearchFragment : VVMBaseFragment<SearchViewModel, FragmentSearchBinding>()
             val result = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 it?.getParcelableExtra("result", WebData::class.java)
             } else {
+                @Suppress("DEPRECATION")
                 it?.getParcelableExtra("result")
             }
             result?.let { data ->
