@@ -10,6 +10,7 @@ import com.example.wan.android.R
 import java.util.Locale
 
 var Context.userLocale
+    // 获取 用户选择的语言 空则返回系统默认语言
     get(): Pair<Boolean, Locale> {
         val context = this
         // 从 SharedPreferences 中获取用户选择的语言
@@ -19,6 +20,8 @@ var Context.userLocale
         val locale = langCode?.let { Locale.forLanguageTag(it) } ?: Locale.getDefault()
         return langDefault to locale
     }
+    // 保存 用户选择的语言
+    // 如果设置为系统默认语言 则将 标记设置为 true 并将保存的语言删除
     set(pair) {
         val context = this
         // 保存用户选择的语言到 SharedPreferences
@@ -34,13 +37,13 @@ var Context.userLocale
         }
     }
 
-// 当前 Locale，用户选择的，resources.configuration.setLocale 的
+// 当前 context 的 Locale
 fun Context.getCurrentLocale(): Locale {
     val context = this
-    @Suppress("DEPRECATION")
     val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         context.resources.configuration.locales.get(0)
     } else {
+        @Suppress("DEPRECATION")
         context.resources.configuration.locale
     }
     return locale
@@ -52,6 +55,8 @@ fun getDefaultLocale(): Locale {
     return locale
 }
 
+// 获取当前 Locale 的自定义显示名称
+// 例如：zh-Hant-HK
 fun Locale.getCustomDisplay(): String {
     var name = this.getCustomDisplayLanguage()
     this.displayScript.takeIf { it.isNullOrBlank().not() }?.let { name += "-$it" }
@@ -60,6 +65,7 @@ fun Locale.getCustomDisplay(): String {
 }
 
 fun Locale.getCustomDisplayName(): String {
+    val locale = this
     return when (this.language) {
 //        "zh" -> when (this.country) {
 //            "HK" -> "中文 (香港)"
@@ -90,7 +96,8 @@ fun Locale.getCustomDisplayName(): String {
             val defaultLocale = LocaleListCompat.getDefault().get(0)
             var name = defaultLocale?.getDisplayLanguage(defaultLocale)
             defaultLocale?.getCustomDisplayCountry().takeIf { it.isNullOrBlank().not() }?.let { name += ", $it" }
-            "${App.INSTANCE.getString(R.string.follow_system)} ($name)"
+//            "${App.INSTANCE.getString(R.string.follow_system)} ($name)"
+            "${App.INSTANCE.userLocale.second.newContext(App.INSTANCE).getString(R.string.follow_system)} ($name)"
         }
 
 //        else -> this.displayName
@@ -100,6 +107,7 @@ fun Locale.getCustomDisplayName(): String {
 }
 
 fun Locale.getCustomDisplayLanguage(): String {
+    val locale = this
     return when (this.language) {
 //        "zh" -> "中文"
         "zh" -> when (this.country) {
@@ -119,7 +127,10 @@ fun Locale.getCustomDisplayLanguage(): String {
             else -> "粵語"
         }
 
-        "" -> "跟随系统"
+        "" -> {
+//            App.INSTANCE.getString(R.string.follow_system)
+            App.INSTANCE.userLocale.second.newContext(App.INSTANCE).getString(R.string.follow_system)
+        }
 //        else -> this.displayLanguage
         else -> this.getDisplayLanguage(this)
     }
@@ -146,4 +157,13 @@ fun Locale.getCustomDisplayCountry(): String {
 //        else -> this.displayCountry
         else -> this.getDisplayCountry(this)
     }
+}
+
+fun Locale.newContext(context: Context): Context {
+    val locale = this
+    return context.createConfigurationContext(
+        context.resources.configuration.apply {
+            setLocale(locale)
+        }
+    )
 }
