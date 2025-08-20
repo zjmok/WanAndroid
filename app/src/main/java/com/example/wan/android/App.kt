@@ -41,7 +41,7 @@ open class App : MultiDexApplication() {
 
     val dataStore by preferencesDataStore(name = "preferences_datastore")
 
-    override fun attachBaseContext(base: Context?) {
+    override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         launchTime = System.currentTimeMillis()
     }

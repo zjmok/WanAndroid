@@ -2,7 +2,6 @@ package com.example.wan.android.index.web
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.Html
 import android.view.Menu
@@ -13,6 +12,7 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.addCallback
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.ClipboardUtils
@@ -276,8 +276,8 @@ class WebActivity : VBaseActivity<ActivityWebBinding>() {
     }
 
     private fun getHttpHttpsApps(context: Context): List<String> {
-        val httpIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://"))
-        val httpsIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://"))
+        val httpIntent = Intent(Intent.ACTION_VIEW, "http://".toUri())
+        val httpsIntent = Intent(Intent.ACTION_VIEW, "https://".toUri())
 
         val packageManager = context.packageManager
 
@@ -300,7 +300,7 @@ class WebActivity : VBaseActivity<ActivityWebBinding>() {
     }
 
     fun getAllHttpApps(context: Context): List<String> {
-        val httpIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://"))
+        val httpIntent = Intent(Intent.ACTION_VIEW, "http://".toUri())
         val httpApps = context.packageManager.queryIntentActivities(httpIntent, 0)
 
         val appPackageNames = mutableSetOf<String>()

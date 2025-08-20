@@ -2,4 +2,5 @@
 <resources>
     <string name="values">yue-rCN</string>
     <string name="language">语言</string>
+    <string name="follow_system">跟随系統</string>
 </resources>

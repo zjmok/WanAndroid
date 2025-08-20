@@ -3,7 +3,7 @@ package com.example.wan.android.utils
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
+import androidx.core.net.toUri
 import com.example.wan.android.App
 
 // 使用系统的浏览器列表
@@ -11,7 +11,7 @@ fun Context.startUrl(url: String) {
 
     loge("startBrowser url = $url")
 
-    val uri = Uri.parse(url)
+    val uri = url.toUri()
 
     val intent = Intent().apply {
         action = Intent.ACTION_VIEW
@@ -52,7 +52,7 @@ fun Context.startBrowser(url: String) {
 
     loge("startUrl url = $url")
 
-    val uri = Uri.parse(url)
+    val uri = url.toUri()
 
     val intent = Intent().apply {
         action = Intent.ACTION_VIEW

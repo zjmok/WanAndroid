@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="values">en</string>
-    <string name="language">language</string>
+    <string name="language">Language</string>
+    <string name="follow_system">Follow the system</string>
 </resources>

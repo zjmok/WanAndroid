@@ -33,12 +33,11 @@ import androidx.compose.ui.unit.sp
 import com.blankj.utilcode.util.ActivityUtils
 import com.example.wan.android.R
 import com.example.wan.android.compose.ui.theme.WanAndroidTheme
-import com.example.wan.android.constant.AppConst
 import com.example.wan.android.index.person.BookmarkActivity
 import com.example.wan.android.index.person.HistoryActivity
+import com.example.wan.android.index.search.SearchActivity
 import com.example.wan.android.index.setting.ManageSpaceActivity
 import com.example.wan.android.ui.dialog.AppDetailDialog
-import com.example.wan.android.utils.UserUtils
 import com.example.wan.android.utils.px2dp
 import com.example.wan.android.utils.startBrowser
 import com.example.wan.android.utils.startUrl
@@ -112,6 +111,24 @@ fun PageList(name: String, modifier: Modifier = Modifier) {
                 )
             }
             Spacer(modifier = Modifier.size(1.px2dp()))
+            // SearchActivity
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorResource(id = R.color.wx_foreground))
+                    .clickable {
+                        ActivityUtils.startActivity(SearchActivity::class.java)
+                    }
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "SearchActivity",
+                    fontSize = 18.sp,
+                    color = colorResource(id = R.color.primaryText)
+                )
+            }
+            Spacer(modifier = Modifier.size(1.px2dp()))
             // DetailActivity
             Row(
                 horizontalArrangement = Arrangement.Center,
@@ -119,11 +136,7 @@ fun PageList(name: String, modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .background(colorResource(id = R.color.wx_foreground))
                     .clickable {
-                        AppDetailDialog(
-                            context = context,
-                            env = AppConst.BASE_URL,
-                            uid = "${UserUtils.getSuperUserInfo()?.userInfo?.id ?: "null"}",
-                        ).show()
+                        AppDetailDialog(context = context).show()
                     }
                     .padding(16.dp)
             ) {

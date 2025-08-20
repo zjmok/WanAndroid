@@ -48,11 +48,11 @@ MVVM 架构, 基于 Kotlin + JetPack 组件: Lifecycle + LiveData + ViewModel + 
 
 - [x] 深色模式, 跟随系统 + 手动模式
 
+- [x] 多语言, 跟随系统 + 手动模式。加了功能，没有翻译
+
 - [x] Splash 页面适配, 仿 bilibili, 无缝衔接
 
 - [x] 首页, 调整为一个列表, Banner + Other接口 + Paging 的列表聚合
-
-- [x] 可拖拽悬浮按钮 可自动贴边
 
 - [x] APP 跳转
   - 邮件 Scheme 跳转。发送邮件时，使用指定邮件应用列表过滤掉其它应用（只是处理了邮件 Scheme 但不是邮件应用）

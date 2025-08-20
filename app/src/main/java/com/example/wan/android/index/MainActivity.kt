@@ -5,24 +5,18 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.graphics.Color
-import android.graphics.Point
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
+import androidx.core.graphics.toColorInt
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
-import com.blankj.utilcode.util.ScreenUtils
 import com.example.wan.android.App
 import com.example.wan.android.R
 import com.example.wan.android.base.activity.VBaseActivity
-import com.example.wan.android.compose.ComposeActivity
 import com.example.wan.android.constant.EventBus
 import com.example.wan.android.databinding.ActivityMainBinding
 import com.example.wan.android.databinding.ViewTabLayoutBinding
@@ -38,12 +32,7 @@ import com.example.wan.android.index.square.SquareMixFragment
 import com.example.wan.android.index.subscribe.SubscribeActivity
 import com.example.wan.android.index.subscribe.SubscribeFragment
 import com.example.wan.android.index.web.WebActivity
-import com.example.wan.android.utils.DraggableViewHelper
-import com.example.wan.android.utils.FloatViewHelper
 import com.example.wan.android.utils.MyAppUtils
-import com.example.wan.android.utils.dp2px
-import com.example.wan.android.utils.dp2pxInt
-import com.example.wan.android.utils.ext.loadCircle
 import com.example.wan.android.utils.ext.loadRes
 import com.example.wan.android.utils.postEvent
 import com.example.wan.android.utils.toast
@@ -52,8 +41,6 @@ import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import splitties.activities.start
 import splitties.views.onClick
-import kotlin.math.roundToInt
-import androidx.core.graphics.toColorInt
 
 class MainActivity : VBaseActivity<ActivityMainBinding>() {
 
@@ -163,39 +150,6 @@ class MainActivity : VBaseActivity<ActivityMainBinding>() {
                 val url = "https://wanandroid.com/tools"
                 WebActivity.start(url)
                 binding.root.close()
-            }
-        }
-    }
-
-    private val floatView by lazy {
-        AppCompatImageView(App.INSTANCE).apply {
-            loadCircle(R.drawable.icon_conan_selected)
-            onClick {
-                start<SearchActivity> {}
-            }
-        }
-    }
-
-    private val floatViewDisposableObserver = LifecycleEventObserver { _, event ->
-        if (event == Lifecycle.Event.ON_DESTROY) {
-            window.windowManager.removeView(floatView)
-        }
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) {
-            if (floatView.isAttachedToWindow.not()) {
-                val sizeDp = 75
-                FloatViewHelper.showInWindow(
-                    window, floatView, loc = Point(
-                        (ScreenUtils.getScreenWidth() - sizeDp.dp2pxInt),
-                        (ScreenUtils.getScreenHeight() * (3 / 4f) - (sizeDp / 2f).dp2px).roundToInt()
-                    ), sizeDp = sizeDp
-                )
-                DraggableViewHelper.intrude(floatView)
-                // 解决 特殊情况导致 activity 销毁重新创建时导致的 内存泄漏
-                lifecycle.addObserver(floatViewDisposableObserver)
             }
         }
     }
@@ -331,7 +285,7 @@ class MainActivity : VBaseActivity<ActivityMainBinding>() {
     }
 
     override fun observeBus() {
-
+        super.observeBus()
     }
 
 }
