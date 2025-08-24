@@ -522,6 +522,7 @@ dependencies {
     implementation "io.github.scwang90:refresh-header-material:${refreshVersion}"    //谷歌刷新头
     implementation "io.github.scwang90:refresh-header-two-level:${refreshVersion}"   //二级刷新头
 
+    // todo 使用 FlexboxLayout 替代
     // 流动布局 标签
     // https://github.com/hongyangAndroid/FlowLayout
     implementation "com.hyman:flowlayout-lib:1.1.2"

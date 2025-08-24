@@ -1,7 +1,7 @@
 package com.example.wan.android.network.api
 
 import com.example.wan.android.data.model.Articles
-import com.example.wan.android.data.model.ArticlesTree
+import com.example.wan.android.data.model.ArticlesTreeItem
 import com.example.wan.android.data.model.BannerItem
 import com.example.wan.android.data.model.CommentList
 import com.example.wan.android.data.model.DataX
@@ -104,7 +104,7 @@ interface WanService {
 
     // 项目分类
     @GET("/project/tree/json")
-    suspend fun getProjectTree(): ApiResult<ArticlesTree>
+    suspend fun getProjectTree(): ApiResult<ArrayList<ArticlesTreeItem>>
 
     // 项目列表数据
     @GET("/project/list/{page}/json")
@@ -122,7 +122,7 @@ interface WanService {
     ): ApiResult<Articles>
 
     @GET("/wxarticle/chapters/json")
-    suspend fun getWxArticleTree(): ApiResult<ArticlesTree>
+    suspend fun getWxArticleTree(): ApiResult<ArrayList<ArticlesTreeItem>>
 
     // 获取公众号列表
     // 查看某个公众号历史数据
