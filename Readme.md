@@ -68,7 +68,7 @@ MVVM 架构, 基于 Kotlin + JetPack 组件: Lifecycle + LiveData + ViewModel + 
 
 - [x] 自定义管理空间页面, 参考 Chrome, 具体路径: 应用详情 -> 清除数据 -> 管理空间 -> 自定义页面
 
-- [x] 集成 Compose, 将个人项目 WanCompose 整合到 WanAndroid, 目前已整合依赖和基础页面, 可正常进行 Compose 页面开发
+- [x] 集成 Compose, 可混合使用 Compose 开发
 
 - [x] 查看/删除 本地浏览历史, Compose UI, 基于 DataStore 本地数据存取
 
