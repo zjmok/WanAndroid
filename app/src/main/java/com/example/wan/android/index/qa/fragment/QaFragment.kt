@@ -1,59 +1,62 @@
-package com.example.wan.android.index.search
+package com.example.wan.android.index.qa.fragment
 
 import android.os.Build
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
-import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.paging.LoadState
 import androidx.paging.liveData
 import by.kirich1409.viewbindingdelegate.CreateMethod
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.LogUtils
-import com.example.wan.android.R
 import com.example.wan.android.base.fragment.VVMBaseFragment
+import com.example.wan.android.constant.EventBus
 import com.example.wan.android.data.model.LikeData
 import com.example.wan.android.data.model.WebData
-import com.example.wan.android.databinding.FragmentSearchBinding
+import com.example.wan.android.databinding.FragmentQaBinding
 import com.example.wan.android.index.common.ArticleListPagingAdapter
-import com.example.wan.android.index.common.ArticleWebActivity
+import com.example.wan.android.index.qa.QaWebActivity
 import com.example.wan.android.utils.ext.gone
 import com.example.wan.android.utils.ext.visible
 import com.example.wan.android.utils.getViewModel
 import com.example.wan.android.utils.newIntent
+import com.example.wan.android.utils.observeEvent
 import com.example.wan.android.utils.registerResultOK
-import com.lxj.xpopup.XPopup
-import splitties.views.onClick
+import splitties.bundle.put
+import splitties.views.topPadding
 
-class SearchFragment : VVMBaseFragment<SearchViewModel, FragmentSearchBinding>() {
+class QaFragment : VVMBaseFragment<QaViewModel, FragmentQaBinding>() {
 
-    override val viewModel: SearchViewModel by lazy { getViewModel() }
-    override val binding: FragmentSearchBinding by viewBinding(CreateMethod.INFLATE)
+    override val viewModel: QaViewModel by lazy { getViewModel() }
+    override val binding: FragmentQaBinding by viewBinding(CreateMethod.INFLATE)
 
     private val adapter by lazy { ArticleListPagingAdapter() }
 
     private var isRefreshing = false
 
-    private var key: String = ""
-    private var isInitialized = false
-
-    private val popupView by lazy {
-        XPopup.Builder(requireContext())
-            .asInputConfirm("站内搜索", "", "请输入关键字") {
-                if (it.isNotBlank()) {
-                    search(it)
+    companion object {
+        fun getInstance(isPaddingTop: Boolean) =
+            QaFragment().apply {
+                arguments = Bundle().apply {
+                    put("isPaddingTop", isPaddingTop)
                 }
             }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initImmersion()
         initView()
         observe()
+    }
 
-        showSearchDialog()
+    override fun onLazyLoad() {
+        viewModel.getArticlesPager().liveData
+            .observe(viewLifecycleOwner) {
+                adapter.submitData(lifecycle, it)
+                binding.refresh.isRefreshing = false
+            }
     }
 
     override fun onResume() {
@@ -61,19 +64,13 @@ class SearchFragment : VVMBaseFragment<SearchViewModel, FragmentSearchBinding>()
 
     }
 
-    private fun showSearchDialog() {
-        popupView.apply {
-            inputContent = key
-        }.show()
-    }
-
-    private fun search(key: String) {
-        this.key = key
-        viewModel.getArticlesPager(key).liveData
-            .observe(viewLifecycleOwner) {
-                adapter.submitData(lifecycle, it)
-                binding.refresh.isRefreshing = false
-            }
+    private fun initImmersion() {
+        val isPaddingTop = arguments?.getBoolean("isPaddingTop")
+        binding.rv.topPadding = if (isPaddingTop == true) {
+            BarUtils.getStatusBarHeight()
+        } else {
+            0
+        }
     }
 
     private fun observe() {
@@ -87,8 +84,6 @@ class SearchFragment : VVMBaseFragment<SearchViewModel, FragmentSearchBinding>()
         recyclerView.adapter = adapter
 
         adapter.addLoadStateListener {
-            isInitialized = true
-
             when (it.refresh) {
                 is LoadState.Loading -> {
                     if (isRefreshing.not()) {
@@ -144,7 +139,7 @@ class SearchFragment : VVMBaseFragment<SearchViewModel, FragmentSearchBinding>()
             }
         }
         adapter.onItemClick { position, dataX ->
-            launcher.launch(newIntent<ArticleWebActivity> {
+            launcher.launch(newIntent<QaWebActivity> {
                 putExtra(
                     "data", WebData(
                         id = dataX.id,
@@ -161,33 +156,24 @@ class SearchFragment : VVMBaseFragment<SearchViewModel, FragmentSearchBinding>()
         binding.refresh.setOnRefreshListener {
             isRefreshing = true
             adapter.refresh()
-
-            // 页面未加载时 下拉刷新结束动画
-            if (isInitialized.not()) {
-                binding.refresh.isRefreshing = false
-            }
         }
 
-        binding.viewEmpty.onClick {
-            showSearchDialog()
-        }
-
-        createMenu()
     }
 
-    private fun createMenu() {
-        requireActivity().addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_search_activity, menu)
-            }
+    override fun observeBus() {
+        observeEvent<Int>(EventBus.HOME_TAB_CHANGED) {
 
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                if (menuItem.itemId == R.id.menu_item_search) {
-                    showSearchDialog()
+        }
+        observeEvent<Int>(EventBus.HOME_TAB_REFRESH) {
+            if (lifecycle.currentState == Lifecycle.State.RESUMED) {
+                binding.rv.smoothScrollToPosition(0)
+                binding.rv.post {
+                    isRefreshing = true
+                    binding.refresh.isRefreshing = true
+                    adapter.refresh()
                 }
-                return true
             }
-        })
+        }
     }
 
 }

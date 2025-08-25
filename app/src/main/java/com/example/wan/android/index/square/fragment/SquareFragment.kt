@@ -1,4 +1,4 @@
-package com.example.wan.android.index.qa
+package com.example.wan.android.index.square.fragment
 
 import android.os.Build
 import android.os.Bundle
@@ -14,8 +14,9 @@ import com.example.wan.android.base.fragment.VVMBaseFragment
 import com.example.wan.android.constant.EventBus
 import com.example.wan.android.data.model.LikeData
 import com.example.wan.android.data.model.WebData
-import com.example.wan.android.databinding.FragmentQaBinding
+import com.example.wan.android.databinding.FragmentSquareBinding
 import com.example.wan.android.index.common.ArticleListPagingAdapter
+import com.example.wan.android.index.common.ArticleWebActivity
 import com.example.wan.android.utils.ext.gone
 import com.example.wan.android.utils.ext.visible
 import com.example.wan.android.utils.getViewModel
@@ -25,10 +26,10 @@ import com.example.wan.android.utils.registerResultOK
 import splitties.bundle.put
 import splitties.views.topPadding
 
-class QaFragment : VVMBaseFragment<QaViewModel, FragmentQaBinding>() {
+class SquareFragment : VVMBaseFragment<SquareViewModel, FragmentSquareBinding>() {
 
-    override val viewModel: QaViewModel by lazy { getViewModel() }
-    override val binding: FragmentQaBinding by viewBinding(CreateMethod.INFLATE)
+    override val viewModel: SquareViewModel get() = getViewModel()
+    override val binding: FragmentSquareBinding by viewBinding(CreateMethod.INFLATE)
 
     private val adapter by lazy { ArticleListPagingAdapter() }
 
@@ -36,7 +37,7 @@ class QaFragment : VVMBaseFragment<QaViewModel, FragmentQaBinding>() {
 
     companion object {
         fun getInstance(isPaddingTop: Boolean) =
-            QaFragment().apply {
+            SquareFragment().apply {
                 arguments = Bundle().apply {
                     put("isPaddingTop", isPaddingTop)
                 }
@@ -50,12 +51,11 @@ class QaFragment : VVMBaseFragment<QaViewModel, FragmentQaBinding>() {
         observe()
     }
 
-    override fun lazyLoad() {
-        viewModel.getArticlesPager().liveData
-            .observe(viewLifecycleOwner) {
-                adapter.submitData(lifecycle, it)
-                binding.refresh.isRefreshing = false
-            }
+    override fun onLazyLoad() {
+        viewModel.getArticlesPager().liveData.observe(viewLifecycleOwner) {
+            adapter.submitData(lifecycle, it)
+            binding.refresh.isRefreshing = false
+        }
     }
 
     override fun onResume() {
@@ -102,19 +102,10 @@ class QaFragment : VVMBaseFragment<QaViewModel, FragmentQaBinding>() {
                     LogUtils.e(it.toString())
                 }
             }
-
-            // 空数据 显示空页面
-            val isEmpty = it.refresh is LoadState.NotLoading &&
-                    it.append.endOfPaginationReached &&
-                    adapter.itemCount < 1
-
-            binding.rv.visible(isEmpty.not())
-            binding.viewEmpty.visible(isEmpty)
-
         }
 
         adapter.onLikeClick {
-            viewModel.like(it, true)
+            viewModel.like(it)
         }
 
         val launcher = registerResultOK {
@@ -138,7 +129,7 @@ class QaFragment : VVMBaseFragment<QaViewModel, FragmentQaBinding>() {
             }
         }
         adapter.onItemClick { position, dataX ->
-            launcher.launch(newIntent<QaWebActivity> {
+            launcher.launch(newIntent<ArticleWebActivity> {
                 putExtra(
                     "data", WebData(
                         id = dataX.id,
@@ -156,7 +147,6 @@ class QaFragment : VVMBaseFragment<QaViewModel, FragmentQaBinding>() {
             isRefreshing = true
             adapter.refresh()
         }
-
     }
 
     override fun observeBus() {

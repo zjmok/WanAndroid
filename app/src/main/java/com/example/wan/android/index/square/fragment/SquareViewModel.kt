@@ -1,4 +1,4 @@
-package com.example.wan.android.index.square
+package com.example.wan.android.index.square.fragment
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig

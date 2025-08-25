@@ -60,12 +60,12 @@ abstract class BaseFragment(@LayoutRes layoutID: Int = 0) : Fragment(layoutID) {
         // ViewPager2 默认可见时才执行 onResume,
         // 其它情况请使用 FragmentTransaction.setMaxLifecycle 控制 Fragment 的生命周期
         if (isLoaded.not()) {
-            lazyLoad()
+            onLazyLoad()
             isLoaded = true
         }
     }
 
-    protected open fun lazyLoad() {
+    protected open fun onLazyLoad() {
 
     }
 

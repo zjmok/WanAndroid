@@ -72,18 +72,23 @@ class ProjectFragment : VVMBaseFragment<ProjectViewModel, FragmentProjectBinding
             val vpAdapter = VpFragmentAdapter(this, list)
             binding.viewpager.adapter = vpAdapter
             binding.viewpager.currentItem = 0
-            binding.viewpager.offscreenPageLimit = 2
+            binding.viewpager.offscreenPageLimit = 1
 
             // TabLayout
             val nameList = finalList.map { it?.nameDecoded ?: "最新项目" }
-            TabLayoutMediator(binding.tabLayout, binding.viewpager) { tab, position ->
+            TabLayoutMediator(
+                binding.tabLayout,
+                binding.viewpager,
+                true,
+                false
+            ) { tab, position ->
                 tab.text = nameList[position]
             }.attach()
 
         }
         viewModel.fetchArticlesTree()
 
-        binding.viewEmpty.onClick{
+        binding.viewEmpty.onClick {
             viewModel.fetchArticlesTree()
         }
     }

@@ -9,7 +9,9 @@ import com.example.wan.android.base.fragment.VBaseFragment
 import com.example.wan.android.constant.EventBus
 import com.example.wan.android.databinding.FragmentSquareMixBinding
 import com.example.wan.android.index.common.VpFragmentAdapter
-import com.example.wan.android.index.qa.QaFragment
+import com.example.wan.android.index.qa.fragment.QaFragment
+import com.example.wan.android.index.search.fragment.SearchFragment
+import com.example.wan.android.index.square.fragment.SquareFragment
 import com.example.wan.android.utils.observeEvent
 import com.google.android.material.tabs.TabLayoutMediator
 import splitties.bundle.put
@@ -49,17 +51,26 @@ class SquareMixFragment : VBaseFragment<FragmentSquareMixBinding>() {
     }
 
     private fun initView() {
-        val nameList = listOf("广场", "问答")
+        val nameList = listOf("搜索", "广场", "问答")
 
         // ViewPager
-        val list = listOf(SquareFragment.getInstance(false), QaFragment.getInstance(false))
+        val list = listOf(
+            SearchFragment.getInstance(false),
+            SquareFragment.getInstance(false),
+            QaFragment.getInstance(false),
+        )
         val vpAdapter = VpFragmentAdapter(this, list)
         binding.viewpager.adapter = vpAdapter
-        binding.viewpager.currentItem = 0
-        binding.viewpager.offscreenPageLimit = 2
+        binding.viewpager.setCurrentItem(1, false)
+        binding.viewpager.offscreenPageLimit = 1
 
         // TabLayout
-        TabLayoutMediator(binding.tabLayout, binding.viewpager) { tab, position ->
+        TabLayoutMediator(
+            binding.tabLayout,
+            binding.viewpager,
+            true,
+            false
+        ) { tab, position ->
             tab.text = nameList[position]
         }.attach()
 

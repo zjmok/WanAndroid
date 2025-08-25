@@ -58,7 +58,7 @@ class SubscribeTabFragment : VVMBaseFragment<SubscribeTabViewModel, FragmentSubs
         observe()
     }
 
-    override fun lazyLoad() {
+    override fun onLazyLoad() {
         viewModel.getArticlesPager(id = item?.id ?: 0).liveData
             .observe(viewLifecycleOwner) {
                 adapter.submitData(lifecycle, it)

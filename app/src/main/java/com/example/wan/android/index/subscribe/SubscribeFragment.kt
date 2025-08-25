@@ -66,18 +66,23 @@ class SubscribeFragment : VVMBaseFragment<SubscribeViewModel, FragmentSubscribeB
             val vpAdapter = VpFragmentAdapter(this, list)
             binding.viewpager.adapter = vpAdapter
             binding.viewpager.currentItem = 0
-            binding.viewpager.offscreenPageLimit = 2
+            binding.viewpager.offscreenPageLimit = 1
 
             // TabLayout
             val nameList = it.map { it.nameDecoded }
-            TabLayoutMediator(binding.tabLayout, binding.viewpager) { tab, position ->
+            TabLayoutMediator(
+                binding.tabLayout,
+                binding.viewpager,
+                true,
+                false
+            ) { tab, position ->
                 tab.text = nameList[position]
             }.attach()
 
         }
         viewModel.fetchArticlesTree()
 
-        binding.viewEmpty.onClick{
+        binding.viewEmpty.onClick {
             viewModel.fetchArticlesTree()
         }
     }

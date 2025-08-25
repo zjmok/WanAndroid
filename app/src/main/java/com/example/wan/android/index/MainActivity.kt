@@ -163,8 +163,9 @@ class MainActivity : VBaseActivity<ActivityMainBinding>() {
 //        ViewPager(this).adapter = MainLazyAdapter(this, fragments)
         viewpager.adapter = MainAdapter(this, fragments)
 //        val pagerAdapter = MainLazyAdapter(this, fragments)
-        viewpager.currentItem = 0
-        viewpager.offscreenPageLimit = 2
+//        viewpager.currentItem = 0
+        viewpager.setCurrentItem(2, false)
+        viewpager.offscreenPageLimit = 1 // 左右各保留至少 1 个离屏实例
 
         viewpager.isUserInputEnabled = false
 
@@ -172,6 +173,7 @@ class MainActivity : VBaseActivity<ActivityMainBinding>() {
 
         tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
+                // tab 从 未选中 到 选中
                 val position = tab.position
                 tab.customView?.let {
                     it.findViewById<ImageView>(R.id.tab_icon).loadRes(tabSelectedIcons[position])
@@ -182,6 +184,7 @@ class MainActivity : VBaseActivity<ActivityMainBinding>() {
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
+                // tab 从 选中 到 未选中
                 val position = tab.position
                 tab.customView?.let {
                     it.findViewById<ImageView>(R.id.tab_icon).loadRes(tabIcons[position])
@@ -191,6 +194,7 @@ class MainActivity : VBaseActivity<ActivityMainBinding>() {
             }
 
             override fun onTabReselected(tab: TabLayout.Tab) {
+                // tab 从 选中 到 再次选中
                 val cacheKey = tab.customView.hashCode()
 
                 val imageView = tab.customView!!.findViewById<ImageView>(R.id.tab_icon)
@@ -239,7 +243,12 @@ class MainActivity : VBaseActivity<ActivityMainBinding>() {
             }
         })
 
-        TabLayoutMediator(tabLayout, viewpager) { tab, position ->
+        TabLayoutMediator(
+            tabLayout,
+            viewpager,
+            true,
+            false
+        ) { tab, position ->
             tab.customView = ViewTabLayoutBinding.inflate(layoutInflater).apply {
                 tabText.text = titles[position]
                 tabIcon.loadRes(tabIcons[position])
@@ -252,7 +261,8 @@ class MainActivity : VBaseActivity<ActivityMainBinding>() {
      * 调用此方法 可以更改选中的 tab
      */
     fun changeIndex(index: Int) {
-        binding.viewpager.currentItem = index
+//        binding.viewpager.currentItem = index
+        binding.viewpager.setCurrentItem(index, false)
     }
 
     /**

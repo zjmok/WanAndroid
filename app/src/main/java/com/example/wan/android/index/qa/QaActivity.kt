@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.example.wan.android.R
 import com.example.wan.android.base.activity.VBaseActivity
 import com.example.wan.android.databinding.ActivityArticleListBinding
+import com.example.wan.android.index.qa.fragment.QaFragment
 
 class QaActivity : VBaseActivity<ActivityArticleListBinding>() {
 
