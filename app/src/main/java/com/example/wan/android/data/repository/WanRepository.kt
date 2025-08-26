@@ -1,10 +1,12 @@
 package com.example.wan.android.data.repository
 
-import com.example.wan.android.network.RetrofitClient
-import com.example.wan.android.network.api.LikeService
-import com.example.wan.android.network.api.SquareService
-import com.example.wan.android.network.api.UserService
-import com.example.wan.android.network.api.WanService
+import com.example.wan.android.data.local.cache.MemoryCache
+import com.example.wan.android.data.local.cache.RequestCache
+import com.example.wan.android.data.remote.RetrofitClient
+import com.example.wan.android.data.remote.api.LikeService
+import com.example.wan.android.data.remote.api.SquareService
+import com.example.wan.android.data.remote.api.UserService
+import com.example.wan.android.data.remote.api.WanService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -17,6 +19,8 @@ object WanRepository {
     private val userService by lazy { RetrofitClient.create(UserService::class.java) }
     private val squareService by lazy { RetrofitClient.create(SquareService::class.java) }
     private val likeService by lazy { RetrofitClient.create(LikeService::class.java) }
+
+    private val cache: RequestCache = MemoryCache()
 
     suspend fun register(username: String, password: String) = withContext(Dispatchers.IO) {
         userService.register(username, password, password).apiData()!!

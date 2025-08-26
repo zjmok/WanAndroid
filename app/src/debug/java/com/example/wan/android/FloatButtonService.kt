@@ -25,14 +25,15 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import com.blankj.utilcode.util.ActivityUtils
-import com.example.wan.android.compose.ComposeActivity
+import com.blankj.utilcode.util.AppUtils
 import com.example.wan.android.constant.AppConst
 import com.example.wan.android.databinding.DebugWindowBinding
-import com.example.wan.android.index.MainActivity
-import com.example.wan.android.index.setting.SettingActivity
-import com.example.wan.android.ui.dialog.AppDetailDialog
-import com.example.wan.android.utils.toJson
-import com.example.wan.android.utils.toast
+import com.example.wan.android.presentation.compose.ComposeActivity
+import com.example.wan.android.presentation.feature.MainActivity
+import com.example.wan.android.presentation.feature.dialog.AppDetailDialog
+import com.example.wan.android.presentation.feature.setting.SettingActivity
+import com.example.wan.android.util.toJson
+import com.example.wan.android.util.toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -403,6 +404,11 @@ class FloatButtonService : Service() {
 
         // 设置调试窗口内容
         debugWindowBinding.tvAppInfo.text = this.appInfo
+
+        debugWindowBinding.btnRestart.setOnClickListener {
+            hideDebugWindow()
+            AppUtils.relaunchApp()
+        }
 
         debugWindowBinding.btnCloseTool.setOnClickListener { stopSelf() }
 

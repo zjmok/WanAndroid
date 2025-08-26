@@ -20,11 +20,12 @@
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">false</item>
         <!-- android:textColorPrimary 可以修改 ActionBar 的 文字颜色
-        但同时会修改其它背景颜色，例如 AlertDialog 的 message 字体颜色 -->
+        但同时会修改其它颜色，例如 AlertDialog 的 message 字体颜色 -->
         <!--<item name="android:textColorPrimary">@color/primaryTextInverted</item>-->
-        <!-- 可以修改 ActionBar Menu 的 文字颜色, textColor 优先级大于 textColorPrimary 但同时会修改其它背景颜色 -->
+        <!-- 可以修改 ActionBar Menu 的 文字颜色, 弹窗标题和按钮
+        textColor 优先级大于 textColorPrimary 但同时会修改其它 -->
         <item name="android:textColor">@color/primaryText</item>
-        <!-- 可以修改 ActionBar 颜色, 但同时会修改其它背景颜色 例如弹窗 -->
+        <!-- 可以修改 ActionBar 背景颜色, 但同时会修改其它 例如 弹窗 页面 等 -->
         <!--<item name="android:background">@color/background</item>-->
         <!-- 解决办法是 使用了此主题的 activity 的弹窗再另外使用别的主题 或者使用自定义 titleView -->
     </style>
@@ -32,6 +33,7 @@
     <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:textColor">@color/primaryText</item>
     </style>
 
     <style name="AppTheme.Fullscreen" parent="AppTheme.NoActionBar">
