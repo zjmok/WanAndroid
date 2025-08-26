@@ -53,7 +53,7 @@ class HomeFragment : VVMBaseFragment<HomeViewModel, FragmentHomeBinding>() {
         observe()
     }
 
-    override fun lazyLoad() {
+    override fun onLazyLoad() {
         viewModel.getArticlesPager().liveData.observe(viewLifecycleOwner) {
             adapter.submitData(lifecycle, it)
             binding.refresh.isRefreshing = false

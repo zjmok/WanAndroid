@@ -48,8 +48,8 @@ open class App : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
-        appCreateTime = System.currentTimeMillis()
         INSTANCE = this
+        appCreateTime = System.currentTimeMillis()
         ProcessLifecycleOwner.get().lifecycle.addObserver(AppLifecycleEventObserver())
         initNightModel()
         initSmartRefreshLayout()

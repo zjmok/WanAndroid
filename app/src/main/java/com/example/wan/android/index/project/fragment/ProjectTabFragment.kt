@@ -56,7 +56,7 @@ class ProjectTabFragment : VVMBaseFragment<ProjectTabViewModel, FragmentProjectT
         observe()
     }
 
-    override fun lazyLoad() {
+    override fun onLazyLoad() {
         viewModel.getArticlesPager(id = item?.id).liveData
             .observe(viewLifecycleOwner) {
                 adapter.submitData(lifecycle, it)

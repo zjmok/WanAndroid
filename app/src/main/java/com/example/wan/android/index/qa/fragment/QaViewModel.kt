@@ -1,4 +1,4 @@
-package com.example.wan.android.index.search
+package com.example.wan.android.index.qa.fragment
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -7,14 +7,14 @@ import com.example.wan.android.data.repository.WanRepository
 import com.example.wan.android.index.common.ArticleListDataSource
 import com.example.wan.android.index.common.LikeViewModel
 
-class SearchViewModel : LikeViewModel() {
+class QaViewModel : LikeViewModel() {
 
-    fun getArticlesPager(key: String): Pager<Int, DataX> {
+    fun getArticlesPager(): Pager<Int, DataX> {
         return Pager(
             config = PagingConfig(pageSize = 10),
             pagingSourceFactory = {
-                ArticleListDataSource(firstPage = 0) {
-                    WanRepository.search(key = key, page = it)
+                ArticleListDataSource(firstPage = 1) {
+                    WanRepository.getQAList(page = it)
                 }
             },
         )

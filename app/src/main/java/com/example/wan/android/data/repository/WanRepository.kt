@@ -71,6 +71,10 @@ object WanRepository {
         apiService.getWxArticleList(id = id, page = page).apiData()!!
     }
 
+    suspend fun searchWxArticleList(id: Int, key: String, page: Int) = withContext(Dispatchers.IO) {
+        apiService.searchWxArticleList(id = id, k = key, page = page).apiData()!!
+    }
+
     suspend fun likeArticle(id: Int) = withContext(Dispatchers.IO) {
         // 此接口会返回 "" Retrofit 解析为 null
         likeService.likeArticle(id).apiData()

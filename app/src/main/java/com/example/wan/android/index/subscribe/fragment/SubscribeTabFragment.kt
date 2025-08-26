@@ -3,6 +3,7 @@ package com.example.wan.android.index.subscribe.fragment
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import androidx.lifecycle.Lifecycle
 import androidx.paging.LoadState
 import androidx.paging.liveData
@@ -17,13 +18,14 @@ import com.example.wan.android.data.model.WebData
 import com.example.wan.android.databinding.FragmentSubscribeTabBinding
 import com.example.wan.android.index.common.ArticleListPagingAdapter
 import com.example.wan.android.index.common.ArticleWebActivity
+import com.example.wan.android.utils.ext.afterTextChanged
 import com.example.wan.android.utils.ext.gone
+import com.example.wan.android.utils.ext.hideSoftInput
 import com.example.wan.android.utils.ext.visible
 import com.example.wan.android.utils.getViewModel
 import com.example.wan.android.utils.newIntent
 import com.example.wan.android.utils.observeEvent
 import com.example.wan.android.utils.registerResultOK
-import com.example.wan.android.utils.toast
 import splitties.views.onClick
 
 class SubscribeTabFragment : VVMBaseFragment<SubscribeTabViewModel, FragmentSubscribeTabBinding>() {
@@ -58,8 +60,20 @@ class SubscribeTabFragment : VVMBaseFragment<SubscribeTabViewModel, FragmentSubs
         observe()
     }
 
-    override fun lazyLoad() {
+    override fun onLazyLoad() {
+        loadAll()
+    }
+
+    private fun loadAll() {
         viewModel.getArticlesPager(id = item?.id ?: 0).liveData
+            .observe(viewLifecycleOwner) {
+                adapter.submitData(lifecycle, it)
+                binding.refresh.isRefreshing = false
+            }
+    }
+
+    private fun loadByKey(key: String) {
+        viewModel.searchWxArticleList(id = item?.id ?: 0, key = key).liveData
             .observe(viewLifecycleOwner) {
                 adapter.submitData(lifecycle, it)
                 binding.refresh.isRefreshing = false
@@ -74,9 +88,35 @@ class SubscribeTabFragment : VVMBaseFragment<SubscribeTabViewModel, FragmentSubs
 
     private fun initView() {
 
-        binding.layoutSearch.onClick {
-            // todo 跳转到另一个独立页面去搜索
-            toast("公众号搜索")
+//        binding.layoutSearch.onClick {
+//            start<SearchActivity> {
+//                putExtra("id", "")
+//                putExtra("key", "")
+//            }
+//        }
+        binding.edSearch.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                binding.ivSearch.performClick()
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
+        }
+        binding.edSearch.afterTextChanged {
+            binding.ivSearchClear.visible(it.isNullOrBlank().not())
+        }
+        binding.ivSearchClear.onClick {
+            binding.edSearch.text = null
+        }
+        binding.ivSearch.onClick {
+            binding.edSearch.let {
+                it.clearFocus()
+                it.hideSoftInput()
+            }
+            binding.edSearch.text?.toString().takeIf {
+                it.isNullOrBlank().not()
+            }?.let {
+                loadByKey(it)
+            } ?: loadAll()
         }
 
         val recyclerView = binding.rv
