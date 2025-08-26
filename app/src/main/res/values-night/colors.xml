@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="status_bar">@color/purple_200</color>
+    <color name="status_bar">@color/teal_200</color>
 
     <color name="background">@color/md_grey_900</color>
     <color name="background_purity">@color/black</color>

@@ -1,7 +1,7 @@
 package com.example.wan.android.data.model
 
 import android.os.Parcelable
-import com.example.wan.android.utils.htmlDecode
+import com.example.wan.android.util.htmlDecode
 import kotlinx.parcelize.Parcelize
 
 @Deprecated("直接用 ArrayList<ArticlesTreeItem>")

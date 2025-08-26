@@ -35,7 +35,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:manageSpaceActivity=".index.setting.ManageSpaceActivity"
+        android:manageSpaceActivity=".presentation.feature.setting.ManageSpaceActivity"
         android:networkSecurityConfig="@xml/network_security_config"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -46,28 +46,28 @@
         tools:targetApi="33">
 
         <activity
-            android:name=".compose.ComposeActivity"
+            android:name=".presentation.compose.ComposeActivity"
             android:exported="false" />
         <activity
-            android:name=".compose.AccountActivity"
+            android:name=".presentation.compose.AccountActivity"
             android:exported="false" />
         <activity
-            android:name=".compose.XhsActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".index.person.HistoryActivity"
-            android:exported="false" />
-        <activity
-            android:name=".index.person.BookmarkActivity"
+            android:name=".presentation.compose.XhsActivity"
             android:exported="false" />
 
         <activity
-            android:name=".index.setting.ManageSpaceActivity"
+            android:name=".presentation.feature.person.HistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.feature.person.BookmarkActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".presentation.feature.setting.ManageSpaceActivity"
             android:exported="true" />
 
         <activity
-            android:name=".index.splash.SplashActivity"
+            android:name=".presentation.feature.splash.SplashActivity"
             android:exported="true"
             android:theme="@style/SplashScreen">
             <intent-filter>
@@ -76,17 +76,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".index.MainActivity"
+            android:name=".presentation.feature.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".index.login.LoginActivity"
+            android:name=".presentation.feature.login.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".index.setting.SettingActivity"
+            android:name=".presentation.feature.setting.SettingActivity"
             android:exported="false"
             android:theme="@style/AppTheme.ActionBar" />
         <activity
-            android:name=".index.web.SchemeActivity"
+            android:name=".presentation.feature.web.SchemeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -102,43 +102,43 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".index.web.WebActivity"
+            android:name=".presentation.feature.web.WebActivity"
             android:exported="false"
             android:theme="@style/AppTheme.ActionBar" />
         <activity
-            android:name=".index.common.ArticleWebActivity"
+            android:name=".presentation.feature.common.ArticleWebActivity"
             android:exported="false"
             android:theme="@style/AppTheme.ActionBar" />
         <activity
-            android:name=".index.qa.QaWebActivity"
+            android:name=".presentation.feature.qa.QaWebActivity"
             android:exported="false"
             android:theme="@style/AppTheme.ActionBar" />
         <activity
-            android:name=".index.search.SearchActivity"
+            android:name=".presentation.feature.search.SearchActivity"
             android:exported="false"
             android:theme="@style/AppTheme.ActionBar" />
         <activity
-            android:name=".index.like.ArticleLikeActivity"
+            android:name=".presentation.feature.like.ArticleLikeActivity"
             android:exported="false"
             android:theme="@style/AppTheme.ActionBar" />
         <activity
-            android:name=".index.home.HomeActivity"
+            android:name=".presentation.feature.home.HomeActivity"
             android:exported="false"
             android:theme="@style/AppTheme.ActionBar" />
         <activity
-            android:name=".index.square.SquareActivity"
+            android:name=".presentation.feature.square.SquareActivity"
             android:exported="false"
             android:theme="@style/AppTheme.ActionBar" />
         <activity
-            android:name=".index.qa.QaActivity"
+            android:name=".presentation.feature.qa.QaActivity"
             android:exported="false"
             android:theme="@style/AppTheme.ActionBar" />
         <activity
-            android:name=".index.project.ProjectActivity"
+            android:name=".presentation.feature.project.ProjectActivity"
             android:exported="false"
             android:theme="@style/AppTheme.ActionBar" />
         <activity
-            android:name=".index.subscribe.SubscribeActivity"
+            android:name=".presentation.feature.subscribe.SubscribeActivity"
             android:exported="false"
             android:theme="@style/AppTheme.ActionBar" />
 

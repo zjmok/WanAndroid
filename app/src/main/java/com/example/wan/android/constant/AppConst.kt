@@ -14,15 +14,6 @@ object AppConst {
     val coilPath by lazy { PathUtils.getCachePathExternalFirst() + File.separator + "coil" }
     const val IMAGE_CACHE_SIZE: Long = 1024 * 1024 * 256 // 256 MB
 
-    const val refresh = 1
-    const val loading = 2
-    const val complete = 3
-    const val error = 4
-    const val loadMore = 5
-    const val loadComplete = 6
-    const val loadMoreFail = 7
-    const val noMore = 8
-
     val SUPPORTED_LOCALE_LIST = listOf(
         Locale(""), // default
         // 简体中文

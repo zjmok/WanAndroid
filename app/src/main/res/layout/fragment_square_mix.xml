@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/wx_background"
-    tools:context=".index.square.SquareMixFragment">
+    tools:context=".presentation.feature.square.SquareMixFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
@@ -71,11 +71,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        app:layout_behavior=".index.square.SquareSearchBehavior" />
+        app:layout_behavior=".presentation.feature.square.SquareSearchBehavior" />
     <!--
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-    app:layout_behavior=".index.square.SquareSearchBehavior"
+    app:layout_behavior=".presentation.feature.square.SquareSearchBehavior"
     -->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

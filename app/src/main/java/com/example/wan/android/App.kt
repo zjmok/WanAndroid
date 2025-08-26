@@ -11,7 +11,7 @@ import com.blankj.utilcode.util.CrashUtils
 import com.blankj.utilcode.util.SPUtils
 import com.example.wan.android.config.CoilConfig
 import com.example.wan.android.constant.AppConst
-import com.example.wan.android.utils.getViewModel
+import com.example.wan.android.util.getViewModel
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout

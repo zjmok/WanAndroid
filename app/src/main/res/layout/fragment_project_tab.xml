@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/wx_background"
-    tools:context=".index.project.fragment.ProjectTabFragment">
+    tools:context=".presentation.feature.project.fragment.ProjectTabFragment">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refresh"
@@ -31,5 +31,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/view_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="如 空\n也 空"
+        android:textSize="100sp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
