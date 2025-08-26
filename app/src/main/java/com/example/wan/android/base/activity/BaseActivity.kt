@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
+import android.widget.EditText
 import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
@@ -110,6 +113,37 @@ abstract class BaseActivity(@LayoutRes layoutId: Int = 0) : AppCompatActivity(la
     override fun attachBaseContext(newBase: Context) {
         val config = newBase.resources.configuration.apply { setLocale(newBase.userLocale.second) }
         super.attachBaseContext(newBase.createConfigurationContext(config))
+    }
+
+    // 触摸 EditText 区域外是否关闭软键盘 配置方法
+    open val isHideKeyboardWhenTouchOutside = true
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (isHideKeyboardWhenTouchOutside) {
+            // 触摸 EditText 区域外关闭软键盘
+            if (ev?.action == MotionEvent.ACTION_DOWN) {
+                val v = currentFocus
+                if (!isInArea(v, ev)) {
+                    v?.hideSoftInput()
+                    v?.clearFocus()
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
+    // 触摸点是否在 EditText 区域
+    private fun isInArea(v: View?, event: MotionEvent): Boolean {
+        if (v != null && v is EditText) {
+            val l = intArrayOf(0, 0)
+            v.getLocationInWindow(l)
+            val left = l[0]
+            val top = l[1]
+            val bottom = top + v.getHeight()
+            val right = left + v.getWidth()
+            return event.x > left && event.x < right && event.y > top && event.y < bottom
+        }
+        return false
     }
 
 }

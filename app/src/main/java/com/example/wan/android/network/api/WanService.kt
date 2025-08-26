@@ -134,11 +134,11 @@ interface WanService {
     ): ApiResult<Articles>
 
     // 在某个公众号中搜索历史文章
-    @GET("/wxarticle/list/{id}/{page}/json?k=Java")
+    @GET("/wxarticle/list/{id}/{page}/json")
     suspend fun searchWxArticleList(
         @Path("id") id: Int,
-        @Query("k") k: Int,
         @Path("page") page: Int = 1,
+        @Query("k") k: String,
         @Query("page_size") pageSize: Int = 10,
     ): ApiResult<Articles>
 

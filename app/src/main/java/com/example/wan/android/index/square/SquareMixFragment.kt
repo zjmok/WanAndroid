@@ -10,11 +10,14 @@ import com.example.wan.android.constant.EventBus
 import com.example.wan.android.databinding.FragmentSquareMixBinding
 import com.example.wan.android.index.common.VpFragmentAdapter
 import com.example.wan.android.index.qa.fragment.QaFragment
+import com.example.wan.android.index.search.SearchActivity
 import com.example.wan.android.index.search.fragment.SearchFragment
 import com.example.wan.android.index.square.fragment.SquareFragment
 import com.example.wan.android.utils.observeEvent
 import com.google.android.material.tabs.TabLayoutMediator
 import splitties.bundle.put
+import splitties.fragments.start
+import splitties.views.onClick
 import splitties.views.topPadding
 
 class SquareMixFragment : VBaseFragment<FragmentSquareMixBinding>() {
@@ -43,26 +46,33 @@ class SquareMixFragment : VBaseFragment<FragmentSquareMixBinding>() {
 
     private fun initImmersion() {
         val isPaddingTop = arguments?.getBoolean("isPaddingTop")
-        binding.tabLayout.topPadding = if (isPaddingTop == true) {
-            BarUtils.getStatusBarHeight()
-        } else {
-            0
-        }
+        binding.appBarLayout.topPadding =
+            if (isPaddingTop == true) {
+                BarUtils.getStatusBarHeight()
+            } else {
+                0
+            }
     }
 
     private fun initView() {
-        val nameList = listOf("搜索", "广场", "问答")
+        val nameList = listOf(
+//            "搜索",
+            "广场",
+            "问答"
+        )
 
         // ViewPager
         val list = listOf(
-            SearchFragment.getInstance(false),
+//            SearchFragment.getInstance(false),
             SquareFragment.getInstance(false),
             QaFragment.getInstance(false),
         )
         val vpAdapter = VpFragmentAdapter(this, list)
         binding.viewpager.adapter = vpAdapter
-        binding.viewpager.setCurrentItem(1, false)
+        binding.viewpager.setCurrentItem(0, false)
         binding.viewpager.offscreenPageLimit = 1
+
+        binding.viewpager.isUserInputEnabled = false // 禁止手动左右滑动
 
         // TabLayout
         TabLayoutMediator(
@@ -74,6 +84,9 @@ class SquareMixFragment : VBaseFragment<FragmentSquareMixBinding>() {
             tab.text = nameList[position]
         }.attach()
 
+        binding.layoutSearch.onClick {
+            start<SearchActivity> {}
+        }
     }
 
     override fun observeBus() {

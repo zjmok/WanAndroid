@@ -71,8 +71,10 @@ class ProjectFragment : VVMBaseFragment<ProjectViewModel, FragmentProjectBinding
             val list = finalList.map { ProjectTabFragment.getInstance(it) }
             val vpAdapter = VpFragmentAdapter(this, list)
             binding.viewpager.adapter = vpAdapter
-            binding.viewpager.currentItem = 0
+            binding.viewpager.setCurrentItem(0, false)
             binding.viewpager.offscreenPageLimit = 1
+
+            binding.viewpager.isUserInputEnabled = false // 禁止手动左右滑动
 
             // TabLayout
             val nameList = finalList.map { it?.nameDecoded ?: "最新项目" }

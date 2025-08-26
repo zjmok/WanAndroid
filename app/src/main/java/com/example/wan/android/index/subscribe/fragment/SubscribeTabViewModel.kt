@@ -22,4 +22,18 @@ class SubscribeTabViewModel : LikeViewModel() {
         )
     }
 
+    fun searchWxArticleList(
+        id: Int,
+        key: String,
+    ): Pager<Int, DataX> {
+        return Pager(
+            config = PagingConfig(pageSize = 10),
+            pagingSourceFactory = {
+                ArticleListDataSource(firstPage = 1) {
+                    WanRepository.searchWxArticleList(id = id, key = key, page = it)
+                }
+            },
+        )
+    }
+
 }

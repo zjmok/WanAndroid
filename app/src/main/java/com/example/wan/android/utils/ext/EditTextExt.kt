@@ -4,10 +4,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 
-fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
+fun EditText.afterTextChanged(afterTextChanged: (String?) -> Unit) {
     this.addTextChangedListener(object : TextWatcher {
         override fun afterTextChanged(editable: Editable?) {
-            afterTextChanged.invoke(editable.toString())
+            afterTextChanged.invoke(editable?.toString())
         }
 
         override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}

@@ -29,7 +29,10 @@
             android:background="@color/wx_foreground"
             app:tabGravity="fill"
             app:tabIndicatorHeight="0dp"
-            app:tabMode="fixed" />
+            app:tabIndicatorColor="@color/icon_color_fore"
+            app:tabMode="auto"
+            app:tabSelectedTextColor="@color/icon_color_fore"
+            app:tabTextColor="@color/icon_color_back" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

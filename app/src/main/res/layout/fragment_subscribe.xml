@@ -14,7 +14,10 @@
         android:background="@color/wx_foreground"
         app:layout_constraintTop_toTopOf="parent"
         app:tabGravity="fill"
-        app:tabMode="auto" />
+        app:tabIndicatorColor="@color/icon_color_fore"
+        app:tabMode="auto"
+        app:tabSelectedTextColor="@color/icon_color_fore"
+        app:tabTextColor="@color/icon_color_back" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewpager"

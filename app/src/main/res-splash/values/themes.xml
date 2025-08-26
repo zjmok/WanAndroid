@@ -22,7 +22,7 @@
             @drawable/bilibili
         </item>-->
         <!-- 必选项, Splash 退出后的主题 -->
-        <item name="postSplashScreenTheme">@style/AppTheme</item>
+        <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
     </style>
 
 </resources>

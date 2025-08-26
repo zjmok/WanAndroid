@@ -266,6 +266,21 @@ class SettingActivity : VVMBaseActivity<SettingViewModel, ActivitySettingBinding
             }.show()
         }
         binding.llVersion.onClick {
+            val url = "${getString(R.string.repo_url)}/releases"
+            alert("检查更新", "打开 URL: \n$url") {
+                ok {
+                    WebActivity.start(url)
+                }
+                cancel {
+
+                }
+                neutral("复制 URL") {
+                    ClipboardUtils.copyText(url)
+                    toastLong("复制成功:\n${url}")
+                }
+            }.show()
+        }
+        binding.tvVersion.onClick {
             onMultiClick({ i ->
                 toast("快速再按 $i 次 查看更多")
             }) {
