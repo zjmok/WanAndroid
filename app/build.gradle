@@ -530,6 +530,6 @@ dependencies {
 
     // 设备兼容框架
     // https://github.com/getActivity/DeviceCompat
-    implementation 'com.github.getActivity:DeviceCompat:1.5'
+    implementation 'com.github.getActivity:DeviceCompat:1.6'
 
 }
