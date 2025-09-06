@@ -68,10 +68,10 @@ POST http://localhost:8080/testPost/multi-form
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
-Content-Disposition: form-data; name="file"; filename="test.http"
+Content-Disposition: form-data; name="file"; filename="filename"
 
 < ./.gitignore
-# < ./test_api.http # 会出问题
+# < ./http_test.http # 发送自身文件会出问题
 --WebAppBoundary--
 
 ### 测试 post 多表单, 参数 + 上传文件（当前路径是相对本http文件路径）（在这里不要选择 http 文件，上传 http 文件时会有 bug，会执行文件中的 `<` 命令）
@@ -87,10 +87,10 @@ Content-Disposition: form-data; name="desc"
 
 description1234
 --WebAppBoundary
-Content-Disposition: form-data; name="file"; filename="test.http"
+Content-Disposition: form-data; name="file"; filename="filename"
 
 < ./.gitignore
-# < ./test_api.http # 会出问题
+# < ./http_test.http # 发送自身文件会出问题
 --WebAppBoundary--
 
 ## 测试 GET POST PUT DELETE

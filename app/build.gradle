@@ -34,9 +34,9 @@ apply from: "../config_source.gradle"
 //    def composeBoMVersion = "2025.05.01"
 //    def composeBoMVersion = "2025.06.01"
 //    def composeBoMVersion = "2025.07.01"
-//    def composeBoMVersion = "2025.08.00"
+//    def composeBoMVersion = "2025.08.01"
 //
-def composeBoMVersion = "2025.08.00"
+def composeBoMVersion = "2025.08.01"
 
 def time = new Date()
 
@@ -131,7 +131,7 @@ android {
             keyAlias getEnvOrLocal("KEY_ALIAS")
             keyPassword getEnvOrLocal("KEY_PASSWORD")
         }
-        // Android 自动生成的 debug.keystore 签名
+        // Android 自动生成的 debug.keystore 签名，或直接用 debug
         debugAsRelease {
             storeFile file("${System.getenv("ANDROID_SDK_HOME") ?: System.getProperty("user.home")}/.android/debug.keystore")
             storePassword "android"
@@ -397,14 +397,12 @@ dependencies {
     // Android
     // KTX https://developer.android.com/kotlin/ktx
     implementation platform("org.jetbrains.kotlin:kotlin-bom:${kotlin_version}")
-    implementation "com.google.android.material:material:1.12.0"
+    implementation "com.google.android.material:material:1.13.0"
     implementation "androidx.appcompat:appcompat:1.7.1"
-    // 1.16.0 需要 AGP 8.6.0+
     implementation "androidx.core:core-ktx:1.17.0"
     implementation "androidx.core:core-splashscreen:1.0.1"
     implementation "androidx.activity:activity-ktx:1.10.1"
-    // 2.9.0 需要 AGP 8.6.0+
-    def lifecycleVersion = "2.9.2"
+    def lifecycleVersion = "2.9.3"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:${lifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:${lifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${lifecycleVersion}"
@@ -417,7 +415,6 @@ dependencies {
     // viewpager2 1.1 新特性 registerFragmentTransactionCallback
     implementation "androidx.viewpager2:viewpager2:1.1.0"
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:${lifecycleVersion}") // compose
-    // 2.9.0 需要 AGP 8.6.0+
     def navigationVersion = "2.9.3"
     implementation "androidx.navigation:navigation-fragment-ktx:${navigationVersion}"
     implementation "androidx.navigation:navigation-ui-ktx:${navigationVersion}"
@@ -457,7 +454,7 @@ dependencies {
     implementation "com.geyifeng.immersionbar:immersionbar:3.2.2"
     implementation "com.geyifeng.immersionbar:immersionbar-ktx:3.2.2"
     // gson
-    implementation "com.google.code.gson:gson:2.11.0"
+    implementation "com.google.code.gson:gson:2.13.1"
     // 网络
     // https://github.com/square/okhttp
     implementation "com.squareup.okhttp3:okhttp:4.12.0"
@@ -529,6 +526,10 @@ dependencies {
 
     // 日志调试框架
     // https://github.com/getActivity/Logcat
-    debugImplementation "com.github.getActivity:Logcat:12.3"
+//    debugImplementation "com.github.getActivity:Logcat:12.3"
+
+    // 设备兼容框架
+    // https://github.com/getActivity/DeviceCompat
+    implementation 'com.github.getActivity:DeviceCompat:1.5'
 
 }

@@ -10,7 +10,7 @@ import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
 
 // 获取当前应用的签名证书
-fun Context.getSignature(): Signature? {
+fun Context.getAppSignature(): Signature? {
     val context = this
     // 提取第一个签名证书（多数 APK 只有一个签名）
     val signature = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
@@ -31,14 +31,16 @@ fun Context.getSignature(): Signature? {
     return signature
 }
 
-// 获取当前应用的签名信息
-fun Context.getSigningCertificateCN(): String? {
+// 获取当前应用的签名信息 CN
+// DN == Distinguished Name == 可分辨名称
+// CN == Common Name == 常用名称
+fun Context.getAppSigningCertificateCN(): String? {
     val context = this
     return try {
         // 生成证书对象 cert，包含完整证书信息
         val certFactory = CertificateFactory.getInstance("X.509")
         val cert = certFactory.generateCertificate(
-            ByteArrayInputStream(this.getSignature()?.toByteArray())
+            ByteArrayInputStream(context.getAppSignature()?.toByteArray())
         ) as X509Certificate
 
         // 解析证书的 Subject DN 中的 CN 字段
@@ -55,10 +57,10 @@ fun Context.getSigningCertificateCN(): String? {
 }
 
 // 获取当前应用的签名证书 MD5 SHA1 SHA256
-fun Context.getSignatureHashCheck(algorithm: String = "SHA256"): String? {
+fun Context.getAppSignatureHashCheck(algorithm: String = "SHA256"): String? {
     try {
         val md = MessageDigest.getInstance(algorithm)
-        this.getSignature()?.toByteArray()?.let { md.update(it) }
+        this.getAppSignature()?.toByteArray()?.let { md.update(it) }
         val digest = md.digest()
         return digest.joinToString("") { "%02x".format(it) }
     } catch (e: Exception) {
@@ -67,6 +69,7 @@ fun Context.getSignatureHashCheck(algorithm: String = "SHA256"): String? {
     return null
 }
 
+// 获取当前应用的 TargetSdk
 fun Context.getAppTargetSdk(): Int {
     val context = this
     return try {
@@ -79,3 +82,6 @@ fun Context.getAppTargetSdk(): Int {
         -1
     }
 }
+
+// 获取当前应用的 TargetSdk
+val Context.appApi get() = getAppTargetSdk()

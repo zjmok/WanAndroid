@@ -55,6 +55,7 @@ data class DataX(
     val visible: Int,
     val zan: Int
 ) : Parcelable {
+    @Suppress("DEPRECATION")
     val chapterNameDecoded get() = chapterName.htmlDecode()
 }
 
