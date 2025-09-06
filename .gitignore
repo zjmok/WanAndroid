@@ -20,5 +20,6 @@ local.properties
 lint-baseline.xml
 full-r8-config.txt
 
-# Http Client 的环境私有配置，可以忽略
+# Http Client 的环境私有配置
+# 这里注释应该打开
 # http-client.private.env.json

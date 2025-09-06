@@ -13,4 +13,11 @@ username=yourusername&password=yourpassword
 GET https://www.wanandroid.com/user/lg/userinfo/json
 Cookie: JSESSIONID=99999999999999999999999999999999
 
-###
+### 获取 Banner 列表
+GET https://www.wanandroid.com/banner/json
+
+### 获取首页置顶文章列表
+GET https://www.wanandroid.com/article/top/json
+
+### 获取首页文章列表
+GET https://www.wanandroid.com/article/list/0/json?page_size=10

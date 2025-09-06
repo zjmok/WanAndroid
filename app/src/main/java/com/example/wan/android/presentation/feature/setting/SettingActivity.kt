@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.SystemClock
+import android.text.TextUtils
 import android.transition.TransitionInflater
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.net.toUri
@@ -19,29 +20,29 @@ import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.ZipUtils
 import com.bumptech.glide.Glide
 import com.example.wan.android.R
-import com.example.wan.android.presentation.feature.base.activity.VVMBaseActivity
 import com.example.wan.android.constant.AppConst
 import com.example.wan.android.constant.EventBus
-import com.example.wan.android.databinding.ActivitySettingBinding
-import com.example.wan.android.presentation.feature.web.WebActivity
 import com.example.wan.android.data.remote.RetrofitClient
+import com.example.wan.android.databinding.ActivitySettingBinding
+import com.example.wan.android.presentation.feature.base.activity.VVMBaseActivity
 import com.example.wan.android.presentation.feature.dialog.AppDetailDialog
+import com.example.wan.android.presentation.feature.web.WebActivity
 import com.example.wan.android.util.AppPkg
 import com.example.wan.android.util.MyAppUtils
 import com.example.wan.android.util.UserUtils
 import com.example.wan.android.util.alert
 import com.example.wan.android.util.cancel
-import com.example.wan.android.util.neutral
-import com.example.wan.android.util.ok
-import com.example.wan.android.util.visible
 import com.example.wan.android.util.getCurrentLocale
 import com.example.wan.android.util.getCustomDisplayName
 import com.example.wan.android.util.getUri
 import com.example.wan.android.util.getViewModel
+import com.example.wan.android.util.neutral
+import com.example.wan.android.util.ok
 import com.example.wan.android.util.postEvent
 import com.example.wan.android.util.toast
 import com.example.wan.android.util.toastLong
 import com.example.wan.android.util.userLocale
+import com.example.wan.android.util.visible
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -180,13 +181,29 @@ class SettingActivity : VVMBaseActivity<SettingViewModel, ActivitySettingBinding
             alert("提示", "发送邮件\n或者打开 Github Issues 反馈问题") {
                 ok("发送邮件") {
                     val email = getString(R.string.email)
+                    // ACTION_SENDTO 无附件
+                    // ACTION_SEND 一个附件
+                    // ACTION_SEND_MULTIPLE 多个附件
+                    /*
+                    https://developer.android.com/guide/components/intents-common#Email
+                    ACTION_SENDTO (for no attachment) or
+                    ACTION_SEND (for one attachment) or
+                    ACTION_SEND_MULTIPLE (for multiple attachments)
+                    */
                     val intent = Intent(Intent.ACTION_SENDTO).apply {
-                        data = "mailto:".toUri()
-                        putExtra(
-                            Intent.EXTRA_EMAIL,
-                            arrayOf(email)
-                        ) // 网易邮箱 未能识别。 Gmail、Mail.ru、Outlook、厂商自带邮件APP 都能正常识别
-                        putExtra(Intent.EXTRA_SUBJECT, "${getString(R.string.app_name)}-反馈/建议")
+                        // 无附件邮件，可使用 uri + QueryParameter 的方式避免网易邮箱无法识别收件人的问题
+                        val uri = "mailto:".toUri().buildUpon()
+                            .appendQueryParameter("to", TextUtils.join(",", arrayOf(email))) // 收件人列表
+                            .appendQueryParameter("subject", "${getString(R.string.app_name)}-反馈/建议")
+//                            .appendQueryParameter("body", "")
+                            .build()
+                        data = uri
+
+//                        data = "mailto:".toUri()
+                        // 网易邮箱 未能识别 Intent.EXTRA_EMAIL
+                        // Gmail、Mail.ru、Outlook、厂商自带邮件APP 都能正常识别
+//                        putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
+//                        putExtra(Intent.EXTRA_SUBJECT, "${getString(R.string.app_name)}-反馈/建议")
 //                        putExtra(Intent.EXTRA_TEXT, "")
                     }
                     sendEmail(intent)
@@ -234,8 +251,8 @@ class SettingActivity : VVMBaseActivity<SettingViewModel, ActivitySettingBinding
                     ACTION_SEND_MULTIPLE (for multiple attachments)
                     */
                     val intent = Intent(Intent.ACTION_SEND).apply {
-                        // 网易邮箱 未能识别 EXTRA_EMAIL。
-                        // Gmail、Mail.ru、Outlook、厂商自带邮件APP 都能正常识别。
+                        // 网易邮箱 未能识别 Intent.EXTRA_EMAIL
+                        // Gmail、Mail.ru、Outlook、厂商自带邮件APP 都能正常识别
                         putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
                         putExtra(Intent.EXTRA_SUBJECT, "${getString(R.string.app_name)}-崩溃日志上报")
                         putExtra(Intent.EXTRA_TEXT, MyAppUtils.getMyAppInfo(activity))

@@ -1,6 +1,9 @@
 package com.example.wan.android.util
 
-// 参考 `android.text.TextUtils.htmlEncode`
+/**
+ * 参考自
+ * @see android.text.TextUtils.htmlEncode
+ */
 fun String.htmlDecode(): String {
     return this.replace("&lt;", "<")
         .replace("&gt;", ">")

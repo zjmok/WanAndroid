@@ -26,5 +26,6 @@ data class ArticlesTreeItem(
     val userControlSetTop: Boolean,
     val visible: Int
 ) : Parcelable {
+    @Suppress("DEPRECATION")
     val nameDecoded: String get() = name.htmlDecode()
 }

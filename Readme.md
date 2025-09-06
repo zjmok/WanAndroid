@@ -80,6 +80,8 @@ MVVM 架构, 基于 Kotlin + JetPack 组件: Lifecycle + LiveData + ViewModel + 
 
 - [ ] 网络请求优化, 通过 LiveData 或 Flow 手动使用三级缓存。请求网络时, 在网络响应等待前, 先返回一次缓存数据
 
+- [ ] 问答评论，替换为使用 BottomSheetDialogFragment 的 add + show/hide，可以保持状态
+
 - 其它 工具类 便捷库
 
   - 工具类, [AndroidUtilCode](https://github.com/Blankj/AndroidUtilCode)

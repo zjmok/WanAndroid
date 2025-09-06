@@ -218,6 +218,7 @@ class QaWebActivity : VVMBaseActivity<QaWebViewModel, ActivityQaWebBinding>() {
 
     private fun openCommentList() {
         val commentList = viewModel.commentList.value ?: return
+        // todo 替换为使用 BottomSheetDialogFragment 的 add + show/hide，可以保持状态
         XPopup.Builder(this)
             .asCustom(CommentPopup(this, webData.id, commentList.datas))
             .show()

@@ -98,10 +98,10 @@ object MyAppUtils {
             [ver   ] ${BuildConfig.VERSION_NAME}_${BuildConfig.VERSION_CODE}
             [var   ] ${BuildConfig.FLAVOR}${if (BuildConfig.DEBUG) "Debug" else "Release"}
             [target] API ${context.getAppTargetSdk()}
-            [source] ${(context.getString(R.string.values))}
+            [res   ] ${(context.getString(R.string.values))}
             [lang  ] ${currentLocale.toLanguageTag()}
             [locate] ${currentLocale.displayName}${languageName}
-            [signer] ${context.getSigningCertificateCN()}
+            [signer] ${context.getAppSigningCertificateCN()}
             - App.Build -
             [commit] ${BuildConfig.COMMIT_ID}
             [gradle] Gradle ${BuildConfig.GRADLE_VERSION}
@@ -115,10 +115,13 @@ object MyAppUtils {
             [time  ] ${format.format(BuildConfig.BUILD_TIME.toLong())}
             - System -
             [abi   ] ${Build.SUPPORTED_ABIS.joinToString(", ")}
-            [brand ] ${Build.BRAND}
-            [model ] ${Build.MODEL}
-            [ver   ] Android ${Build.VERSION.RELEASE}
-            [api   ] API ${Build.VERSION.SDK_INT}
+            [brand ] ${DeviceUtils.brand}
+            [model ] ${DeviceUtils.model}
+            [os    ] Android ${DeviceUtils.androidVersion}
+            [api   ] API ${DeviceUtils.androidApi}
+            [skin_t] ${DeviceUtils.skinType}
+            [skin_v] ${DeviceUtils.skinVersion}
+            [skin_n] ${DeviceUtils.skinName}
             [lang  ] ${Locale.getDefault().toLanguageTag()}
             [locale] ${Locale.getDefault().displayName}
             - System.Build -
