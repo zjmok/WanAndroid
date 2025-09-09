@@ -96,7 +96,7 @@ class HomePagingAdapter(val fragment: HomeFragment, private var bannerData: List
                     tvAuthor.text = if (item.superChapterName == "广场Tab") {
                         "分享人: ${item.shareUser}"
                     } else {
-                        item.author
+                        "作者: ${item.author}"
                     }
 
                     tvTitle.text = Html.fromHtml(item.title)

@@ -2,7 +2,6 @@ package com.example.wan.android.util
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.os.Looper
@@ -10,20 +9,23 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.graphics.toColorInt
 import com.example.wan.android.App
 
 fun toast(any: Any?) {
-    toastShort(any)
+    toastShort(any, 6) // 此方法 trace 为 5，调用此方法处为 6
 }
 
-fun toastShort(any: Any?) {
+fun toastShort(any: Any?, trace: Int = 5) {
     ToastUtils.showShort(any.toString())
-    log(any)
+    printStackLine(trace) // 此方法 trace 为 4，调用此方法处为 5
+    loge(any)
 }
 
-fun toastLong(any: Any?) {
+fun toastLong(any: Any?, trace: Int = 5) {
     ToastUtils.showLong(any.toString())
-    log(any)
+    printStackLine(trace) // 此方法 trace 为 4，调用此方法处为 5
+    loge(any)
 }
 
 object ToastUtils {
@@ -57,7 +59,7 @@ object ToastUtils {
                     orientation = LinearLayout.VERTICAL
                     setPadding(16.dp2pxInt, 12.dp2pxInt, 16.dp2pxInt, 12.dp2pxInt)
                     background = GradientDrawable().apply {
-                        setColor(Color.parseColor("#E6EEEEEE")) // 设置背景颜色
+                        setColor("#E6EEEEEE".toColorInt()) // 设置背景颜色
                         cornerRadius = 16.dp2px // 设置圆角
                     }
                     layoutParams = ViewGroup.LayoutParams(
@@ -69,7 +71,7 @@ object ToastUtils {
                 // 创建显示消息的 TextView
                 val textView = TextView(context).apply {
                     text = message
-                    setTextColor(Color.parseColor("#DE000000"))
+                    setTextColor("#DE000000".toColorInt())
                     textSize = 14f
                 }
                 layout.addView(textView)

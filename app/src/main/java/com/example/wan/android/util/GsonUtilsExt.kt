@@ -18,7 +18,7 @@ fun Any.toJson(escape: Boolean = false, format: Boolean = true): String? {
             }
         }.create()
 //        GsonUtils.toJson(gson, this)
-        gson.toJson(this)
+        gson.toJson(this) // Gson 是通过反射获取 this 的实际类型，这里不需要使用 reified T
     } catch (e: Exception) {
         loge(e)
         null

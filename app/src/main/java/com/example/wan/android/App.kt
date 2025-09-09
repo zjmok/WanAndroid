@@ -2,6 +2,7 @@ package com.example.wan.android
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.view.Gravity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -12,6 +13,7 @@ import com.blankj.utilcode.util.SPUtils
 import com.example.wan.android.config.CoilConfig
 import com.example.wan.android.constant.AppConst
 import com.example.wan.android.util.getViewModel
+import com.hjq.toast.Toaster
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
@@ -51,11 +53,22 @@ open class App : MultiDexApplication() {
         INSTANCE = this
         appCreateTime = System.currentTimeMillis()
         ProcessLifecycleOwner.get().lifecycle.addObserver(AppLifecycleEventObserver())
+        initCrashUtils()
         initNightModel()
         initSmartRefreshLayout()
         initLitePal()
         initCoil() // compose
-        CrashUtils.init(AppConst.crashPath)
+        initToaster()
+    }
+
+    private fun initToaster() {
+        // 初始化 Toast 框架
+        Toaster.init(this)
+        Toaster.setGravity(
+            Gravity.CENTER or Gravity.BOTTOM,
+            0,
+            200
+        )
     }
 
     private fun initCoil() {
@@ -80,6 +93,10 @@ open class App : MultiDexApplication() {
     private fun initNightModel() {
         val lightModel = SPUtils.getInstance().getInt("night_model")
         AppCompatDelegate.setDefaultNightMode(lightModel)
+    }
+
+    private fun initCrashUtils() {
+        CrashUtils.init(AppConst.crashPath)
     }
 
 }
