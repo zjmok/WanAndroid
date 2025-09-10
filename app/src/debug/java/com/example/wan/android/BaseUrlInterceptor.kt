@@ -24,7 +24,7 @@ class BaseUrlInterceptor : Interceptor {
             oldHttpUrl.host == baseUrl.host &&
             oldHttpUrl.port == baseUrl.port
         ) {
-            log("baseUrl: no change", "BaseUrlInterceptor")
+            loge("baseUrl: no change", "BaseUrlInterceptor")
             return chain.proceed(oldRequest)
         }
 

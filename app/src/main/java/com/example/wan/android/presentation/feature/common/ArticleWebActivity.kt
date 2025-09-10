@@ -158,7 +158,7 @@ class ArticleWebActivity : VVMBaseActivity<ArticleWebViewModel, ActivityWebBindi
                 })
                 finish()
                 isEnabled = false // 禁用当前的回调
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
             }
         }
 

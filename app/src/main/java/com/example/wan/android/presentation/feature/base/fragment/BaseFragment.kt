@@ -14,31 +14,6 @@ abstract class BaseFragment(@LayoutRes layoutID: Int = 0) : Fragment(layoutID) {
 
     private var isLoaded = false
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        // 使用 androidx.appcompat:appcompat:1.1.0 或更高版本，可以使用 OnBackPressedCallback 来处理 onBackPressed 事件
-        requireActivity().onBackPressedDispatcher.addCallback(
-            this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    // 在这里处理返回键事件
-                    if (shouldInterceptBackPress()) {
-                        // 拦截处理返回事件
-                        val consumed = onBackPress()
-                        if (consumed.not()) {
-                            // 不消费掉事件，activity 将继续响应
-                            isEnabled = false // 禁用当前的回调
-                            requireActivity().onBackPressed() // 调用默认的返回操作
-                        }
-                    } else {
-                        // 不拦截
-                        isEnabled = false // 禁用当前的回调
-                        requireActivity().onBackPressed() // 调用默认的返回操作
-                    }
-                }
-            })
-    }
-
     protected open fun shouldInterceptBackPress(): Boolean {
         // 返回 true 表示拦截返回事件
         return true
@@ -51,6 +26,28 @@ abstract class BaseFragment(@LayoutRes layoutID: Int = 0) : Fragment(layoutID) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // 使用 androidx.appcompat:appcompat:1.1.0 或更高版本，可以使用 OnBackPressedCallback 来处理 onBackPressed 事件
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner, // 使用 viewLifecycleOwner 而非 this
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    // 在这里处理返回键事件
+                    if (shouldInterceptBackPress()) {
+                        // 拦截处理返回事件
+                        val consumed = onBackPress()
+                        if (consumed.not()) {
+                            // 不消费掉事件，activity 将继续响应
+                            isEnabled = false // 禁用当前的回调
+                            requireActivity().onBackPressedDispatcher.onBackPressed() // 调用默认的返回操作
+                        }
+                    } else {
+                        // 不拦截
+                        isEnabled = false // 禁用当前的回调
+                        requireActivity().onBackPressedDispatcher.onBackPressed() // 调用默认的返回操作
+                    }
+                }
+            })
 
         observeBus()
     }

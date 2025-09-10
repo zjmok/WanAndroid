@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
 import androidx.core.content.ContextCompat
@@ -75,6 +76,8 @@ class MainActivity : VBaseActivity<ActivityMainBinding>() {
 
     override val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
+    private var firstClickTime = 0L
+
     @SuppressLint("UseCustomToast")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,6 +100,18 @@ class MainActivity : VBaseActivity<ActivityMainBinding>() {
         if (fromScheme && url.isNullOrBlank().not()) {
             WebActivity.start(url!!)
         }
+
+        onBackPressedDispatcher.addCallback {
+            val secondClickTime = System.currentTimeMillis()
+            if (secondClickTime - firstClickTime > 1000) {
+                toast("再按一次, 将返回主屏幕")
+                firstClickTime = secondClickTime
+            } else {
+//                AppUtils.exitApp()
+                ActivityUtils.startHomeActivity()
+            }
+        }
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -302,25 +317,6 @@ class MainActivity : VBaseActivity<ActivityMainBinding>() {
      */
     fun pageRefresh(pageIndex: Int) {
         postEvent(EventBus.HOME_TAB_REFRESH, pageIndex)
-    }
-
-    private var firstClickTime = 0L
-
-    @SuppressLint("MissingSuperCall")
-    @Suppress("OVERRIDE_DEPRECATION")
-    override fun onBackPressed() {
-        val secondClickTime = System.currentTimeMillis()
-        if (secondClickTime - firstClickTime > 1000) {
-            toast("再按一次, 将返回主屏幕")
-            firstClickTime = secondClickTime
-        } else {
-//            AppUtils.exitApp()
-            ActivityUtils.startHomeActivity()
-        }
-    }
-
-    override fun observeBus() {
-        super.observeBus()
     }
 
 }

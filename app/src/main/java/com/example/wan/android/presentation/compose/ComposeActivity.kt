@@ -42,6 +42,7 @@ import com.example.wan.android.util.px2dp
 import com.example.wan.android.util.startBrowser
 import com.example.wan.android.util.startUrl
 import com.example.wan.android.util.toast
+import com.example.wan.android.util.toaster
 
 class ComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -268,6 +269,24 @@ fun PageList(name: String, modifier: Modifier = Modifier) {
             ) {
                 Text(
                     text = "从 自定义浏览器列表 打开",
+                    fontSize = 18.sp,
+                    color = colorResource(id = R.color.primaryText),
+                )
+            }
+            Spacer(modifier = Modifier.size(1.px2dp()))
+            // toaster test
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorResource(id = R.color.wx_foreground))
+                    .clickable {
+                        toaster("toaster test")
+                    }
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "Toaster 测试",
                     fontSize = 18.sp,
                     color = colorResource(id = R.color.primaryText),
                 )

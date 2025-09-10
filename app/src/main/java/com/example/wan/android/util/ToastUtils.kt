@@ -2,19 +2,56 @@ package com.example.wan.android.util
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.os.Looper
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.graphics.toColorInt
 import com.example.wan.android.App
+import com.hjq.toast.ToastLogInterceptor
+import com.hjq.toast.ToastParams
+import com.hjq.toast.Toaster
+import com.hjq.toast.style.BlackToastStyle
+import com.hjq.toast.style.LocationToastStyle
+
+//////////////////////////////////////////////////
+
+fun toaster(message: Any?) {
+    Toaster.show(ToastParams().apply {
+        text = message.toString()
+        duration = Toast.LENGTH_SHORT
+        style = object : BlackToastStyle() {
+            override fun getBackgroundDrawable(context: Context): Drawable {
+                return (super.getBackgroundDrawable(context) as GradientDrawable).apply {
+                    setCornerRadius(
+                        TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            999f,
+                            context.resources.displayMetrics
+                        )
+                    )
+                }
+            }
+        }.let {
+            LocationToastStyle(it, Gravity.CENTER or Gravity.BOTTOM, 0, 200, 0f, 0f)
+        }
+        interceptor = ToastLogInterceptor(1)
+    })
+}
+
+//////////////////////////////////////////////////
 
 fun toast(any: Any?) {
     toastShort(any, 6) // 此方法 trace 为 5，调用此方法处为 6
 }
+
+//////////////////////////////////////////////////
 
 fun toastShort(any: Any?, trace: Int = 5) {
     ToastUtils.showShort(any.toString())
@@ -27,6 +64,8 @@ fun toastLong(any: Any?, trace: Int = 5) {
     printStackLine(trace) // 此方法 trace 为 4，调用此方法处为 5
     loge(any)
 }
+
+//////////////////////////////////////////////////
 
 object ToastUtils {
 
@@ -42,10 +81,11 @@ object ToastUtils {
 
     @SuppressLint("ToastUsage")
     fun show(context: Context, message: String, duration: Int = Toast.LENGTH_SHORT) {
+        val appContext = context.applicationContext
         val showToast = {
             // 取消之前的 Toast
             currentToast?.cancel()
-
+            // 自定义 view 的 toast 复用易出问题，直接使用新的对象
             // 创建新的 Toast
             // 默认的 Toast 会有 APP 名称前缀
 //            currentToast = Toast.makeText(context, message, duration).apply {
@@ -53,9 +93,9 @@ object ToastUtils {
 ////                setGravity(Gravity.TOP or Gravity.END, 0, 0) // 右上角
 //            }
             // 使用 自定义 View 的 Toast
-            currentToast = Toast(context).apply {
+            currentToast = Toast(appContext).apply {
                 // 创建自定义布局
-                val layout = LinearLayout(context).apply {
+                val layout = LinearLayout(appContext).apply {
                     orientation = LinearLayout.VERTICAL
                     setPadding(16.dp2pxInt, 12.dp2pxInt, 16.dp2pxInt, 12.dp2pxInt)
                     background = GradientDrawable().apply {
@@ -69,7 +109,7 @@ object ToastUtils {
                 }
 
                 // 创建显示消息的 TextView
-                val textView = TextView(context).apply {
+                val textView = TextView(appContext).apply {
                     text = message
                     setTextColor("#DE000000".toColorInt())
                     textSize = 14f
@@ -109,3 +149,5 @@ object ToastUtils {
     }
 
 }
+
+//////////////////////////////////////////////////

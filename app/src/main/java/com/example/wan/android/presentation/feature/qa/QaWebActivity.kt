@@ -194,7 +194,7 @@ class QaWebActivity : VVMBaseActivity<QaWebViewModel, ActivityQaWebBinding>() {
                 })
                 finish()
                 isEnabled = false // 禁用当前的回调
-                onBackPressed() // 调用默认的返回操作
+                onBackPressedDispatcher.onBackPressed() // 调用默认的返回操作
             }
         }
 
