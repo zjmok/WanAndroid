@@ -3,7 +3,6 @@ package com.example.wan.android.presentation.feature.web
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.Html
 import android.view.Menu
 import android.view.MenuItem
 import android.webkit.WebChromeClient
@@ -18,15 +17,16 @@ import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.ClipboardUtils
 import com.example.wan.android.App
 import com.example.wan.android.R
-import com.example.wan.android.presentation.feature.base.activity.VBaseActivity
 import com.example.wan.android.data.model.WebPage
 import com.example.wan.android.databinding.ActivityWebBinding
-import com.example.wan.android.util.visible
+import com.example.wan.android.presentation.feature.base.activity.VBaseActivity
+import com.example.wan.android.util.fromHtmlLegacy
 import com.example.wan.android.util.logd
 import com.example.wan.android.util.startBrowser
 import com.example.wan.android.util.toJson
 import com.example.wan.android.util.toast
 import com.example.wan.android.util.toastLong
+import com.example.wan.android.util.visible
 import com.lxj.xpopup.XPopup
 import kotlinx.coroutines.launch
 
@@ -73,8 +73,8 @@ class WebActivity : VBaseActivity<ActivityWebBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        supportActionBar?.title = Html.fromHtml(webTitle ?: "")
-        titleView.text = Html.fromHtml(webTitle ?: "")
+//        supportActionBar?.title = fromHtmlLegacy(webTitle ?: "")
+        titleView.text = fromHtmlLegacy(webTitle ?: "")
 
         repository =
             com.example.wan.android.presentation.feature.web.WebPageRepository(dataStore = (application as App).dataStore)
@@ -115,7 +115,7 @@ class WebActivity : VBaseActivity<ActivityWebBinding>() {
                 }
 
                 override fun onReceivedTitle(view: WebView, title: String?) {
-                    titleView.text = Html.fromHtml(/*webTitle ?: */title ?: "")
+                    titleView.text = fromHtmlLegacy(/*webTitle ?: */title ?: "")
 
                     logd("onReceivedTitle: url = ${view.url}, title = $title")
                     lifecycleScope.launch {

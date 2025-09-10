@@ -1,13 +1,13 @@
 package com.example.wan.android.presentation.feature.qa
 
 import android.annotation.SuppressLint
-import android.text.Html
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.ColorUtils
 import com.example.wan.android.R
 import com.example.wan.android.data.model.Comment
 import com.example.wan.android.databinding.RvItemCommentBinding
+import com.example.wan.android.util.fromHtmlLegacy
 import com.example.wan.android.util.visible
 import splitties.systemservices.layoutInflater
 import splitties.views.imageResource
@@ -59,7 +59,7 @@ class CommentRvAdapter(var list: List<Comment>) : RecyclerView.Adapter<CommentRv
 
         holder.binding.tvIndex.text = "${floor}楼"
         holder.binding.tvName.text = comment.userName
-        holder.binding.tvContent.text = Html.fromHtml(comment.contentMd)
+        holder.binding.tvContent.text = fromHtmlLegacy(comment.contentMd)
         holder.binding.tvTime.text = comment.niceDate
 
         if (comment.zan > 0) {
