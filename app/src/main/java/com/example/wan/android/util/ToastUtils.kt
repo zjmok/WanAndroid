@@ -2,12 +2,9 @@ package com.example.wan.android.util
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.os.Looper
-import android.util.TypedValue
-import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -17,30 +14,12 @@ import com.example.wan.android.App
 import com.hjq.toast.ToastLogInterceptor
 import com.hjq.toast.ToastParams
 import com.hjq.toast.Toaster
-import com.hjq.toast.style.BlackToastStyle
-import com.hjq.toast.style.LocationToastStyle
 
 //////////////////////////////////////////////////
 
 fun toaster(message: Any?) {
     Toaster.show(ToastParams().apply {
         text = message.toString()
-        duration = Toast.LENGTH_SHORT
-        style = object : BlackToastStyle() {
-            override fun getBackgroundDrawable(context: Context): Drawable {
-                return (super.getBackgroundDrawable(context) as GradientDrawable).apply {
-                    setCornerRadius(
-                        TypedValue.applyDimension(
-                            TypedValue.COMPLEX_UNIT_DIP,
-                            999f,
-                            context.resources.displayMetrics
-                        )
-                    )
-                }
-            }
-        }.let {
-            LocationToastStyle(it, Gravity.CENTER or Gravity.BOTTOM, 0, 200, 0f, 0f)
-        }
         interceptor = ToastLogInterceptor(1)
     })
 }

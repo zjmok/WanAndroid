@@ -33,11 +33,11 @@ import androidx.compose.ui.unit.sp
 import com.blankj.utilcode.util.ActivityUtils
 import com.example.wan.android.R
 import com.example.wan.android.presentation.compose.ui.theme.WanAndroidTheme
+import com.example.wan.android.presentation.feature.dialog.AppDetailDialog
 import com.example.wan.android.presentation.feature.person.BookmarkActivity
 import com.example.wan.android.presentation.feature.person.HistoryActivity
 import com.example.wan.android.presentation.feature.search.SearchActivity
 import com.example.wan.android.presentation.feature.setting.ManageSpaceActivity
-import com.example.wan.android.presentation.feature.dialog.AppDetailDialog
 import com.example.wan.android.util.px2dp
 import com.example.wan.android.util.startBrowser
 import com.example.wan.android.util.startUrl

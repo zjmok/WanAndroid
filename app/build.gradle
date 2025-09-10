@@ -528,7 +528,7 @@ dependencies {
     // https://github.com/getActivity/Toaster
 //    implementation 'com.github.getActivity:Toaster:13.5'
     // https://github.com/zjmok/Toaster
-    implementation 'com.github.zjmok:Toaster:13.5.1' // 基于 13.5 的修改版
+    implementation 'com.github.zjmok:Toaster:13.5.2' // 基于 13.5 的修改版
     // 日志调试框架
     // https://github.com/getActivity/Logcat
 //    debugImplementation "com.github.getActivity:Logcat:12.3"
