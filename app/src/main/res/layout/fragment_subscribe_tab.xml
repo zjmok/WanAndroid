@@ -101,4 +101,15 @@
 
     </FrameLayout>
 
+    <ImageView
+        android:id="@+id/iv_top"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="50dp"
+        android:background="#33000000"
+        android:rotation="270"
+        android:src="@drawable/icon_arrow_right" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

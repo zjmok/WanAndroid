@@ -45,6 +45,10 @@ class QaFragment : VVMBaseFragment<QaViewModel, FragmentQaBinding>() {
             }
     }
 
+    fun scrollToPosition(position: Int) {
+        binding.rv.smoothScrollToPosition(position)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initImmersion()

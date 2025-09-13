@@ -219,6 +219,11 @@ class HomeFragment : VVMBaseFragment<HomeViewModel, FragmentHomeBinding>() {
             isRefreshing = true
             adapter.refresh()
         }
+
+        binding.ivTop.onClick {
+            recyclerView.smoothScrollToPosition(0)
+        }
+
     }
 
     override fun observeBus() {

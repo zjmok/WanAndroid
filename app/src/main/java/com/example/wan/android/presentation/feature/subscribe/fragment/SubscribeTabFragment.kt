@@ -200,6 +200,11 @@ class SubscribeTabFragment : VVMBaseFragment<SubscribeTabViewModel, FragmentSubs
             isRefreshing = true
             adapter.refresh()
         }
+
+        binding.ivTop.onClick {
+            recyclerView.smoothScrollToPosition(0)
+        }
+
     }
 
     override fun observeBus() {
