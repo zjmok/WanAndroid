@@ -1,7 +1,6 @@
 package com.example.wan.android.presentation.feature.home.paging
 
 import android.annotation.SuppressLint
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -16,6 +15,7 @@ import com.example.wan.android.databinding.RvItemBannerBinding
 import com.example.wan.android.presentation.feature.common.ArticleTagAdapter
 import com.example.wan.android.presentation.feature.home.HomeBannerAdapter
 import com.example.wan.android.presentation.feature.home.HomeFragment
+import com.example.wan.android.util.fromHtmlLegacy
 import com.example.wan.android.util.gone
 import com.example.wan.android.util.load
 import com.example.wan.android.util.loadRes
@@ -99,9 +99,9 @@ class HomePagingAdapter(val fragment: HomeFragment, private var bannerData: List
                         "作者: ${item.author}"
                     }
 
-                    tvTitle.text = Html.fromHtml(item.title)
+                    tvTitle.text = fromHtmlLegacy(item.title)
 
-                    tvSubtitle.text = Html.fromHtml(item.desc)
+                    tvSubtitle.text = fromHtmlLegacy(item.desc)
                     tvSubtitle.visible(item.desc.isNotBlank())
 
                     tvClassification.text = listOf(
@@ -141,7 +141,7 @@ class HomePagingAdapter(val fragment: HomeFragment, private var bannerData: List
                     ivStar.onClick {
                         if (item.collect) {
                             XPopup.Builder(holder.binding.root.context)
-                                .asConfirm("移除收藏", "《${Html.fromHtml(item.title)}》") {
+                                .asConfirm("移除收藏", "《${fromHtmlLegacy(item.title)}》") {
                                     likeClickListener?.invoke(
                                         LikeData(
                                             id = item.id,

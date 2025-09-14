@@ -86,6 +86,16 @@ class SquareMixFragment : VBaseFragment<FragmentSquareMixBinding>() {
         binding.layoutSearch.onClick {
             start<SearchActivity> {}
         }
+
+        binding.ivTop.onClick {
+            val fragment = list[binding.viewpager.currentItem]
+            if (fragment is SquareFragment) {
+                fragment.scrollToPosition(0)
+            } else if (fragment is QaFragment) {
+                fragment.scrollToPosition(0)
+            }
+        }
+
     }
 
     override fun observeBus() {

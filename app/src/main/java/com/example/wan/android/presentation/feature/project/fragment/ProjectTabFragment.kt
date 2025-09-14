@@ -153,6 +153,11 @@ class ProjectTabFragment : VVMBaseFragment<ProjectTabViewModel, FragmentProjectT
             isRefreshing = true
             adapter.refresh()
         }
+
+        binding.ivTop.onClick {
+            recyclerView.smoothScrollToPosition(0)
+        }
+
     }
 
     override fun observeBus() {

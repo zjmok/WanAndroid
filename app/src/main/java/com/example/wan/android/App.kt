@@ -2,6 +2,9 @@ package com.example.wan.android
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.util.TypedValue
 import android.view.Gravity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.preferences.preferencesDataStore
@@ -14,6 +17,8 @@ import com.example.wan.android.config.CoilConfig
 import com.example.wan.android.constant.AppConst
 import com.example.wan.android.util.getViewModel
 import com.hjq.toast.Toaster
+import com.hjq.toast.style.BlackToastStyle
+import com.hjq.toast.style.LocationToastStyle
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
@@ -64,11 +69,24 @@ open class App : MultiDexApplication() {
     private fun initToaster() {
         // 初始化 Toast 框架
         Toaster.init(this)
-        Toaster.setGravity(
-            Gravity.CENTER or Gravity.BOTTOM,
-            0,
-            200
-        )
+        // setStyle 会给 sToastStyle 赋值，
+        // 若前面设置 setGravity 会失效，但可以放在后面
+        Toaster.setStyle(object : BlackToastStyle() {
+            override fun getBackgroundDrawable(context: Context): Drawable {
+                return (super.getBackgroundDrawable(context) as GradientDrawable).apply {
+                    setCornerRadius(
+                        TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            999f, // 修改样式的圆角半径
+                            context.resources.displayMetrics
+                        )
+                    )
+                }
+            }
+        }.let {
+            // 这里跟直接设置 Toaster.setGravity 一样的效果，必须在后面进行包裹
+            LocationToastStyle(it, Gravity.CENTER or Gravity.BOTTOM, 0, 200, 0f, 0f)
+        })
     }
 
     private fun initCoil() {

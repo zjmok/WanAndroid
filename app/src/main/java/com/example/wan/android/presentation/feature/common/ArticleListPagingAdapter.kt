@@ -1,7 +1,6 @@
 package com.example.wan.android.presentation.feature.common
 
 import android.annotation.SuppressLint
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -11,6 +10,7 @@ import com.example.wan.android.R
 import com.example.wan.android.data.model.DataX
 import com.example.wan.android.data.model.LikeData
 import com.example.wan.android.databinding.RvItemArticleBinding
+import com.example.wan.android.util.fromHtmlLegacy
 import com.example.wan.android.util.gone
 import com.example.wan.android.util.load
 import com.example.wan.android.util.loadRes
@@ -62,9 +62,9 @@ class ArticleListPagingAdapter :
                     "作者: ${item.author}"
                 }
 
-                tvTitle.text = Html.fromHtml(item.title)
+                tvTitle.text = fromHtmlLegacy(item.title)
 
-                tvSubtitle.text = Html.fromHtml(item.desc)
+                tvSubtitle.text = fromHtmlLegacy(item.desc)
                 tvSubtitle.visible(item.desc.isNotBlank())
 
                 tvClassification.text = listOf(
@@ -104,7 +104,7 @@ class ArticleListPagingAdapter :
                 ivStar.onClick {
                     if (item.collect) {
                         XPopup.Builder(holder.binding.root.context)
-                            .asConfirm("移除收藏", "《${Html.fromHtml(item.title)}》") {
+                            .asConfirm("移除收藏", "《${fromHtmlLegacy(item.title)}》") {
                                 likeClickListener?.invoke(
                                     LikeData(
                                         id = item.id,

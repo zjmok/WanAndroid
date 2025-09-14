@@ -10,8 +10,8 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
-        android:background="@color/wx_foreground"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/wx_foreground">
 
         <!-- 由于状态栏沉浸效果，折叠后在状态栏依然会看到这里的内容，所以需要使用自定义 Behavior 隐藏 -->
         <FrameLayout
@@ -77,5 +77,16 @@
     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
     app:layout_behavior=".presentation.feature.square.SquareSearchBehavior"
     -->
+
+    <ImageView
+        android:id="@+id/iv_top"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="50dp"
+        android:background="#33000000"
+        android:rotation="270"
+        android:src="@drawable/icon_arrow_right" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

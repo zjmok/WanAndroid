@@ -45,6 +45,10 @@ class SquareFragment : VVMBaseFragment<SquareViewModel, FragmentSquareBinding>()
             }
     }
 
+    fun scrollToPosition(position: Int) {
+        binding.rv.smoothScrollToPosition(position)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initImmersion()

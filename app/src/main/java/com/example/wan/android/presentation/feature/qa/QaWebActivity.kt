@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.text.Html
 import android.view.Menu
 import android.view.MenuItem
 import android.webkit.WebChromeClient
@@ -17,16 +16,17 @@ import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.ClipboardUtils
 import com.example.wan.android.App
 import com.example.wan.android.R
-import com.example.wan.android.presentation.feature.base.activity.VVMBaseActivity
 import com.example.wan.android.data.model.WebData
 import com.example.wan.android.data.model.WebPage
 import com.example.wan.android.databinding.ActivityQaWebBinding
-import com.example.wan.android.util.visible
+import com.example.wan.android.presentation.feature.base.activity.VVMBaseActivity
+import com.example.wan.android.util.fromHtmlLegacy
 import com.example.wan.android.util.getViewModel
 import com.example.wan.android.util.logd
 import com.example.wan.android.util.startBrowser
 import com.example.wan.android.util.toast
 import com.example.wan.android.util.toastLong
+import com.example.wan.android.util.visible
 import com.lxj.xpopup.XPopup
 import kotlinx.coroutines.launch
 import splitties.views.imageResource
@@ -73,8 +73,8 @@ class QaWebActivity : VVMBaseActivity<QaWebViewModel, ActivityQaWebBinding>() {
         }
         this.webData = data
 
-//        supportActionBar?.title = Html.fromHtml(webData.title ?: "文章")
-        titleView.text = Html.fromHtml(webData.title ?: "文章")
+//        supportActionBar?.title = fromHtmlLegacy(webData.title ?: "文章")
+        titleView.text = fromHtmlLegacy(webData.title ?: "文章")
 
         initView()
 
@@ -101,7 +101,7 @@ class QaWebActivity : VVMBaseActivity<QaWebViewModel, ActivityQaWebBinding>() {
         binding.ivLike.onClick {
             if (webData.like) {
                 XPopup.Builder(this)
-                    .asConfirm("移除收藏", "《${Html.fromHtml(webData.title)}》") {
+                    .asConfirm("移除收藏", "《${fromHtmlLegacy(webData.title)}》") {
                         viewModel.unlikeArticle(webData.id, webData.originId, webData.isMyLike)
                     }.show()
             } else {
@@ -148,7 +148,7 @@ class QaWebActivity : VVMBaseActivity<QaWebViewModel, ActivityQaWebBinding>() {
                 }
 
                 override fun onReceivedTitle(view: WebView, title: String?) {
-                    titleView.text = Html.fromHtml(/*webData.title ?: */title ?: "文章")
+                    titleView.text = fromHtmlLegacy(/*webData.title ?: */title ?: "文章")
 
                     logd("onReceivedTitle: url = ${view.url}, title = $title")
                     lifecycleScope.launch {
@@ -194,7 +194,7 @@ class QaWebActivity : VVMBaseActivity<QaWebViewModel, ActivityQaWebBinding>() {
                 })
                 finish()
                 isEnabled = false // 禁用当前的回调
-                onBackPressed() // 调用默认的返回操作
+                onBackPressedDispatcher.onBackPressed() // 调用默认的返回操作
             }
         }
 

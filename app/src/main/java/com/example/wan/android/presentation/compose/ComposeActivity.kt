@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,15 +34,19 @@ import androidx.compose.ui.unit.sp
 import com.blankj.utilcode.util.ActivityUtils
 import com.example.wan.android.R
 import com.example.wan.android.presentation.compose.ui.theme.WanAndroidTheme
+import com.example.wan.android.presentation.feature.dialog.AppDetailDialog
 import com.example.wan.android.presentation.feature.person.BookmarkActivity
 import com.example.wan.android.presentation.feature.person.HistoryActivity
 import com.example.wan.android.presentation.feature.search.SearchActivity
 import com.example.wan.android.presentation.feature.setting.ManageSpaceActivity
-import com.example.wan.android.presentation.feature.dialog.AppDetailDialog
 import com.example.wan.android.util.px2dp
 import com.example.wan.android.util.startBrowser
 import com.example.wan.android.util.startUrl
 import com.example.wan.android.util.toast
+import com.example.wan.android.util.toaster
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class ComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,6 +77,8 @@ private fun ComposeComponent() {
 fun PageList(name: String, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
     LazyColumn(
         state = listState,
         modifier = modifier
@@ -268,6 +275,49 @@ fun PageList(name: String, modifier: Modifier = Modifier) {
             ) {
                 Text(
                     text = "从 自定义浏览器列表 打开",
+                    fontSize = 18.sp,
+                    color = colorResource(id = R.color.primaryText),
+                )
+            }
+            Spacer(modifier = Modifier.size(1.px2dp()))
+            // toaster test
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorResource(id = R.color.wx_foreground))
+                    .clickable {
+                        toaster("toaster test")
+                    }
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "Toaster 测试",
+                    fontSize = 18.sp,
+                    color = colorResource(id = R.color.primaryText),
+                )
+            }
+            Spacer(modifier = Modifier.size(1.px2dp()))
+            // toaster test
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorResource(id = R.color.wx_foreground))
+                    .clickable {
+                        val handler = CoroutineExceptionHandler { context, throwable ->
+                            toast("handler: ${throwable.message}")
+                        }
+                        // 使用 SupervisorJob 或 supervisorScope 隔离异常，防止取消整个作用域。
+                        // 这里不加 SupervisorJob 会导致页面无响应
+                        coroutineScope.launch(SupervisorJob() + handler) {
+                            throw RuntimeException("抛出异常")
+                        }
+                    }
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "测试 协程异常",
                     fontSize = 18.sp,
                     color = colorResource(id = R.color.primaryText),
                 )

@@ -1,7 +1,8 @@
 package com.example.wan.android.data.remote.interceptors
 
-import android.util.Log
 import com.example.wan.android.BuildConfig
+import com.example.wan.android.util.loge
+import com.example.wan.android.util.logeLong
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -20,10 +21,11 @@ class LoggingInterceptor : Interceptor {
 
         val request = chain.request()
         val t1 = System.nanoTime()
+
         val msgRequest = "request(${request.method}): ${request.url}\n" +
 //                "${request.headers.toStringCustom().trim()}\n" +
                 getRequestInfo(request)
-        Log.e(TAG, msgRequest)
+        loge(any = msgRequest, tag = TAG)
 
         val response = chain.proceed(request)
         val t2 = System.nanoTime()
@@ -41,35 +43,9 @@ class LoggingInterceptor : Interceptor {
 
         val msgResponse = "$from response for ${response.request.url} in ${(t2 - t1) / 1e6} ms\n" +
 //                "${response.headers.toStringCustom().trim()}\n" +
-//                getResponseInfo(response)
-                // 太长的内容 在新版 Android Studio 的 Logcat 显示得很恶心
-                getResponseInfo(response).let {
-                    val maxLen = 180
-                    if (it.length > maxLen) {
-                        it.substring(0, maxLen)
-                    } else {
-                        it
-                    }
-                } +
-                getResponseInfo(response.cacheResponse).let {
-                    val maxLen = 180
-                    if (it.length > maxLen) {
-                        it.substring(0, maxLen)
-                    } else {
-                        it
-                    }
-                } +
-                getResponseInfo(response.networkResponse).let {
-                    val maxLen = 180
-                    if (it.length > maxLen) {
-                        it.substring(0, maxLen)
-                    } else {
-                        it
-                    }
-                }
-
-
-        Log.e(TAG, msgResponse)
+                getResponseInfo(response)
+        // 长内容会被截断，需要分块
+        logeLong(msgResponse, TAG)
 
         return response
     }
