@@ -36,6 +36,6 @@ object UserUtils {
         spUtils.remove("SuperUserInfo")
     }
 
-    val isLogin get() = getSuperUserInfo()?.userInfo != null && getSuperUserInfo()?.userInfo?.id != null
+    val isLogin get() = getSuperUserInfo()?.userInfo != null && (getSuperUserInfo()?.userInfo?.id ?: -1) > 0
 
 }
