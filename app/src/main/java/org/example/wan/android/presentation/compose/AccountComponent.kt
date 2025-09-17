@@ -25,6 +25,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blankj.utilcode.util.ActivityUtils
 import org.example.wan.android.R
 import org.example.wan.android.composable.ImageFromDrawableRes
@@ -254,6 +255,6 @@ fun AccountComponent(viewModel: PersonViewModel) {
 @Composable
 fun AccountComponentPreview() {
     WanAndroidTheme {
-        AccountComponent(PersonViewModel())
+        AccountComponent(viewModel())
     }
 }

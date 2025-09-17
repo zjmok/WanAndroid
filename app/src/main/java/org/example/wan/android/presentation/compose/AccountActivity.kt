@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.example.wan.android.presentation.compose.ui.theme.WanAndroidTheme
 import org.example.wan.android.presentation.feature.person.PersonViewModel
 import org.example.wan.android.util.getViewModel
@@ -51,6 +52,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier, viewModel: PersonViewM
 @Composable
 fun GreetingPreview() {
     WanAndroidTheme {
-        Greeting("Android", viewModel = PersonViewModel())
+        Greeting("Android", viewModel = viewModel())
     }
 }
