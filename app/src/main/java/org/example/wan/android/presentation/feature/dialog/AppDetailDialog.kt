@@ -10,6 +10,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import org.example.wan.android.util.MyAppUtils.getMyAppInfo
 import org.example.wan.android.util.dp2pxInt
+import org.example.wan.android.util.setTypeface
 
 class AppDetailDialog(context: Context) :
     AlertDialog(context) {
