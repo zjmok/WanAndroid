@@ -3,6 +3,7 @@ package org.example.wan.android.presentation.feature.square.fragment
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.paging.LoadState
 import androidx.paging.liveData
@@ -10,19 +11,20 @@ import by.kirich1409.viewbindingdelegate.CreateMethod
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.LogUtils
-import org.example.wan.android.presentation.feature.base.fragment.VVMBaseFragment
 import org.example.wan.android.constant.EventBus
 import org.example.wan.android.data.model.LikeData
 import org.example.wan.android.data.model.WebData
 import org.example.wan.android.databinding.FragmentSquareBinding
+import org.example.wan.android.presentation.feature.base.fragment.VVMBaseFragment
 import org.example.wan.android.presentation.feature.common.ArticleListPagingAdapter
 import org.example.wan.android.presentation.feature.common.ArticleWebActivity
-import org.example.wan.android.util.gone
-import org.example.wan.android.util.visible
+import org.example.wan.android.presentation.feature.square.ScrollViewModel
 import org.example.wan.android.util.getViewModel
+import org.example.wan.android.util.gone
 import org.example.wan.android.util.newIntent
 import org.example.wan.android.util.observeEvent
 import org.example.wan.android.util.registerResultOK
+import org.example.wan.android.util.visible
 import splitties.bundle.put
 import splitties.views.onClick
 import splitties.views.topPadding
@@ -36,6 +38,8 @@ class SquareFragment : VVMBaseFragment<SquareViewModel, FragmentSquareBinding>()
 
     private var isRefreshing = false
 
+    private val atyViewModel: ScrollViewModel by viewModels({ requireParentFragment() })
+
     companion object {
         fun getInstance(isPaddingTop: Boolean) =
             SquareFragment().apply {
@@ -45,7 +49,7 @@ class SquareFragment : VVMBaseFragment<SquareViewModel, FragmentSquareBinding>()
             }
     }
 
-    fun scrollToPosition(position: Int) {
+    private fun scrollToPosition(position: Int) {
         binding.rv.smoothScrollToPosition(position)
     }
 
@@ -80,6 +84,11 @@ class SquareFragment : VVMBaseFragment<SquareViewModel, FragmentSquareBinding>()
     private fun observe() {
         viewModel.likeStatus.observe(viewLifecycleOwner) {
             adapter.notifyLikeChanged(it)
+        }
+        atyViewModel.scrollEvent.observe(viewLifecycleOwner) {
+            if (it.second == this.javaClass.simpleName) {
+                scrollToPosition(it.first)
+            }
         }
     }
 
