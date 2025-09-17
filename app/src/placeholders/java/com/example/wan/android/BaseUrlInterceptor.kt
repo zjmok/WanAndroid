@@ -1,4 +1,4 @@
-package com.example.wan.android
+package org.example.wan.android
 
 import okhttp3.Interceptor
 import okhttp3.Response
