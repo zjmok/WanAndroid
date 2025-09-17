@@ -1,8 +1,8 @@
-package com.example.wan.android
+package org.example.wan.android
 
 import android.content.Intent
 import androidx.core.net.toUri
-import com.example.wan.android.constant.AppConst
+import org.example.wan.android.constant.AppConst
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
 class FloatButtonApp : App() {

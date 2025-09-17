@@ -81,13 +81,13 @@ def getEnvOrLocal(String key) {
 }
 
 android {
-    namespace "com.example.wan.android"
+    namespace "org.example.wan.android"
     // 确定编译应用时，项目代码可以使用哪些 API。不影响应用运行时的行为，只影响编译时可以访问到哪些类和方法
     compileSdk 36
 //    compileSdkExtension 19 // 36.0-ext19
 
     defaultConfig {
-        applicationId "com.example.wan.android"
+        applicationId "org.example.wan.android"
         minSdk 21
         // 指定应用在运行时目标的 Android 版本。不影响可以使用的 API，而是影响应用在运行时的行为
         targetSdk 36

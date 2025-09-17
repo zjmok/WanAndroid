@@ -1,4 +1,4 @@
-package com.example.wan.android
+package org.example.wan.android
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -26,14 +26,14 @@ import androidx.core.content.edit
 import androidx.core.net.toUri
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.AppUtils
-import com.example.wan.android.constant.AppConst
-import com.example.wan.android.databinding.DebugWindowBinding
-import com.example.wan.android.presentation.compose.ComposeActivity
-import com.example.wan.android.presentation.feature.MainActivity
-import com.example.wan.android.presentation.feature.dialog.AppDetailDialog
-import com.example.wan.android.presentation.feature.setting.SettingActivity
-import com.example.wan.android.util.toJson
-import com.example.wan.android.util.toast
+import org.example.wan.android.constant.AppConst
+import org.example.wan.android.databinding.DebugWindowBinding
+import org.example.wan.android.presentation.compose.ComposeActivity
+import org.example.wan.android.presentation.feature.MainActivity
+import org.example.wan.android.presentation.feature.dialog.AppDetailDialog
+import org.example.wan.android.presentation.feature.setting.SettingActivity
+import org.example.wan.android.util.toJson
+import org.example.wan.android.util.toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
