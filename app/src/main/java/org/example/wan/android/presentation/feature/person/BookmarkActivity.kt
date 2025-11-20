@@ -50,8 +50,8 @@ import org.example.wan.android.R
 import org.example.wan.android.presentation.compose.ui.theme.WanAndroidTheme
 import org.example.wan.android.data.model.WebPage
 import org.example.wan.android.presentation.feature.web.WebActivity
-import org.example.wan.android.util.logd
-import org.example.wan.android.util.px2dp
+import com.zjmok.util.logd
+import org.example.wan.android.util.compose.px2dp
 import kotlinx.coroutines.launch
 
 class BookmarkActivity : ComponentActivity() {

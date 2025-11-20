@@ -2,7 +2,6 @@ package org.example.wan.android.presentation.feature.base.activity
 
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.MotionEvent
@@ -13,18 +12,18 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import com.blankj.utilcode.util.SPUtils
+import com.gyf.immersionbar.ktx.immersionBar
+import com.zjmok.util.hideSoftInput
 import org.example.wan.android.R
 import org.example.wan.android.constant.EventBus
 import org.example.wan.android.databinding.CustomActionbarBinding
 import org.example.wan.android.presentation.feature.dialog.LoadingDialog
-import org.example.wan.android.util.hideSoftInput
-import org.example.wan.android.util.observeEvent
+import org.example.wan.android.util.liveeventbus.observeEvent
 import org.example.wan.android.util.userLocale
-import com.gyf.immersionbar.ktx.immersionBar
 import splitties.views.onClick
 import java.util.Locale
-import androidx.core.graphics.drawable.toDrawable
 
 abstract class BaseActivity(@LayoutRes layoutId: Int = 0) : AppCompatActivity(layoutId) {
 

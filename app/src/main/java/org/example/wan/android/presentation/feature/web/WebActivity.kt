@@ -20,13 +20,13 @@ import org.example.wan.android.R
 import org.example.wan.android.data.model.WebPage
 import org.example.wan.android.databinding.ActivityWebBinding
 import org.example.wan.android.presentation.feature.base.activity.VBaseActivity
-import org.example.wan.android.util.fromHtmlLegacy
-import org.example.wan.android.util.logd
+import com.zjmok.util.fromHtmlLegacy
+import com.zjmok.util.logd
 import org.example.wan.android.util.startBrowser
-import org.example.wan.android.util.toJson
-import org.example.wan.android.util.toast
-import org.example.wan.android.util.toastLong
-import org.example.wan.android.util.visible
+import org.example.wan.android.util.gson.toJson
+import com.zjmok.util.toast
+import com.zjmok.util.toastLong
+import com.zjmok.util.visible
 import com.lxj.xpopup.XPopup
 import kotlinx.coroutines.launch
 

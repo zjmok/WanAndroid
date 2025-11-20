@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import org.example.wan.android.data.remote.RetrofitClient
 import org.example.wan.android.data.remote.api.ApiException
 import org.example.wan.android.util.UserUtils
-import org.example.wan.android.util.toast
+import com.zjmok.util.toast
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart

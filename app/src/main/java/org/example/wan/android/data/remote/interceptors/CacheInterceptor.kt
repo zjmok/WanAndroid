@@ -2,7 +2,7 @@ package org.example.wan.android.data.remote.interceptors
 
 import android.util.Log
 import com.blankj.utilcode.util.NetworkUtils
-import org.example.wan.android.util.formatSecondsToDHMS
+import com.zjmok.util.formatSecondsToDHMS
 import okhttp3.CacheControl
 import okhttp3.Interceptor
 import okhttp3.Response

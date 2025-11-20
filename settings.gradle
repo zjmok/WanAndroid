@@ -18,6 +18,12 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
+    /**
+     RepositoriesMode
+     - FAIL_ON_PROJECT_REPOS：严格模式。所有仓库必须在 settings.gradle 中声明。如果在模块级 build.gradle 文件中额外添加了 repositories 块，Gradle 会报错
+     - PREFER_PROJECT_REPOS：项目优先模式。模块级 build.gradle 中声明的仓库会覆盖 settings.gradle 中的配置
+     - PREFER_SETTINGS_REPOS：设置优先模式（Gradle 6.8+）。优先使用 settings.gradle 中的仓库，但允许模块级添加额外仓库
+     */
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         mavenLocal()
@@ -37,4 +43,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "WanAndroid"
 include ":app"
+include ':module_utils'
 //include ":module_lint"

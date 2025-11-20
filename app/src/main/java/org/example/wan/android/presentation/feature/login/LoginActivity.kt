@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import org.example.wan.android.presentation.feature.base.activity.VVMBaseActivity
 import org.example.wan.android.databinding.ActivityLoginBinding
-import org.example.wan.android.util.afterTextChanged
-import org.example.wan.android.util.getViewModel
+import com.zjmok.util.afterTextChanged
+import com.zjmok.util.getViewModel
 import splitties.views.onClick
 
 class LoginActivity : VVMBaseActivity<LoginViewModel, ActivityLoginBinding>() {

@@ -32,8 +32,8 @@ import org.example.wan.android.presentation.compose.ComposeActivity
 import org.example.wan.android.presentation.feature.MainActivity
 import org.example.wan.android.presentation.feature.dialog.AppDetailDialog
 import org.example.wan.android.presentation.feature.setting.SettingActivity
-import org.example.wan.android.util.toJson
-import org.example.wan.android.util.toast
+import org.example.wan.android.util.gson.toJson
+import com.zjmok.util.toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

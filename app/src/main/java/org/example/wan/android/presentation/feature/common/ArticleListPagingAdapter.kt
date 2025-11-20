@@ -10,11 +10,11 @@ import org.example.wan.android.R
 import org.example.wan.android.data.model.DataX
 import org.example.wan.android.data.model.LikeData
 import org.example.wan.android.databinding.RvItemArticleBinding
-import org.example.wan.android.util.fromHtmlLegacy
-import org.example.wan.android.util.gone
-import org.example.wan.android.util.load
-import org.example.wan.android.util.loadRes
-import org.example.wan.android.util.visible
+import com.zjmok.util.fromHtmlLegacy
+import com.zjmok.util.gone
+import org.example.wan.android.util.glide.load
+import org.example.wan.android.util.glide.loadRes
+import com.zjmok.util.visible
 import com.lxj.xpopup.XPopup
 import splitties.views.onClick
 

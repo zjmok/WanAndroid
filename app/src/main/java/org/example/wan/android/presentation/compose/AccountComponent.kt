@@ -33,7 +33,7 @@ import org.example.wan.android.composable.ImageFromRes
 import org.example.wan.android.presentation.compose.ui.theme.WanAndroidTheme
 import org.example.wan.android.presentation.feature.person.PersonViewModel
 import org.example.wan.android.presentation.feature.setting.SettingActivity
-import org.example.wan.android.util.toast
+import com.zjmok.util.toast
 
 @Composable
 fun AccountComponent(viewModel: PersonViewModel) {

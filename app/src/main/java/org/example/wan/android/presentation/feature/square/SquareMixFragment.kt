@@ -14,7 +14,7 @@ import org.example.wan.android.presentation.feature.common.VpFragmentAdapter
 import org.example.wan.android.presentation.feature.qa.fragment.QaFragment
 import org.example.wan.android.presentation.feature.search.SearchActivity
 import org.example.wan.android.presentation.feature.square.fragment.SquareFragment
-import org.example.wan.android.util.observeEvent
+import org.example.wan.android.util.liveeventbus.observeEvent
 import splitties.bundle.put
 import splitties.fragments.start
 import splitties.views.onClick

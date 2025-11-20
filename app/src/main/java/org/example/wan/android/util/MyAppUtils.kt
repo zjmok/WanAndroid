@@ -5,6 +5,8 @@ import android.content.Context
 import android.os.Build
 import androidx.core.content.ContextCompat
 import com.blankj.utilcode.util.SPUtils
+import com.zjmok.util.getAppSigningCertificateCN
+import com.zjmok.util.getAppTargetSdk
 import org.example.wan.android.BuildConfig
 import org.example.wan.android.R
 import java.text.SimpleDateFormat
@@ -119,9 +121,9 @@ object MyAppUtils {
             [model ] ${DeviceUtils.model}
             [os    ] Android ${DeviceUtils.androidVersion}
             [api   ] API ${DeviceUtils.androidApi}
-            [skin_t] ${DeviceUtils.skinType}
-            [skin_v] ${DeviceUtils.skinVersion}
-            [skin_n] ${DeviceUtils.skinName}
+            [mk_n  ] ${DeviceUtils.marketName}
+            [ui_n  ] ${DeviceUtils.uiName}
+            [ui_v  ] ${DeviceUtils.uiVersion}
             [lang  ] ${Locale.getDefault().toLanguageTag()}
             [locale] ${Locale.getDefault().displayName}
             - System.Build -

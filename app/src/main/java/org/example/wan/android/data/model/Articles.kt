@@ -1,7 +1,7 @@
 package org.example.wan.android.data.model
 
 import android.os.Parcelable
-import org.example.wan.android.util.htmlDecode
+import com.zjmok.util.htmlDecode
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

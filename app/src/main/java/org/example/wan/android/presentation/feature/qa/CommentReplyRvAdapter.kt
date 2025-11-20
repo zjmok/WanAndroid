@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 import org.example.wan.android.R
 import org.example.wan.android.data.model.ReplyComment
 import org.example.wan.android.databinding.RvItemCommentReplyBinding
-import org.example.wan.android.util.fromHtmlLegacy
-import org.example.wan.android.util.gone
+import com.zjmok.util.fromHtmlLegacy
+import com.zjmok.util.gone
 import splitties.systemservices.layoutInflater
 import splitties.views.imageResource
 

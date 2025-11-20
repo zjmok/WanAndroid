@@ -7,7 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.LayoutRes
 import org.example.wan.android.presentation.feature.base.BaseViewModel
 import org.example.wan.android.presentation.feature.login.LoginActivity
-import org.example.wan.android.util.toast
+import com.zjmok.util.toast
 
 abstract class VMBaseActivity<VM : BaseViewModel>(@LayoutRes layoutId: Int = 0) :
     BaseActivity(layoutId) {

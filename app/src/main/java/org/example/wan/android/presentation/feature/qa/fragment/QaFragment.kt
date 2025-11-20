@@ -11,6 +11,11 @@ import by.kirich1409.viewbindingdelegate.CreateMethod
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.LogUtils
+import com.zjmok.util.getViewModel
+import com.zjmok.util.gone
+import com.zjmok.util.newIntent
+import com.zjmok.util.registerResultOK
+import com.zjmok.util.visible
 import org.example.wan.android.constant.EventBus
 import org.example.wan.android.data.model.LikeData
 import org.example.wan.android.data.model.WebData
@@ -19,12 +24,7 @@ import org.example.wan.android.presentation.feature.base.fragment.VVMBaseFragmen
 import org.example.wan.android.presentation.feature.common.ArticleListPagingAdapter
 import org.example.wan.android.presentation.feature.qa.QaWebActivity
 import org.example.wan.android.presentation.feature.square.ScrollViewModel
-import org.example.wan.android.util.getViewModel
-import org.example.wan.android.util.gone
-import org.example.wan.android.util.newIntent
-import org.example.wan.android.util.observeEvent
-import org.example.wan.android.util.registerResultOK
-import org.example.wan.android.util.visible
+import org.example.wan.android.util.liveeventbus.observeEvent
 import splitties.bundle.put
 import splitties.views.onClick
 import splitties.views.topPadding

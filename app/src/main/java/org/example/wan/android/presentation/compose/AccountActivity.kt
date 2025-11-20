@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.example.wan.android.presentation.compose.ui.theme.WanAndroidTheme
 import org.example.wan.android.presentation.feature.person.PersonViewModel
-import org.example.wan.android.util.getViewModel
+import com.zjmok.util.getViewModel
 
 class AccountActivity : ComponentActivity() {
 

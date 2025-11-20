@@ -2,8 +2,9 @@ package org.example.wan.android.util
 
 import android.annotation.SuppressLint
 import android.os.Build
+import com.hjq.device.compat.DeviceMarketName
 import com.hjq.device.compat.DeviceOs
-
+import org.example.wan.android.App
 
 object DeviceUtils {
 
@@ -19,16 +20,17 @@ object DeviceUtils {
     // 示例: 29
     val androidApi get(): Int = Build.VERSION.SDK_INT
 
+    // 示例: Xiaomi 10 Ultra
+    val marketName get(): String = DeviceMarketName.getMarketName(App.INSTANCE)
+
     // 示例: MIUI
-    val skinType get(): String = DeviceOs.getOsName()
+    val uiName get(): String = DeviceOs.getOsName()
 
     // 示例: 12.0.15.0
-    val skinVersion get(): String = DeviceOs.getOsVersionName()
+    val uiVersion get(): String = DeviceOs.getOsVersionName()
 
-    // 示例: V12.0.15.0.QJJCNXM
-    val skinName get(): String = DeviceOs.getOriginalOsVersionName()
-
-    val marketName get(): String = "TODO"
+    // 示例: 12
+    val uiBigVersion get(): Int = DeviceOs.getOsBigVersionCode()
 
     // 获取指定系统属性
     @SuppressLint("PrivateApi")

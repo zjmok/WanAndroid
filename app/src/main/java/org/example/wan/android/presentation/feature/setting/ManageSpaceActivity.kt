@@ -31,7 +31,7 @@ import org.example.wan.android.data.remote.RetrofitClient
 import org.example.wan.android.util.alert
 import org.example.wan.android.util.cancel
 import org.example.wan.android.util.ok
-import org.example.wan.android.util.toast
+import com.zjmok.util.toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

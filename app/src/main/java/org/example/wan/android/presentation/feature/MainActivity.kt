@@ -15,6 +15,11 @@ import androidx.annotation.RawRes
 import androidx.core.content.ContextCompat
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.LogUtils
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
+import com.google.android.material.tabs.TabLayoutMediator
+import com.zjmok.util.BarUtils
+import com.zjmok.util.toast
 import org.example.wan.android.App
 import org.example.wan.android.R
 import org.example.wan.android.constant.EventBus
@@ -34,13 +39,10 @@ import org.example.wan.android.presentation.feature.subscribe.SubscribeActivity
 import org.example.wan.android.presentation.feature.subscribe.SubscribeFragment
 import org.example.wan.android.presentation.feature.web.WebActivity
 import org.example.wan.android.util.MyAppUtils
-import org.example.wan.android.util.loadRes
-import org.example.wan.android.util.postEvent
-import org.example.wan.android.util.toast
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
-import com.google.android.material.tabs.TabLayoutMediator
+import org.example.wan.android.util.glide.loadRes
+import org.example.wan.android.util.liveeventbus.postEvent
 import splitties.activities.start
+import splitties.views.bottomPadding
 import splitties.views.onClick
 
 class MainActivity : VBaseActivity<ActivityMainBinding>() {
@@ -211,6 +213,11 @@ class MainActivity : VBaseActivity<ActivityMainBinding>() {
 
         val animatorCache = mutableMapOf<Int, Animator?>()
 
+        // 适配导航栏高度
+        BarUtils.setBarListener(tabLayout) {
+            // 小米实时获取的导航栏高度可能为 0，但小米会自动适配导航栏
+            tabLayout.bottomPadding = it.bottom
+        }
         tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 // tab 从 未选中 到 选中

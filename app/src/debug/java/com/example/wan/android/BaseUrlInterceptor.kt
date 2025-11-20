@@ -1,8 +1,7 @@
 package org.example.wan.android
 
 import org.example.wan.android.constant.AppConst
-import org.example.wan.android.util.log
-import org.example.wan.android.util.loge
+import com.zjmok.util.loge
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Interceptor
 import okhttp3.Response

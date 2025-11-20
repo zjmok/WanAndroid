@@ -6,11 +6,11 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import org.example.wan.android.data.model.CacheData
 import org.example.wan.android.data.model.WebPage
-import org.example.wan.android.util.dateFormat
-import org.example.wan.android.util.fromJson
-import org.example.wan.android.util.logd
-import org.example.wan.android.util.loge
-import org.example.wan.android.util.toJson
+import com.zjmok.util.dateFormat
+import org.example.wan.android.util.gson.fromJson
+import com.zjmok.util.logd
+import com.zjmok.util.loge
+import org.example.wan.android.util.gson.toJson
 import kotlinx.coroutines.flow.catch
 import java.util.Date
 
