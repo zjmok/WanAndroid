@@ -13,49 +13,54 @@ buildscript {
     // 1.9.25
     // 2.0.21
     // 2.1.21
-    // 2.2.10
+    // 2.2.21
     // 不升级最新版，有些太新的库可能还没更新，容易报错
     ext.kotlin_version = "2.1.21" // 后面要用到具体版本号，所以不能用 `+` 号
 
     //
     // AGP 与 Gradle 对应版本, AGP 与 Android Studio 对应版本（另外 AGP 与 Gradle 对应版本见 `gradle-wrapper.properties`）
-    // AGP https://developer.android.com/build/releases/gradle-plugin
-    // AGP Older Versions https://developer.android.com/build/releases/gradle-plugin#expandable-1
-    // AS                               | AGP
-    // Flamingo | 2022.2.1              | 3.2-8.0
-    // Giraffe | 2022.3.1               | 3.2-8.1
-    // Hedgehog | 2023.1.1              | 3.2-8.2
-    // Iguana | 2023.2.1                | 3.2-8.3
-    // Jellyfish | 2023.3.1             | 3.2-8.4
-    // Koala | 2024.1.1                 | 3.2-8.5
-    // Koala Feature Drop | 2024.1.2    | 3.2-8.6
-    // Ladybug | 2024.2.1               | 3.2-8.7
-    // Ladybug Feature Drop | 2024.2.2  | 3.2-8.8
-    // Meerkat | 2024.3.1               | 3.2-8.9
-    // Meerkat Feature Drop | 2024.3.2  | 3.2-8.10
-    // Narwhal | 2025.1.1               | 3.2-8.11
-    // Narwhal Feature Drop | 2025.1.2  | 4.0-8.12
-    //                                  |
+    // AGP https://developer.android.com/build/releases/about-agp#android_gradle_plugin_and_android_studio_compatibility
+    // AS                                | AGP
+    // Flamingo  | 2022.2.1              | 3.2-8.0
+    // Giraffe   | 2022.3.1              | 3.2-8.1
+    // Hedgehog  | 2023.1.1              | 3.2-8.2
+    // Iguana    | 2023.2.1              | 3.2-8.3
+    // Jellyfish | 2023.3.1              | 3.2-8.4
+    // Koala 1   | 2024.1.1              | 3.2-8.5
+    // Koala 2   | 2024.1.2              | 3.2-8.6
+    // Ladybug 1 | 2024.2.1              | 3.2-8.7
+    // Ladybug 2 | 2024.2.2              | 3.2-8.8
+    // Meerkat 1 | 2024.3.1              | 3.2-8.9
+    // Meerkat 2 | 2024.3.2              | 3.2-8.10
+    // Narwhal 1 | 2025.1.1              | 3.2-8.11
+    // Narwhal 2 | 2025.1.2              | 4.0-8.12
+    // Narwhal 3 | 2025.1.3              | 4.0-8.13
+    // Narwhal 4 | 2025.1.4              | 4.0-8.13
+    // Otter 1   | 2025.2.1              | 4.0-8.13
+    // Otter 2   | 2025.2.2              | 4.0-8.13
+    // Otter 3   | 2025.2.3              | 4.0-9.0
+    // Panda 1   | 2025.3.1              | 4.0-9.0
+    // Panda 2   | 2025.3.2              | 4.0-9.1
+    //                                   |
     //
-    // API 与 AGP 对应版本
-    // API Level https://developer.android.com/build/releases/gradle-plugin#api-level-support
-    // API  | minimum AGP | Patch Version | minimun AS Version
-    //      |             | 3.6.4         |
-    //      |             | 4.2.2         |
-    // 33   | 7.2         | 7.4.2         | E+                  | api33 --> agp7.4.2  --> gradle7.6.6, AS E+
-    // 34   | 8.1.1       | 8.1.4         | G+                  | api34 --> agp8.1.1+ --> gradle8.0+, AS G+
-    // 35   | 8.6.0       | 8.6.1         | KFD+                | api35 --> agp8.6.0+ --> gradle8.7+, AS KFD+
-    // 36   | 8.9.0       | 8.9.3         | M+                  | api36 --> agp8.9.0+ --> gradle8.11.1+, AS M+
-    //
-    //      |             | 8.10.1        | AS MFD+
-    //      |             | 8.11.1        | AS N+
-    //      |             | 8.12.2        | AS NFD+
-    //      |             | 8.13.0        | AS N3FD+
-    //      |             |               |
+    // API 与 AGP, Gradle, AS 对应版本
+    // API Level https://developer.android.com/build/releases/about-agp#api-level-support
+    // API  | minimum AGP | AGP Patch | Gradle  | AS
+    //      |             | 3.6.4     |         |
+    //      |             | 4.2.2     |         |
+    // 33   | 7.2         | 7.4.2     | 7.5+    | E+  | api33   --> agp7.4.2   --> gradle7.6.6, AS E+
+    // 34   | 8.1.1       | 8.1.4     | 8.0+    | G+  | api34   --> agp8.1.1+  --> gradle8.0+, AS G+
+    // 35   | 8.6.0       | 8.6.1     | 8.7+    | K2+ | api35   --> agp8.6.0+  --> gradle8.7+, AS K2+
+    // 36   | 8.9.1       | 8.9.3     | 8.11.1+ | M1+ | api36   --> agp8.9.1+  --> gradle8.11.1+, AS M1+
+    // 36.1 | 8.13.0      | 8.13.0    | 8.13+   | N3+ | api36.1 --> agp8.13.0+ --> gradle8.13+, AS N3+
+    //      |             |           |         |
     //
     // 从 AGP 7.0.0 开始，构建 AAR 时不支持模块直接依赖本地 .aar 文件（不支持子模块包含本地 aar，请使用 maven 远程依赖）
     //
-    ext.agp_version = "8.9.+"
+//    ext.agp_version = "8.1.4"  // AS G+, API 34
+//    ext.agp_version = "8.6.1"  // AS K2+, API 35
+    ext.agp_version = "8.9.3"  // AS M1+, API 36
+//    ext.agp_version = "8.13.0" // AS N3+, API 36.1
 
     dependencies {
 //        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"

@@ -40,7 +40,13 @@ apply from: "../config_source.gradle"
 //    def composeBoMVersion = "2025.10.00"
 //    def composeBoMVersion = "2025.10.01"
 //    def composeBoMVersion = "2025.11.00"
-//    def composeBoMVersion = "2025.11.01"
+//    def composeBoMVersion = "2025.11.01" // minSdkVersion 21+
+//    def composeBoMVersion = "2025.12.00" // minSdkVersion 23+
+//    def composeBoMVersion = "2025.12.01"
+//    def composeBoMVersion = "2026.01.00"
+//    def composeBoMVersion = "2026.01.01"
+//    def composeBoMVersion = "2026.02.00"
+//    def composeBoMVersion = "2026.02.01"
 //
 def composeBoMVersion = "2025.11.01"
 
@@ -49,7 +55,14 @@ def time = new Date()
 def gitCommitCount = executeCmd("git rev-list --count HEAD")?.toInteger() ?: 0
 def gitCommitId = executeCmd("git rev-parse --short HEAD") ?: "v0.0.0" //
 def gitTag = executeCmd("git tag --points-at HEAD").split("\n")
+// 版本号版本名称管理方案：
+// 方案1，git 管理之 gitLastTag。
+// 无需审核时，可使用 release 分支合并版本分支，在版本对应节点打上 tag，再进行打包
 def gitLastTag = executeCmd("git describe --tags --always").split("-").first() ?: "v0.0.0"
+// 方案2，git 管理之 gitBranch。
+// 需要审核时，可使用版本分支进行打包，审核通过发行后可合并到主分支
+def gitBranch = executeCmd("git branch --show-current") ?: "alpha"
+// 方案3，常规管理，代码硬编码。
 
 static def executeCmd(String cmd) {
     try {
@@ -97,8 +110,13 @@ android {
         minSdk 21
         // 指定应用在运行时目标的 Android 版本。不影响可以使用的 API，而是影响应用在运行时的行为
         targetSdk 36
+
         versionCode gitCommitCount
-        versionName gitLastTag
+//        versionCode 1
+
+//        versionName gitLastTag
+        versionName "${gitBranch}.${gitCommitCount}"
+//        versionName "1.0.0"
 
         multiDexEnabled true
 
@@ -160,7 +178,7 @@ android {
             // github
             dimension "channel"
             applicationIdSuffix ".github"
-            versionNameSuffix ".github"
+            versionNameSuffix "_github"
             manifestPlaceholders = [app_channel: "\"${name}\""]
             buildConfigField "String", "APP_CHANNEL", "\"${name}\""
         }
@@ -203,7 +221,7 @@ android {
     buildTypes {
         debug {
             isDefault = true
-            versionNameSuffix ".${gitCommitId}"
+            versionNameSuffix "_${gitCommitId}"
             debuggable true // 可调试
             minifyEnabled false // 代码压缩 (R8/ProGuard)
             shrinkResources false // 资源压缩 (shrinkResources)
