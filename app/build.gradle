@@ -328,6 +328,9 @@ android {
 composeCompiler {
     reportsDestination = layout.buildDirectory.dir("compose_compiler")
     stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")
+
+    // Kotlin 2.0+ 特性，需要 Gradle 9.0+，可以进一步提升 Compose 的重组性能
+//    strongSkipping = true
 }
 
 // https://developer.android.com/build/dependencies
