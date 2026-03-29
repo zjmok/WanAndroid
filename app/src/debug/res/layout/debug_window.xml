@@ -93,7 +93,7 @@
             android:id="@+id/et_port"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:hint="prot"
+            android:hint="port"
             android:maxLines="1"
             android:singleLine="true" />
 
