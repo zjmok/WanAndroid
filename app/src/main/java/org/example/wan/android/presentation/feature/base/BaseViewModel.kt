@@ -3,19 +3,17 @@ package org.example.wan.android.presentation.feature.base
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import org.example.wan.android.data.remote.RetrofitClient
-import org.example.wan.android.data.remote.api.ApiException
-import org.example.wan.android.util.UserUtils
 import com.zjmok.util.toast
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import org.example.wan.android.data.remote.RetrofitClient
+import org.example.wan.android.data.remote.api.ApiException
+import org.example.wan.android.util.UserUtils
 import retrofit2.HttpException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
@@ -23,16 +21,9 @@ import java.net.UnknownHostException
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-abstract class BaseViewModel : ViewModel(),
-    // 直接将 this 赋予 MainScope
-    CoroutineScope by MainScope() {
+abstract class BaseViewModel : ViewModel() {
 
     val loginStatus = MutableLiveData<Boolean>()
-
-    override fun onCleared() {
-        cancel()
-        super.onCleared()
-    }
 
     protected fun onLogout() {
         RetrofitClient.clearCookie() // cookie 清除
@@ -57,12 +48,12 @@ abstract class BaseViewModel : ViewModel(),
         onEnd: (suspend () -> Unit)? = null,
         context: CoroutineContext = EmptyCoroutineContext,
         start: CoroutineStart = CoroutineStart.DEFAULT,
-        block: suspend (CoroutineScope) -> Unit,
+        block: suspend CoroutineScope.() -> Unit,
     ): Job {
         return viewModelScope.launch(context, start) {
             try {
                 onStart?.invoke()
-                block.invoke(this)
+                block()
             } catch (e: Exception) {
                 when (e) {
                     is CancellationException -> {
