@@ -52,16 +52,42 @@ def composeBoMVersion = "2025.11.01"
 
 def time = new Date()
 
-def gitCommitCount = executeCmd("git rev-list --count HEAD")?.toInteger() ?: 0
-def gitCommitId = executeCmd("git rev-parse --short HEAD") ?: "v0.0.0" //
-def gitTag = executeCmd("git tag --points-at HEAD").split("\n")
+// gradle configuration-cache 不兼容 executeCmd, 替换为 providers
+//def gitCommitCount = executeCmd("git rev-list --count HEAD")?.toInteger() ?: 0
+// gradle configuration-cache 要求不要直接在脚本里执行命令，要使用 Gradle 提供的 ValueSource (或简写为 providers)。这样 Gradle 会知道这个值是来自外部命令的，并在命令输出变化时自动刷新缓存
+def gitCommitCount = providers.exec {
+    commandLine "git", "rev-list", "--count", "HEAD"
+}.standardOutput.asText.map { it.trim().toInteger() }.getOrElse(0)
+
+// gradle configuration-cache 不兼容 executeCmd, 替换为 providers
+//def gitCommitId = executeCmd("git rev-parse --short HEAD") ?: "v0.0.0" //
+def gitCommitId = providers.exec {
+    commandLine "git", "rev-parse", "--short", "HEAD"
+}.standardOutput.asText.map { it.trim() }.getOrElse("v0.0.0")
+
+// gradle configuration-cache 不兼容 executeCmd, 替换为 providers
+//def gitTag = executeCmd("git tag --points-at HEAD").split("\n")
+def gitTag = providers.exec {
+    commandLine "git", "tag", "--points-at", "HEAD"
+}.standardOutput.asText.map { it.trim().split("\n") }.getOrElse([])
+
 // 版本号版本名称管理方案：
 // 方案1，git 管理之 gitLastTag。
 // 无需审核时，可使用 release 分支合并版本分支，在版本对应节点打上 tag，再进行打包
-def gitLastTag = executeCmd("git describe --tags --always").split("-").first() ?: "v0.0.0"
+// gradle configuration-cache executeCmd, 替换为 providers
+//def gitLastTag = executeCmd("git describe --tags --always").split("-").first() ?: "v0.0.0"
+def gitLastTag = providers.exec {
+    commandLine "git", "describe", "--tags", "--always"
+}.standardOutput.asText.map { it.trim().split("-").first() ?: "v0.0.0" }.getOrElse("v0.0.0")
+
 // 方案2，git 管理之 gitBranch。
 // 需要审核时，可使用版本分支进行打包，审核通过发行后可合并到主分支
-def gitBranch = executeCmd("git branch --show-current") ?: "alpha"
+// gradle configuration-cache executeCmd, 替换为 providers
+//def gitBranch = executeCmd("git branch --show-current") ?: "alpha"
+def gitBranch = providers.exec {
+    commandLine "git", "branch", "--show-current"
+}.standardOutput.asText.map { it.trim().isEmpty() ? "alpha" : it.trim() }.getOrElse("alpha")
+
 // 方案3，常规管理，代码硬编码。
 
 static def executeCmd(String cmd) {
@@ -585,3 +611,12 @@ dependencies {
     implementation 'com.github.getActivity:DeviceCompat:2.3'
 
 }
+
+// gradle configuration-cache 不兼容 buildFinished, 替换为 FlowAction
+// (FlowAction 是 Gradle 8.1+ 官方唯一支持的非阻塞式生命周期监听 API, 使用 configuration-cache 后应使用这 FlowAction, 但代码相对有点多)
+//gradle.buildFinished { result ->
+//    if (result.failure && gradle.startParameter.offline) {
+//        def text = "\n[OFFLINE MODE] 提示：当前 Gradle 处于 OFFLINE 模式，请尝试关闭离线模式再执行。"
+//        throw new RuntimeException(text)
+//    }
+//}
