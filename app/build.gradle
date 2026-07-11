@@ -151,17 +151,20 @@ android {
 //    ndkVersion project.properties.ndkVersion
 
     signingConfigs {
+        // 从 release.jks.properties 文件加载签名配置
         def releasePropsFile = rootProject.file("release.jks.properties")
         def releaseProps = null
         if (releasePropsFile.exists()) {
             releaseProps = new Properties()
             releaseProps.load(releasePropsFile.newDataInputStream())
         }
+        // 从环境变量加载签名配置
         def env = { String key -> System.getenv(key) }
-        if (releaseProps != null || env("RELEASE_STORE_FILE") != null) {
+        // 若 release.jks.properties 文件存在或环境变量中包含 RELEASE_STORE_FILE_BASE64，创建 release 签名配置
+        if (releaseProps != null || env("RELEASE_STORE_FILE_BASE64") != null) {
             // https://developer.android.com/studio/publish/app-signing#secure_key
             release {
-                storeFile rootProject.file(releaseProps?.getProperty("storeFile") ?: "release.jks")
+                storeFile rootProject.file(releaseProps?.getProperty("storeFile") ?: env("RELEASE_STORE_FILE") ?: "release.jks")
                 storePassword releaseProps?.getProperty("storePassword") ?: env("RELEASE_STORE_PASSWORD") ?: ""
                 keyAlias releaseProps?.getProperty("keyAlias") ?: env("RELEASE_KEY_ALIAS") ?: ""
                 keyPassword releaseProps?.getProperty("keyPassword") ?: env("RELEASE_KEY_PASSWORD") ?: ""

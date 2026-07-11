@@ -1,0 +1,64 @@
+# 当前版本适用多 flavor 项目
+# 但只构建 app 渠道的 Debug 变体
+
+name: CI
+
+on:
+  push:
+    branches: [ main, master, develop, dev ]
+  pull_request:
+    branches: [ main, master, develop, dev ]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # 构建 app 渠道的 Debug 变体（不构建 github 渠道，节省 CI 时间）
+      # 产物路径：app/build/outputs/apk/app/debug/*.apk
+      # --no-daemon: 禁用 Gradle daemon，避免与 setup-gradle 缓存冲突
+      - name: Assemble Debug APK
+        run: ./gradlew assembleAppDebug --no-daemon
+
+      # 仅对 app 渠道跑 Lint，避免重复检查 github 渠道
+      # 报告路径：app/build/reports/lint-results-appDebug.html / .xml
+      - name: Run Lint
+        run: ./gradlew lintAppDebug --no-daemon
+
+      # 上传 Debug APK 作为 artifact，供 PR 审查时下载测试
+      # 保留 7 天（短周期，避免占用过多存储）
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/app/debug/*.apk
+          retention-days: 7
+
+      # 上传 Lint 报告，便于查看代码质量问题
+      # if: always() 即使前面步骤失败也上传（lint 失败时更需要看报告）
+      - name: Upload Lint Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-results
+          path: |
+            app/build/reports/lint-results-appDebug.html
+            app/build/reports/lint-results-appDebug.xml
+          retention-days: 7
