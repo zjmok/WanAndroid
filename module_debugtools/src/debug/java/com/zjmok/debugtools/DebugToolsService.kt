@@ -2,8 +2,11 @@ package com.zjmok.debugtools
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlarmManager
 import android.app.AlertDialog
+import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -32,18 +35,41 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
+/**
+ * 提供给 actions 视图的能力上下文。
+ */
+interface DebugActionsContext {
+    /** 隐藏调试悬浮窗 */
+    fun hideWindow()
+
+    /** 获取栈顶 Activity，应用在后台时返回 null */
+    val topActivity: Activity?
+
+    /** 应用级协程作用域，用于在 actions 中启动协程 */
+    val serviceScope: CoroutineScope
+}
+
 @RequiresApi(Build.VERSION_CODES.M)
-class DebugToolsService : Service() {
+class DebugToolsService : Service(), DebugActionsContext {
 
     companion object {
         private const val POLL_INTERVAL = 3000L // 3秒轮询间隔
         private const val MAX_RETRY_COUNT = 20 // 最大重试次数
+
+        /**
+         * 静态注入点：由 app 在 [DebugTools.init] 之前设置，返回 actions 视图。
+         * 返回 null 表示不展示 actions 区块。
+         *
+         * [DebugActionsContext] 提供 hideWindow() / topActivity / serviceScope 等能力，
+         * 让注入的 actions 视图可以与悬浮窗交互。
+         */
+        var actionsViewFactory: ((DebugActionsContext, LayoutInflater) -> View?)? = null
     }
 
     private val windowManager: WindowManager by lazy { getSystemService(WINDOW_SERVICE) as WindowManager }
     private val floatButton: View by lazy {
         ImageView(this).apply {
-            setImageResource(android.R.drawable.ic_menu_edit)
+            setImageResource(android.R.drawable.ic_menu_preferences)
             setBackgroundResource(android.R.color.holo_blue_bright)
         }
     }
@@ -54,7 +80,7 @@ class DebugToolsService : Service() {
     private val prefs: SharedPreferences by lazy { getSharedPreferences("debug_base_url_prefs", MODE_PRIVATE) }
 
     private val serviceJob = Job()
-    private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
+    override val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
 
     @SuppressLint("SetTextI18n")
     private fun setupViews() {
@@ -97,12 +123,12 @@ class DebugToolsService : Service() {
             toast("已切换到 Profile3")
         }
 
-        actionsView()?.let {
+        // 关闭窗口重新打开时，setupViews 会再次调用，先清空容器避免重复添加
+        binding.llActions.removeAllViews()
+        actionsViewFactory?.invoke(this, LayoutInflater.from(this))?.let {
             binding.llActions.addView(it)
         }
     }
-
-    fun actionsView(): View? = null
 
     /**
      * 重新从 [DebugBaseUrl] 读取并回填表单。
@@ -302,6 +328,11 @@ class DebugToolsService : Service() {
         // 设置调试窗口内容
         binding.tvAppInfo.text = this.appInfo
 
+        binding.btnRestart.setOnClickListener {
+            hideDebugWindow()
+            relaunchApp()
+        }
+
         binding.btnCloseTool.setOnClickListener { stopSelf() }
 
         binding.btnCloseDialog.setOnClickListener { hideDebugWindow() }
@@ -316,6 +347,8 @@ class DebugToolsService : Service() {
         windowManager.removeView(debugWindow)
         isDebugWindowShown = false
     }
+
+    override fun hideWindow() = hideDebugWindow()
 
     private val appInfo: String
         get() {
@@ -334,6 +367,30 @@ class DebugToolsService : Service() {
             }
         }
 
+    /**
+     * 原生实现：杀进程重启 App（等价于 utilcodex 的 AppUtils.relaunchApp）。
+     * 通过 AlarmManager 延迟 100ms 触发启动 Intent，再 System.exit(0) 终止当前进程。
+     */
+    private fun relaunchApp() {
+        val intent = packageManager.getLaunchIntentForPackage(packageName)
+        if (intent == null) {
+            stopSelf()
+            return
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        } else {
+            PendingIntent.FLAG_CANCEL_CURRENT
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent, pendingIntentFlags
+        )
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent)
+        System.exit(0)
+    }
+
     override fun onDestroy() {
         // 取消所有协程
         serviceJob.cancel()
@@ -348,7 +405,7 @@ class DebugToolsService : Service() {
         super.onDestroy()
     }
 
-    private val topActivity: Activity?
+    override val topActivity: Activity?
         /**
          * 获取栈顶 Activity 的工具方法
          * AndroidUtilCode 的 ActivityUtils.getTopActivity 应用无论是在前台还是后台时都会返回 topActivity

@@ -5,15 +5,10 @@
 
     <application tools:ignore="MissingApplicationIcon">
 
-        <service
-            android:name=".DebugWindowService"
-            android:enabled="true"
-            android:exported="false"
-            tools:targetApi="23" />
-
         <!--
-        ContentProvider 自动初始化方案
+        ContentProvider 注入器
         由系统在 Application 实例创建后、Application.onCreate() 之前调用 onCreate()
+        负责向模块的 DebugToolsService 注入 actions 视图工厂
         -->
         <provider
             android:name=".DebugWindowInitializer"

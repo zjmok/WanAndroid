@@ -35,13 +35,13 @@ WanAndroid 是基于 wanandroid.com 开放 API 的 Android 客户端，采用 Vi
 │   │   ├── res-splash/         # Splash 资源
 │   │   ├── res-setting/        # 设置页资源
 │   │   └── AndroidManifest.xml
-│   ├── src/debug/              # debug 专用源集（FloatButtonApp / FloatButtonService，悬浮窗主体 + feature 按钮）
+│   ├── src/debug/              # debug 专用源集（DebugWindowInitializer：注入 actions 视图工厂到模块的 DebugToolsService）
 │   ├── build.gradle            # Groovy DSL
 │   └── proguard-rules.pro
 ├── module_debugtools/         # 调试工具库（com.zjmok.debugtools），Android Library
-│   ├── src/main/               # 主源集（DebugBaseUrl 数据层 + DebugBaseUrlView 自定义 View + 布局）
-│   ├── src/debug/              # debug 源集（BaseUrlInterceptor 真实实现）
-│   ├── src/release/            # release 源集（BaseUrlInterceptor 占位空实现）
+│   ├── src/main/               # 主源集（DebugBaseUrl 数据层）
+│   ├── src/debug/              # debug 源集（DebugTools + DebugToolsService + DebugActionsContext + BaseUrlInterceptor 真实实现 + 布局）
+│   ├── src/release/           # release 源集（DebugTools + BaseUrlInterceptor 占位空实现）
 │   └── build.gradle.kts        # Kotlin DSL
 ├── module_utils/               # 工具库（com.zjmok.util），Android Library
 │   └── build.gradle.kts        # Kotlin DSL，发布坐标 com.github.zjmok:util:0.0.1
@@ -202,21 +202,26 @@ remote / local / cache (具体实现)
 
 ### 调试工具模块（module_debugtools）
 
-独立 Android Library 模块，封装 BaseUrl 修改 UI + 数据层 + 拦截器，跨项目可复用。模块**不提供** Service，悬浮窗主体由 app 自行管理。
+独立 Android Library 模块，封装 BaseUrl 修改 UI + 数据层 + 拦截器 + 悬浮窗主体（应用信息/重启/关闭），跨项目可复用。模块自身负责 Service 启动，app 通过静态注入扩展 actions 视图。
 
 - **包名**：`com.zjmok.debugtools`
 - **main 源集**：
   - `DebugBaseUrl`（object）：BaseUrl 持久化数据层，使用 SharedPreferences 文件 `float_window_prefs`，需在 `App.onCreate()` 调用 `DebugBaseUrl.init(this, AppConst.BASE_URL)`
-  - `DebugBaseUrlView`（自定义 LinearLayout）：完整的 BaseUrl 修改 UI + 预设切换（清除/预设1/预设2/预设3/保存），内部自管理键盘隐藏与 toast，可在 app 布局中直接引用
-  - 布局 `debug_base_url_view.xml`（merge 标签）：BaseUrl 表单 + 预设按钮
-- **debug 源集**：`BaseUrlInterceptor` 真实实现，读取 `DebugBaseUrl.currentUrl` 替换请求 URL
-- **release 源集**：`BaseUrlInterceptor` 占位空实现，直接放行请求，确保 release 不打包任何调试逻辑
-- **变体传递**：app 的 debug 变体自动使用模块的 debug 变体（真实拦截器）；app 的 release 变体自动使用模块的 release 变体（占位实现）
+- **debug 源集**：
+  - `DebugTools`（object）：`init(context, defaultBaseUrl)` 内部调用 `DebugBaseUrl.init` + 启动 `DebugToolsService`
+  - `DebugToolsService`：完整悬浮窗服务，含 BaseUrl 表单、预设切换、应用信息、重启App（原生杀进程实现）、关闭工具/窗口按钮；通过 `actionsViewFactory` 静态注入点让 app 注入 feature 视图
+  - `DebugActionsContext`（顶层 interface）：提供给 actions 视图的能力上下文，含 `hideWindow()` / `topActivity` / `serviceScope`
+  - `BaseUrlInterceptor`：真实实现，读取 `DebugBaseUrl.currentUrl` 替换请求 URL
+  - 布局 `debug_base_url_view.xml`：BaseUrl 表单 + 预设按钮 + 重启App/关闭工具/关闭窗口按钮 + `ll_actions` 容器
+- **release 源集**：
+  - `DebugTools`（object）：`init()` 占位空实现，不启动 Service
+  - `BaseUrlInterceptor`：占位空实现，直接放行请求
+- **变体传递**：app 的 debug 变体自动使用模块的 debug 变体（真实 Service + 拦截器）；app 的 release 变体自动使用模块的 release 变体（占位实现）
 - **app 集成方式**：
   - `app/build.gradle` 添加 `implementation project(":module_debugtools")`
   - `RetrofitClient` 中 `import com.zjmok.debugtools.BaseUrlInterceptor` 并 `.addInterceptor(BaseUrlInterceptor())`
-  - `App.onCreate()` 调用 `DebugBaseUrl.init(this, AppConst.BASE_URL)`
-  - （可选）app 的 debug 源集悬浮窗布局中通过 `<com.zjmok.debugtools.DebugBaseUrlView>` 引入 BaseUrl 修改 UI
+  - `App.onCreate()` 调用 `DebugTools.init(this, AppConst.BASE_URL)`（debug 启动 Service，release 空操作）
+  - （可选）app 的 debug 源集通过 `DebugWindowInitializer`（ContentProvider）注入 `DebugToolsService.actionsViewFactory`，返回 feature 视图；ContentProvider 的 onCreate 早于 Application.onCreate，注入发生在 Service 启动之前
 
 ## CI / CD
 
