@@ -383,6 +383,8 @@ dependencies {
 //    lintChecks project(":module_lint")
 
     implementation project(":module_utils")
+    // 调试工具模块（BaseUrl 拦截 + 悬浮窗），debug 真实实现，release 占位实现
+    implementation project(":module_debugtools")
 
     // Test
     testImplementation "junit:junit:4.13.2"

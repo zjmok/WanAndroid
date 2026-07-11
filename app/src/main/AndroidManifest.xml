@@ -46,7 +46,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true"
-        tools:replace="android:name, android:allowBackup, android:icon, android:label, android:roundIcon, android:theme"
         tools:targetApi="33">
 
         <activity

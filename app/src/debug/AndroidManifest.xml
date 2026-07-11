@@ -3,17 +3,24 @@
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
-    <!-- 主清单声明 tools:replace 表示允许被覆盖，其它清单 tools:replace 表示请求要覆盖，必须双方都要声明 -->
-    <application
-        android:name=".FloatButtonApp"
-        tools:ignore="MissingApplicationIcon"
-        tools:replace="android:name">
+    <application tools:ignore="MissingApplicationIcon">
 
         <service
-            android:name=".FloatButtonService"
+            android:name=".DebugWindowService"
             android:enabled="true"
             android:exported="false"
             tools:targetApi="23" />
+
+        <!--
+        ContentProvider 自动初始化方案
+        由系统在 Application 实例创建后、Application.onCreate() 之前调用 onCreate()
+        -->
+        <provider
+            android:name=".DebugWindowInitializer"
+            android:authorities="${applicationId}.floatbutton.initializer"
+            android:enabled="true"
+            android:exported="false"
+            android:initOrder="100" />
 
     </application>
 

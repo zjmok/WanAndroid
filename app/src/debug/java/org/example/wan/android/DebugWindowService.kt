@@ -18,31 +18,28 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
 import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.AppUtils
-import org.example.wan.android.constant.AppConst
-import org.example.wan.android.databinding.DebugWindowBinding
-import org.example.wan.android.presentation.compose.ComposeActivity
-import org.example.wan.android.presentation.feature.MainActivity
-import org.example.wan.android.presentation.feature.dialog.AppDetailDialog
-import org.example.wan.android.presentation.feature.setting.SettingActivity
-import org.example.wan.android.util.gson.toJson
 import com.zjmok.util.toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.example.wan.android.databinding.DebugWindowBinding
+import org.example.wan.android.presentation.compose.ComposeActivity
+import org.example.wan.android.presentation.feature.MainActivity
+import org.example.wan.android.presentation.feature.dialog.AppDetailDialog
+import org.example.wan.android.presentation.feature.setting.SettingActivity
+import org.example.wan.android.util.gson.toJson
 import kotlin.math.abs
 
 @RequiresApi(api = Build.VERSION_CODES.M)
-class FloatButtonService : Service() {
+class DebugWindowService : Service() {
 
     companion object {
         private const val POLL_INTERVAL = 3000L // 3秒轮询间隔
@@ -51,7 +48,6 @@ class FloatButtonService : Service() {
 
     private val windowManager: WindowManager by lazy { getSystemService(WINDOW_SERVICE) as WindowManager }
     private val floatButton: View by lazy {
-        // 创建悬浮按钮
         ImageView(this).apply {
             setImageResource(android.R.drawable.ic_menu_preferences)
             setBackgroundResource(android.R.color.holo_blue_bright)
@@ -66,65 +62,8 @@ class FloatButtonService : Service() {
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
 
-    private fun saveUrl(scheme: String, host: String, port: String = "") {
-        prefs.edit { putString("scheme", scheme) }
-        prefs.edit { putString("host", host) }
-        prefs.edit { putString("port", port) }
-    }
-
     @SuppressLint("SetTextI18n")
     private fun setDebugWindow() {
-        val defaultUri = AppConst.BASE_URL.toUri()
-        val scheme = prefs.getString("scheme", defaultUri.scheme)
-        val host = prefs.getString("host", defaultUri.host)
-        val port = prefs.getString("port", "${defaultUri.port.takeIf { it > 0 } ?: ""}")
-
-        debugWindowBinding.etScheme.setText(scheme)
-        debugWindowBinding.etHost.setText(host)
-        debugWindowBinding.etPort.setText(port)
-
-        debugWindowBinding.btnSave.setOnClickListener {
-            val resultScheme = debugWindowBinding.etScheme.text.toString().trim()
-            val resultIp = debugWindowBinding.etHost.text.toString().trim()
-            val resultPort = debugWindowBinding.etPort.text.toString().trim()
-
-            saveUrl(resultScheme, resultIp, resultPort)
-
-            hideKeyboard()
-            toast("已保存")
-        }
-
-        // Clear
-        debugWindowBinding.btnClear.setOnClickListener {
-            saveUrl("", "")
-            hideKeyboard()
-            setDebugWindow()
-            toast("已清除修改")
-        }
-
-        // profile1
-        debugWindowBinding.btnProfile1.setOnClickListener {
-            saveUrl("https", "www.wanandroid.com", "")
-            hideKeyboard()
-            setDebugWindow()
-            toast("已切换到 Profile1")
-        }
-
-        // profile2
-        debugWindowBinding.btnProfile2.setOnClickListener {
-            saveUrl("http", "192.168.1.1", "8080")
-            hideKeyboard()
-            setDebugWindow()
-            toast("已切换到 Profile2")
-        }
-
-        // profile3
-        debugWindowBinding.btnProfile3.setOnClickListener {
-            saveUrl("https", "192.168.1.254", "8443")
-            hideKeyboard()
-            setDebugWindow()
-            toast("已切换到 Profile3")
-        }
 
         // feature1
         debugWindowBinding.btnFeature1.text = "应用详情"
@@ -214,17 +153,6 @@ class FloatButtonService : Service() {
         debugWindowBinding.btnFeature8.setOnClickListener { }
     }
 
-    private fun hideKeyboard() {
-        val focusedView = debugWindow.findFocus() ?: return
-        // 清除焦点
-        focusedView.clearFocus()
-        // 关闭软键盘
-        if (focusedView is EditText) {
-            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(focusedView.getWindowToken(), 0)
-        }
-    }
-
     override fun onBind(intent: Intent): IBinder? {
         return null
     }
@@ -280,7 +208,7 @@ class FloatButtonService : Service() {
         serviceScope.launch {
             var currentRetryCount = 0
             while (currentRetryCount < MAX_RETRY_COUNT) {
-                if (Settings.canDrawOverlays(this@FloatButtonService)) {
+                if (Settings.canDrawOverlays(this@DebugWindowService)) {
                     // 已授权
                     initFloatButton()
                     break
@@ -399,8 +327,8 @@ class FloatButtonService : Service() {
             PixelFormat.TRANSLUCENT
         )
 
-        debugParams.gravity = Gravity.TOP
-        debugParams.y = dpToPx(100)
+        debugParams.gravity = Gravity.CENTER
+        debugParams.y = dpToPx(0)
 
         // 设置调试窗口内容
         debugWindowBinding.tvAppInfo.text = this.appInfo
