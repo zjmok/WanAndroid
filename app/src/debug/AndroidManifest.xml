@@ -15,7 +15,8 @@
             android:authorities="${applicationId}.floatbutton.initializer"
             android:enabled="true"
             android:exported="false"
-            android:initOrder="100" />
+            android:initOrder="100"
+            tools:targetApi="23" />
 
     </application>
 
