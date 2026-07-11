@@ -383,6 +383,8 @@ dependencies {
 //    lintChecks project(":module_lint")
 
     implementation project(":module_utils")
+    // debugtools：BaseUrl 运行时切换（release 自动 no-op）
+    implementation project(":module_debugtools")
 
     // Test
     testImplementation "junit:junit:4.13.2"
