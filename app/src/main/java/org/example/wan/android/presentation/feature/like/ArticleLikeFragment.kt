@@ -14,12 +14,12 @@ import org.example.wan.android.data.model.WebData
 import org.example.wan.android.databinding.FragmentArticleLikeBinding
 import org.example.wan.android.presentation.feature.common.ArticleListPagingAdapter
 import org.example.wan.android.presentation.feature.common.ArticleWebActivity
-import org.example.wan.android.util.gone
-import org.example.wan.android.util.visible
-import org.example.wan.android.util.getViewModel
-import org.example.wan.android.util.newIntent
-import org.example.wan.android.util.postEvent
-import org.example.wan.android.util.registerResultOK
+import com.zjmok.util.gone
+import com.zjmok.util.visible
+import com.zjmok.util.getViewModel
+import com.zjmok.util.newIntent
+import org.example.wan.android.util.liveeventbus.postEvent
+import com.zjmok.util.registerResultOK
 
 class ArticleLikeFragment : VVMBaseFragment<ArticleLikeViewModel, FragmentArticleLikeBinding>() {
 

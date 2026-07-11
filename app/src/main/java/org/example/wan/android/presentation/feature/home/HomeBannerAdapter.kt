@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.example.wan.android.data.model.BannerItem
 import org.example.wan.android.data.model.LikeData
 import org.example.wan.android.databinding.ViewBannerBinding
-import org.example.wan.android.util.load
+import org.example.wan.android.util.glide.load
 import com.youth.banner.adapter.BannerAdapter
 import splitties.views.onClick
 

@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.core.net.toUri
+import com.zjmok.util.AppPkg
+import com.zjmok.util.loge
+import com.zjmok.util.toast
 import org.example.wan.android.App
 
 // 使用系统的浏览器列表
@@ -108,11 +111,11 @@ fun Context.startBrowser(url: String) {
     val specifiedPkgList = mutableListOf<String>()
         .apply {
             addAll(pkgList)
-            // 阿猫阿狗都说自己是浏览器（淘宝、京东、WPS...），不要系统默认解析的
+            // 伪浏览器（淘宝、京东、WPS...），不要系统默认解析的
 //            addAll(resolvePkgList)
         }
-        // TODO: 小米 MIUI 12 有 bug，魔改它自己的默认浏览器到推荐位置后导致后面其它方式的索引差了一位
-        // TODO: 受不了 过滤掉
+        // TODO: 小米 MIUI 12 有 bug，它自己的默认浏览器在推荐位置，后面其它方式的索引差了一位
+        // TODO: 过滤掉
         .filter {
             it != AppPkg.Browser.pkg
         }

@@ -1,12 +1,12 @@
 package org.example.wan.android.data.remote.interceptors
 
-import org.example.wan.android.BuildConfig
-import org.example.wan.android.util.loge
-import org.example.wan.android.util.logeLong
+import com.zjmok.util.loge
+import com.zjmok.util.logeLong
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import okio.Buffer
+import org.example.wan.android.BuildConfig
 import java.io.IOException
 import java.nio.charset.Charset
 

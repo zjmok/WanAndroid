@@ -19,6 +19,16 @@ import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.ZipUtils
 import com.bumptech.glide.Glide
+import com.zjmok.util.AppPkg
+import com.zjmok.util.getViewModel
+import com.zjmok.util.toUriCompat
+import com.zjmok.util.toast
+import com.zjmok.util.toastLong
+import com.zjmok.util.visible
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.example.wan.android.R
 import org.example.wan.android.constant.AppConst
 import org.example.wan.android.constant.EventBus
@@ -27,26 +37,16 @@ import org.example.wan.android.databinding.ActivitySettingBinding
 import org.example.wan.android.presentation.feature.base.activity.VVMBaseActivity
 import org.example.wan.android.presentation.feature.dialog.AppDetailDialog
 import org.example.wan.android.presentation.feature.web.WebActivity
-import org.example.wan.android.util.AppPkg
 import org.example.wan.android.util.MyAppUtils
 import org.example.wan.android.util.UserUtils
 import org.example.wan.android.util.alert
 import org.example.wan.android.util.cancel
 import org.example.wan.android.util.getCurrentLocale
 import org.example.wan.android.util.getCustomDisplayName
-import org.example.wan.android.util.getUri
-import org.example.wan.android.util.getViewModel
+import org.example.wan.android.util.liveeventbus.postEvent
 import org.example.wan.android.util.neutral
 import org.example.wan.android.util.ok
-import org.example.wan.android.util.postEvent
-import org.example.wan.android.util.toast
-import org.example.wan.android.util.toastLong
 import org.example.wan.android.util.userLocale
-import org.example.wan.android.util.visible
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import splitties.views.onClick
 import java.io.File
 
@@ -256,7 +256,7 @@ class SettingActivity : VVMBaseActivity<SettingViewModel, ActivitySettingBinding
                         putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
                         putExtra(Intent.EXTRA_SUBJECT, "${getString(R.string.app_name)}-崩溃日志上报")
                         putExtra(Intent.EXTRA_TEXT, MyAppUtils.getMyAppInfo(activity))
-                        putExtra(Intent.EXTRA_STREAM, File(zipFilePath).getUri())
+                        putExtra(Intent.EXTRA_STREAM, File(zipFilePath).toUriCompat())
                         type = "application/octet-stream"
                     }
                     if (intent.resolveActivity(packageManager) != null) {

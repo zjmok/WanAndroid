@@ -6,7 +6,9 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <!-- 12 -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <!-- 12L 旧的读写 -->
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
@@ -14,25 +16,27 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"
         tools:ignore="ScopedStorage" />
-    <!-- 13 -->
+    <!-- 13 精细媒体权限 -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-    <!-- 14 -->
+    <!-- 14 选择部分媒体 -->
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
 
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-
-    <!-- 适配 Android 10 沙盒
+    <!-- 适配（暂不开启） Android 10 分区存储 ScopedStorage, 暂时保留旧版存储行为, targetSdk 30 运行在 Android 11+ (API 30+) 的设备上失效
     android:requestLegacyExternalStorage="true"
     -->
     <!-- WebView 支持明文流量 即 Http
     android:usesCleartextTraffic="true"
+    -->
+    <!-- ScopedStorage 卸载可保留数据
+    android:hasFragileUserData="true"
     -->
     <application
         android:name=".App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
+        android:hasFragileUserData="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:manageSpaceActivity=".presentation.feature.setting.ManageSpaceActivity"
@@ -150,9 +154,10 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
+                android:resource="@xml/util_file_paths" />
         </provider>
 
+        <!-- ImmersionBar -->
         <!--适配华为（huawei）刘海屏-->
         <meta-data
             android:name="android.notch_support"

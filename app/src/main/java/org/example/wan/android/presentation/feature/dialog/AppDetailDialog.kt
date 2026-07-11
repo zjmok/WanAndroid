@@ -8,9 +8,9 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import com.zjmok.util.dp2pxInt
+import com.zjmok.util.setTypeface
 import org.example.wan.android.util.MyAppUtils.getMyAppInfo
-import org.example.wan.android.util.dp2pxInt
-import org.example.wan.android.util.setTypeface
 
 class AppDetailDialog(context: Context) :
     AlertDialog(context) {

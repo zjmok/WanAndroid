@@ -15,7 +15,7 @@ import org.example.wan.android.util.MyAppUtils
 import org.example.wan.android.util.alert
 import org.example.wan.android.util.cancel
 import org.example.wan.android.util.ok
-import org.example.wan.android.util.loge
+import com.zjmok.util.loge
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

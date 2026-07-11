@@ -7,8 +7,8 @@ import com.blankj.utilcode.util.ColorUtils
 import org.example.wan.android.R
 import org.example.wan.android.data.model.Comment
 import org.example.wan.android.databinding.RvItemCommentBinding
-import org.example.wan.android.util.fromHtmlLegacy
-import org.example.wan.android.util.visible
+import com.zjmok.util.fromHtmlLegacy
+import com.zjmok.util.visible
 import splitties.systemservices.layoutInflater
 import splitties.views.imageResource
 
@@ -28,7 +28,7 @@ class CommentRvAdapter(var list: List<Comment>) : RecyclerView.Adapter<CommentRv
         list = list.sortedWith(
 //            compareBy(
             // 没有 `public fun <T> compareByDescending(vararg selectors: (T) -> Comparable<*>?): Comparator<T>`
-            org.example.wan.android.util.compareByDescending(
+            com.zjmok.util.compareByDescending(
                 { it.zan },
                 { it.publishDate },
             )
@@ -41,7 +41,7 @@ class CommentRvAdapter(var list: List<Comment>) : RecyclerView.Adapter<CommentRv
         byLikeOrTime = false
         list = list.sortedWith(
 //            compareBy(
-            org.example.wan.android.util.compareByDescending(
+            com.zjmok.util.compareByDescending(
                 { it.publishDate },
                 { it.zan },
             )
@@ -77,7 +77,7 @@ class CommentRvAdapter(var list: List<Comment>) : RecyclerView.Adapter<CommentRv
             floor, if (byLikeOrTime) {
                 comment.replyComments.sortedWith(
 //                    compareBy(
-                    org.example.wan.android.util.compareByDescending(
+                    com.zjmok.util.compareByDescending(
                         { it.publishDate },
                         { it.zan },
                     )
@@ -85,7 +85,7 @@ class CommentRvAdapter(var list: List<Comment>) : RecyclerView.Adapter<CommentRv
             } else {
                 comment.replyComments.sortedWith(
 //                    compareBy(
-                    org.example.wan.android.util.compareByDescending(
+                    com.zjmok.util.compareByDescending(
                         { it.publishDate },
                         { it.zan },
                     )

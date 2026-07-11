@@ -2,7 +2,10 @@ package org.example.wan.android.util
 
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.SPUtils
+import com.zjmok.util.decrypt
+import com.zjmok.util.encrypt
 import org.example.wan.android.data.model.SuperUserInfo
+import org.example.wan.android.util.gson.toJson
 
 object UserUtils {
     private const val SP_NAME = "UserInfo"

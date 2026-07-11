@@ -6,8 +6,8 @@ import com.blankj.utilcode.util.ClipboardUtils
 import org.example.wan.android.presentation.feature.base.activity.VBaseActivity
 import org.example.wan.android.databinding.ActivitySchemeBinding
 import org.example.wan.android.presentation.feature.MainActivity
-import org.example.wan.android.util.toast
-import org.example.wan.android.util.toastLong
+import com.zjmok.util.toast
+import com.zjmok.util.toastLong
 import splitties.activities.start
 import splitties.views.onClick
 

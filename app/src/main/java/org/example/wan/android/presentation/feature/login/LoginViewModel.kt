@@ -26,7 +26,7 @@ class LoginViewModel : BaseViewModel() {
                     collectArticleInfo = null,
                 )
             )
-            this.result.postValue(true)
+            this@LoginViewModel.result.postValue(true)
         }
     }
 
@@ -40,7 +40,7 @@ class LoginViewModel : BaseViewModel() {
                     collectArticleInfo = null,
                 )
             )
-            this.result.postValue(true)
+            this@LoginViewModel.result.postValue(true)
         }
     }
 

@@ -12,9 +12,9 @@ import org.example.wan.android.data.model.ArticlesTreeItem
 import org.example.wan.android.databinding.FragmentProjectBinding
 import org.example.wan.android.presentation.feature.common.VpFragmentAdapter
 import org.example.wan.android.presentation.feature.project.fragment.ProjectTabFragment
-import org.example.wan.android.util.visible
-import org.example.wan.android.util.getViewModel
-import org.example.wan.android.util.observeEvent
+import com.zjmok.util.visible
+import com.zjmok.util.getViewModel
+import org.example.wan.android.util.liveeventbus.observeEvent
 import com.google.android.material.tabs.TabLayoutMediator
 import splitties.bundle.put
 import splitties.views.onClick

@@ -18,14 +18,14 @@ import org.example.wan.android.data.model.WebData
 import org.example.wan.android.databinding.FragmentSubscribeTabBinding
 import org.example.wan.android.presentation.feature.common.ArticleListPagingAdapter
 import org.example.wan.android.presentation.feature.common.ArticleWebActivity
-import org.example.wan.android.util.afterTextChanged
-import org.example.wan.android.util.gone
-import org.example.wan.android.util.hideSoftInput
-import org.example.wan.android.util.visible
-import org.example.wan.android.util.getViewModel
-import org.example.wan.android.util.newIntent
-import org.example.wan.android.util.observeEvent
-import org.example.wan.android.util.registerResultOK
+import com.zjmok.util.afterTextChanged
+import com.zjmok.util.gone
+import com.zjmok.util.hideSoftInput
+import com.zjmok.util.visible
+import com.zjmok.util.getViewModel
+import com.zjmok.util.newIntent
+import org.example.wan.android.util.liveeventbus.observeEvent
+import com.zjmok.util.registerResultOK
 import splitties.views.onClick
 
 class SubscribeTabFragment : VVMBaseFragment<SubscribeTabViewModel, FragmentSubscribeTabBinding>() {

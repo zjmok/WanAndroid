@@ -35,15 +35,60 @@ apply from: "../config_source.gradle"
 //    def composeBoMVersion = "2025.06.01"
 //    def composeBoMVersion = "2025.07.01"
 //    def composeBoMVersion = "2025.08.01"
+//    def composeBoMVersion = "2025.09.00"
+//    def composeBoMVersion = "2025.09.01"
+//    def composeBoMVersion = "2025.10.00"
+//    def composeBoMVersion = "2025.10.01"
+//    def composeBoMVersion = "2025.11.00"
+//    def composeBoMVersion = "2025.11.01" // minSdkVersion 21+
+//    def composeBoMVersion = "2025.12.00" // minSdkVersion 23+
+//    def composeBoMVersion = "2025.12.01"
+//    def composeBoMVersion = "2026.01.00"
+//    def composeBoMVersion = "2026.01.01"
+//    def composeBoMVersion = "2026.02.00"
+//    def composeBoMVersion = "2026.02.01"
 //
-def composeBoMVersion = "2025.08.01"
+def composeBoMVersion = "2025.11.01"
 
 def time = new Date()
 
-def gitCommitCount = executeCmd("git rev-list --count HEAD")?.toInteger() ?: 0
-def gitCommitId = executeCmd("git rev-parse --short HEAD") ?: "v0.0.0" //
-def gitTag = executeCmd("git tag --points-at HEAD").split("\n")
-def gitLastTag = executeCmd("git describe --tags --always").split("-").first() ?: "v0.0.0"
+// gradle configuration-cache 不兼容 executeCmd, 替换为 providers
+//def gitCommitCount = executeCmd("git rev-list --count HEAD")?.toInteger() ?: 0
+// gradle configuration-cache 要求不要直接在脚本里执行命令，要使用 Gradle 提供的 ValueSource (或简写为 providers)。这样 Gradle 会知道这个值是来自外部命令的，并在命令输出变化时自动刷新缓存
+def gitCommitCount = providers.exec {
+    commandLine "git", "rev-list", "--count", "HEAD"
+}.standardOutput.asText.map { it.trim().toInteger() }.getOrElse(0)
+
+// gradle configuration-cache 不兼容 executeCmd, 替换为 providers
+//def gitCommitId = executeCmd("git rev-parse --short HEAD") ?: "v0.0.0" //
+def gitCommitId = providers.exec {
+    commandLine "git", "rev-parse", "--short", "HEAD"
+}.standardOutput.asText.map { it.trim() }.getOrElse("v0.0.0")
+
+// gradle configuration-cache 不兼容 executeCmd, 替换为 providers
+//def gitTag = executeCmd("git tag --points-at HEAD").split("\n")
+def gitTag = providers.exec {
+    commandLine "git", "tag", "--points-at", "HEAD"
+}.standardOutput.asText.map { it.trim().split("\n") }.getOrElse([])
+
+// 版本号版本名称管理方案：
+// 方案1，git 管理之 gitLastTag。
+// 无需审核时，可使用 release 分支合并版本分支，在版本对应节点打上 tag，再进行打包
+// gradle configuration-cache executeCmd, 替换为 providers
+//def gitLastTag = executeCmd("git describe --tags --always").split("-").first() ?: "v0.0.0"
+def gitLastTag = providers.exec {
+    commandLine "git", "describe", "--tags", "--always"
+}.standardOutput.asText.map { it.trim().split("-").first() ?: "v0.0.0" }.getOrElse("v0.0.0")
+
+// 方案2，git 管理之 gitBranch。
+// 需要审核时，可使用版本分支进行打包，审核通过发行后可合并到主分支
+// gradle configuration-cache executeCmd, 替换为 providers
+//def gitBranch = executeCmd("git branch --show-current") ?: "alpha"
+def gitBranch = providers.exec {
+    commandLine "git", "branch", "--show-current"
+}.standardOutput.asText.map { it.trim().isEmpty() ? "alpha" : it.trim() }.getOrElse("alpha")
+
+// 方案3，常规管理，代码硬编码。
 
 static def executeCmd(String cmd) {
     try {
@@ -91,8 +136,13 @@ android {
         minSdk 21
         // 指定应用在运行时目标的 Android 版本。不影响可以使用的 API，而是影响应用在运行时的行为
         targetSdk 36
+
         versionCode gitCommitCount
-        versionName gitLastTag
+//        versionCode 1
+
+//        versionName gitLastTag
+        versionName "${gitBranch}.${gitCommitCount}"
+//        versionName "1.0.0"
 
         multiDexEnabled true
 
@@ -154,7 +204,7 @@ android {
             // github
             dimension "channel"
             applicationIdSuffix ".github"
-            versionNameSuffix ".github"
+            versionNameSuffix "_github"
             manifestPlaceholders = [app_channel: "\"${name}\""]
             buildConfigField "String", "APP_CHANNEL", "\"${name}\""
         }
@@ -197,7 +247,7 @@ android {
     buildTypes {
         debug {
             isDefault = true
-            versionNameSuffix ".${gitCommitId}"
+            versionNameSuffix "_${gitCommitId}"
             debuggable true // 可调试
             minifyEnabled false // 代码压缩 (R8/ProGuard)
             shrinkResources false // 资源压缩 (shrinkResources)
@@ -215,7 +265,9 @@ android {
     }
 
     // variant 变体，由 flavorDimensions + productFlavors + buildTypes 组合而成
-    // 配置优先级 main < flavorDimensions < productFlavors < buildTypes < variant，因为后者会覆盖前者
+    // 配置优先级 main < flavorDimensions < productFlavors < buildTypes < variant
+    // 后者会覆盖前者
+    // 不同的 source set 中有相同代码资源也会如此优先级覆盖，类似 debugImplementation 与 main 的有相同代码资源也是如此
     android.applicationVariants.configureEach { variant ->
         variant.outputs.configureEach {
             def flavorType = variant.productFlavors.collect {
@@ -302,6 +354,9 @@ android {
 composeCompiler {
     reportsDestination = layout.buildDirectory.dir("compose_compiler")
     stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")
+
+    // Kotlin 2.0+ 特性，需要 Gradle 9.0+，可以进一步提升 Compose 的重组性能
+//    strongSkipping = true
 }
 
 // https://developer.android.com/build/dependencies
@@ -332,6 +387,8 @@ dependencies {
     // `lintChecks` 是 lint-checks 库的，Lint 专用
     //noinspection DependencyNotationArgument
 //    lintChecks project(":module_lint")
+
+    implementation project(":module_utils")
 
     // Test
     testImplementation "junit:junit:4.13.2"
@@ -400,9 +457,13 @@ dependencies {
     implementation "com.google.android.material:material:1.13.0"
     implementation "androidx.appcompat:appcompat:1.7.1"
     implementation "androidx.core:core-ktx:1.17.0"
-    implementation "androidx.core:core-splashscreen:1.0.1"
-    implementation "androidx.activity:activity-ktx:1.10.1"
-    def lifecycleVersion = "2.9.3"
+    implementation "androidx.core:core-splashscreen:1.2.0"
+    // 1.12.0 最低支持 api 23
+    // 1.11.0 最低支持 api 21
+    implementation "androidx.activity:activity-ktx:1.11.0"
+    // 2.10.0 最低支持 api 23
+    // 2.9.4 最低支持 api 21
+    def lifecycleVersion = "2.9.4"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:${lifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:${lifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${lifecycleVersion}"
@@ -415,24 +476,30 @@ dependencies {
     // viewpager2 1.1 新特性 registerFragmentTransactionCallback
     implementation "androidx.viewpager2:viewpager2:1.1.0"
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:${lifecycleVersion}") // compose
-    def navigationVersion = "2.9.3"
+    def navigationVersion = "2.9.6"
     implementation "androidx.navigation:navigation-fragment-ktx:${navigationVersion}"
     implementation "androidx.navigation:navigation-ui-ktx:${navigationVersion}"
     implementation("androidx.navigation:navigation-compose:${navigationVersion}") // compose
     implementation "androidx.palette:palette-ktx:1.0.0"
+    // 2.6.2 最低支持 api 2.3
+    // 2.5.2 最低支持 api 2.1
     implementation "androidx.sqlite:sqlite-ktx:2.5.2"
     // https://developer.android.com/jetpack/androidx/releases/datastore
     def datastoreVersion = "1.1.7"
     implementation("androidx.datastore:datastore:${datastoreVersion}") // datastore
     implementation("androidx.datastore:datastore-preferences:${datastoreVersion}") // preferences datastore
     // https://developer.android.com/jetpack/androidx/releases/room
+    // 2.8.4 最低支持 api 2.3
+    // 2.7.2 最低支持 api 2.1
     def roomVersion = "2.7.2"
     implementation("androidx.room:room-runtime:${roomVersion}")
     implementation("androidx.room:room-ktx:${roomVersion}")
 //    kapt("androidx.room:room-compiler:${roomVersion}")
     ksp("androidx.room:room-compiler:${roomVersion}")
     testImplementation("androidx.room:room-testing:${roomVersion}")
-    implementation "androidx.work:work-runtime-ktx:2.10.3"
+    // 2.11.0 最低支持 api 2.3
+    // 2.10.5 最低支持 api 2.1
+    implementation "androidx.work:work-runtime-ktx:2.10.5"
     def pagingVersion = "3.3.6"
     implementation("androidx.paging:paging-runtime-ktx:${pagingVersion}")
     implementation("androidx.paging:paging-compose:${pagingVersion}") // paging compose
@@ -450,9 +517,14 @@ dependencies {
     // https://github.com/Blankj/AndroidUtilCode
     implementation "com.blankj:utilcodex:1.31.1"
     // 沉浸状态栏
+    // fixme: ColorOS 似乎不兼容
     // https://github.com/gyf-dev/ImmersionBar
-    implementation "com.geyifeng.immersionbar:immersionbar:3.2.2"
-    implementation "com.geyifeng.immersionbar:immersionbar-ktx:3.2.2"
+//    implementation "com.geyifeng.immersionbar:immersionbar:3.2.2"
+//    implementation "com.geyifeng.immersionbar:immersionbar:3.2.2"
+    // 适配 Android 15 16
+    // https://github.com/OCNYang/ImmersionBar
+    implementation "com.github.OCNYang.ImmersionBar:immersionbar:3.4.0"
+    implementation "com.github.OCNYang.ImmersionBar:immersionbar-ktx:3.4.0"
     // gson
     implementation "com.google.code.gson:gson:2.13.1"
     // 网络
@@ -505,7 +577,9 @@ dependencies {
 
     // 弹窗
     // https://github.com/li-xiaojun/XPopup
-    implementation("com.github.li-xiaojun:XPopup:2.9.19") {
+    // 2.9.19
+    // 2.10.0
+    implementation("com.github.li-xiaojun:XPopup:2.10.0") {
         exclude group: "com.davemorrissey.labs", module: "subsampling-scale-image-view-androidx"
     }
 
@@ -526,14 +600,23 @@ dependencies {
 
     // 吐司框架
     // https://github.com/getActivity/Toaster
-//    implementation 'com.github.getActivity:Toaster:13.5'
+//    implementation 'com.github.getActivity:Toaster:13.8'
     // https://github.com/zjmok/Toaster
-    implementation 'com.github.zjmok:Toaster:13.5.2' // 基于 13.5 的修改版
+//    implementation 'com.github.zjmok:Toaster:13.8.1' // 基于 13.8 的修改版
     // 日志调试框架
     // https://github.com/getActivity/Logcat
-//    debugImplementation "com.github.getActivity:Logcat:12.3"
+//    debugImplementation "com.github.getActivity:Logcat:12.5"
     // 设备兼容框架
     // https://github.com/getActivity/DeviceCompat
-    implementation 'com.github.getActivity:DeviceCompat:1.6'
+    implementation 'com.github.getActivity:DeviceCompat:2.3'
 
 }
+
+// gradle configuration-cache 不兼容 buildFinished, 替换为 FlowAction
+// (FlowAction 是 Gradle 8.1+ 官方唯一支持的非阻塞式生命周期监听 API, 使用 configuration-cache 后应使用这 FlowAction, 但代码相对有点多)
+//gradle.buildFinished { result ->
+//    if (result.failure && gradle.startParameter.offline) {
+//        def text = "\n[OFFLINE MODE] 提示：当前 Gradle 处于 OFFLINE 模式，请尝试关闭离线模式再执行。"
+//        throw new RuntimeException(text)
+//    }
+//}

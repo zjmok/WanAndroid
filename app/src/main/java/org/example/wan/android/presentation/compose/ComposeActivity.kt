@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,9 +30,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.blankj.utilcode.util.ActivityUtils
+import com.zjmok.util.navBarHeight
+import com.zjmok.util.statusBarHeight
+import com.zjmok.util.toast
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import org.example.wan.android.R
 import org.example.wan.android.presentation.compose.ui.theme.WanAndroidTheme
 import org.example.wan.android.presentation.feature.dialog.AppDetailDialog
@@ -39,14 +47,9 @@ import org.example.wan.android.presentation.feature.person.BookmarkActivity
 import org.example.wan.android.presentation.feature.person.HistoryActivity
 import org.example.wan.android.presentation.feature.search.SearchActivity
 import org.example.wan.android.presentation.feature.setting.ManageSpaceActivity
-import org.example.wan.android.util.px2dp
+import org.example.wan.android.util.compose.px2dp
 import org.example.wan.android.util.startBrowser
 import org.example.wan.android.util.startUrl
-import org.example.wan.android.util.toast
-import org.example.wan.android.util.toaster
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 
 class ComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -280,19 +283,21 @@ fun PageList(name: String, modifier: Modifier = Modifier) {
                 )
             }
             Spacer(modifier = Modifier.size(1.px2dp()))
-            // toaster test
+            // bar test
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(colorResource(id = R.color.wx_foreground))
                     .clickable {
-                        toaster("toaster test")
+                        val statusBarHeight = context.statusBarHeight
+                        val navBarHeight = context.navBarHeight
+                        toast("statusBarHeight = $statusBarHeight\nnavBarHeight = $navBarHeight")
                     }
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Toaster 测试",
+                    text = "SystemBar 测试",
                     fontSize = 18.sp,
                     color = colorResource(id = R.color.primaryText),
                 )
