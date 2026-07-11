@@ -434,7 +434,7 @@ class FloatButtonService : Service() {
                 return """
                     App: ${packageInfo.packageName}
                     Version: ${packageInfo.versionName} (${if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else packageInfo.versionCode})
-                    Android: ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})
+                    Android: ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})
                     Device: ${Build.MANUFACTURER} ${Build.MODEL}
                 """.trimIndent()
             } catch (e: PackageManager.NameNotFoundException) {
