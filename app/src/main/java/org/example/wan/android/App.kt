@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.example.wan.android.config.CoilConfig
 import org.example.wan.android.constant.AppConst
+import org.example.wan.android.data.repository.WanRepository
 import org.litepal.LitePal
 import java.text.SimpleDateFormat
 
@@ -58,6 +59,7 @@ open class App : MultiDexApplication() {
         initSmartRefreshLayout()
         initLitePal()
         initCoil() // compose
+        initWanRepository()
         /*
                 initToaster()
         */
@@ -90,6 +92,10 @@ open class App : MultiDexApplication() {
 
     private fun initCoil() {
         Coil.setImageLoader(CoilConfig.getImageLoader(this))
+    }
+
+    private fun initWanRepository() {
+        WanRepository.init(this)
     }
 
     private fun initLitePal() {

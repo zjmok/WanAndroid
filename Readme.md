@@ -78,7 +78,10 @@ MVVM 架构, 基于 Kotlin + JetPack 组件: Lifecycle + LiveData + ViewModel + 
 
 - [x] Debug 全局悬浮按钮
 
-- [ ] 网络请求优化, 通过 LiveData 或 Flow 手动使用三级缓存。请求网络时, 在网络响应等待前, 先返回一次缓存数据
+- [x] 网络请求三级缓存
+  - Memory(内存) + Disk(磁盘) + Network(网络)
+  - 策略: 有缓存立即返回，同时异步请求网络更新缓存
+  - 缓存接口: Banner, HomeTopList, ProjectTree, WxArticleTree, ProjectList, WxArticleList
 
 - [ ] 问答评论，替换为使用 BottomSheetDialogFragment 的 add + show/hide，可以保持状态
 
