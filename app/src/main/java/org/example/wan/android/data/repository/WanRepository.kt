@@ -2,6 +2,7 @@ package org.example.wan.android.data.repository
 
 import android.content.Context
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.blankj.utilcode.util.LogUtils
 import org.example.wan.android.data.local.cache.CompositeCache
 import org.example.wan.android.data.local.cache.DiskCache
@@ -71,7 +72,7 @@ object WanRepository {
      * @param fetch 网络请求 lambda
      * @return 请求结果
      */
-    private suspend inline fun <T> getWithCache(
+    private suspend inline fun <reified T> getWithCache(
         cacheKey: String,
         expireTime: Long,
         crossinline fetch: suspend () -> T
@@ -81,12 +82,15 @@ object WanRepository {
             return fetch()
         }
 
+        // 保留泛型类型，避免 Gson 擦除 T（否则 data 会被反序列化成 LinkedTreeMap）
+        val cacheType = object : TypeToken<CacheResult<T>>() {}.type
+
         // 1. 先从缓存获取 (三级: Memory -> Disk)
         val cachedData = cache.get(cacheKey)
         if (cachedData != null) {
             // 2. 解析缓存数据
             val cached = try {
-                gson.fromJson(cachedData, CacheResult::class.java)
+                gson.fromJson<CacheResult<T>>(cachedData, cacheType)
             } catch (e: Exception) {
                 null
             }
@@ -96,20 +100,20 @@ object WanRepository {
                 repositoryScope.launch {
                     try {
                         val freshData = fetch()
-                        val json = gson.toJson(CacheResult(data = freshData))
+                        val json = gson.toJson(CacheResult(data = freshData), cacheType)
                         cache.put(cacheKey, json, expireTime)
                     } catch (e: Exception) {
                         LogUtils.eTag(TAG, "refresh cache error: ${e.message}")
                     }
                 }
-                return cached.data as T
+                return cached.data
             }
         }
 
         // 5. 无缓存，请求网络并缓存结果
         val data = fetch()
         if (data != null) {
-            val json = gson.toJson(CacheResult(data = data))
+            val json = gson.toJson(CacheResult(data = data), cacheType)
             cache.put(cacheKey, json, expireTime)
         }
         return data
