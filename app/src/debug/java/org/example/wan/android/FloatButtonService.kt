@@ -26,7 +26,6 @@ import androidx.core.content.edit
 import androidx.core.net.toUri
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.AppUtils
-import com.zjmok.debugtools.DebugBaseUrl
 import org.example.wan.android.constant.AppConst
 import org.example.wan.android.databinding.DebugWindowBinding
 import org.example.wan.android.presentation.compose.ComposeActivity
@@ -67,14 +66,18 @@ class FloatButtonService : Service() {
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
 
+    private fun saveUrl(scheme: String, host: String, port: String = "") {
+        prefs.edit { putString("scheme", scheme) }
+        prefs.edit { putString("host", host) }
+        prefs.edit { putString("port", port) }
+    }
+
     @SuppressLint("SetTextI18n")
     private fun setDebugWindow() {
-        // 优先从 DebugBaseUrl 读取自定义值，无则回退到 AppConst.BASE_URL
         val defaultUri = AppConst.BASE_URL.toUri()
-        val parts = DebugBaseUrl.getUrlParts()
-        val scheme = parts?.scheme ?: defaultUri.scheme
-        val host = parts?.host ?: defaultUri.host
-        val port = parts?.port?.ifBlank { null } ?: "${defaultUri.port.takeIf { it > 0 } ?: ""}"
+        val scheme = prefs.getString("scheme", defaultUri.scheme)
+        val host = prefs.getString("host", defaultUri.host)
+        val port = prefs.getString("port", "${defaultUri.port.takeIf { it > 0 } ?: ""}")
 
         debugWindowBinding.etScheme.setText(scheme)
         debugWindowBinding.etHost.setText(host)
@@ -85,7 +88,7 @@ class FloatButtonService : Service() {
             val resultIp = debugWindowBinding.etHost.text.toString().trim()
             val resultPort = debugWindowBinding.etPort.text.toString().trim()
 
-            DebugBaseUrl.saveUrl(resultScheme, resultIp, resultPort)
+            saveUrl(resultScheme, resultIp, resultPort)
 
             hideKeyboard()
             toast("已保存")
@@ -93,7 +96,7 @@ class FloatButtonService : Service() {
 
         // Clear
         debugWindowBinding.btnClear.setOnClickListener {
-            DebugBaseUrl.clearUrl()
+            saveUrl("", "")
             hideKeyboard()
             setDebugWindow()
             toast("已清除修改")
@@ -101,7 +104,7 @@ class FloatButtonService : Service() {
 
         // profile1
         debugWindowBinding.btnProfile1.setOnClickListener {
-            DebugBaseUrl.saveUrl("https", "www.wanandroid.com", "")
+            saveUrl("https", "www.wanandroid.com", "")
             hideKeyboard()
             setDebugWindow()
             toast("已切换到 Profile1")
@@ -109,7 +112,7 @@ class FloatButtonService : Service() {
 
         // profile2
         debugWindowBinding.btnProfile2.setOnClickListener {
-            DebugBaseUrl.saveUrl("http", "192.168.1.1", "8080")
+            saveUrl("http", "192.168.1.1", "8080")
             hideKeyboard()
             setDebugWindow()
             toast("已切换到 Profile2")
@@ -117,7 +120,7 @@ class FloatButtonService : Service() {
 
         // profile3
         debugWindowBinding.btnProfile3.setOnClickListener {
-            DebugBaseUrl.saveUrl("https", "192.168.1.254", "8443")
+            saveUrl("https", "192.168.1.254", "8443")
             hideKeyboard()
             setDebugWindow()
             toast("已切换到 Profile3")

@@ -35,18 +35,12 @@ WanAndroid 是基于 wanandroid.com 开放 API 的 Android 客户端，采用 Vi
 │   │   ├── res-splash/         # Splash 资源
 │   │   ├── res-setting/        # 设置页资源
 │   │   └── AndroidManifest.xml
-│   ├── src/debug/              # debug 专用源集（FloatButtonApp / FloatButtonService，调用 DebugBaseUrl）
+│   ├── src/debug/              # debug 专用源集（BaseUrlInterceptor 真实实现 / FloatButton）
+│   ├── src/placeholders/       # release 占位空壳（BaseUrlInterceptor 占位实现）
 │   ├── build.gradle            # Groovy DSL
 │   └── proguard-rules.pro
 ├── module_utils/               # 工具库（com.zjmok.util），Android Library
 │   └── build.gradle.kts        # Kotlin DSL，发布坐标 com.github.zjmok:util:0.0.1
-├── module_debugtools/          # 调试工具库（com.zjmok.debugtools），Android Library
-│   ├── src/main/java/com/zjmok/debugtools/
-│   │   ├── DebugBaseUrl.kt     # BaseUrl 运行时切换数据层（SharedPreferences 持久化）
-│   │   ├── DebugBaseUrlInterceptor.kt  # OkHttp 拦截器，release 自动 no-op
-│   │   └── DebugToolsInitializer.kt    # ContentProvider 自动初始化
-│   ├── src/main/AndroidManifest.xml    # 声明 ContentProvider + SYSTEM_ALERT_WINDOW
-│   └── build.gradle.kts        # Kotlin DSL
 ├── module_lint/                # 自定义 Lint 规则（JVM 库，settings.gradle 中已注释，未参与构建）
 │   └── build.gradle
 ├── doc/                        # 项目文档
@@ -220,7 +214,6 @@ remote / local / cache (具体实现)
 5. **修改源集目录需同步更新 `config_source.gradle`**
 6. **`module_lint` 当前未启用**：`settings.gradle` 中 `include ":module_lint"` 已注释，自定义 Lint 规则暂不生效
 7. **Room 依赖已声明但未使用**：新增本地数据库前确认是否真的需要，当前数据存储走 DataStore
-8. **`module_debugtools` 使用 `implementation` 而非 `debugImplementation`**：`RetrofitClient` 是共享代码需直接引用 `DebugBaseUrlInterceptor`，release 中通过 `ApplicationInfo.FLAG_DEBUGGABLE` 检测自动 no-op。集成到其它项目时同样两行：`implementation` + `addInterceptor(DebugBaseUrlInterceptor())`
 
 ## 相关文档
 

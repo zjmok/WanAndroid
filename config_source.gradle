@@ -25,7 +25,8 @@ android {
             manifest.srcFile "src/debug/AndroidManifest.xml"
         }
         release {
-            // BaseUrl 切换由 module_debugtools 提供（implementation），release 自动 no-op，无需占位源集
+            // 这些是 引用占位，空壳代码，因为 main 使用到对应的 debug 代码，加上只为不报错
+            java.srcDirs += ["src/placeholders/java/"]
         }
         app {
 

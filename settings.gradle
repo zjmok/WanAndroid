@@ -44,5 +44,4 @@ dependencyResolutionManagement {
 rootProject.name = "WanAndroid"
 include ":app"
 include ':module_utils'
-include ':module_debugtools'
 //include ":module_lint"

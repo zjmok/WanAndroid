@@ -1,8 +1,8 @@
 package org.example.wan.android.data.remote
 
 import org.example.wan.android.App
+import org.example.wan.android.BaseUrlInterceptor
 import org.example.wan.android.constant.AppConst
-import com.zjmok.debugtools.DebugBaseUrlInterceptor
 import org.example.wan.android.data.remote.interceptors.CacheInterceptor
 import org.example.wan.android.data.remote.interceptors.LoggingInterceptor
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
@@ -49,7 +49,7 @@ object RetrofitClient {
         // 先添加的拦截器，会先处理请求，最后处理响应
         // 日志拦截器通常放在最前面，以便记录所有请求和响应的详细信息。
         // 缓存拦截器通常放在靠前的位置，以便在其它拦截器之前处理缓存逻辑。
-        .addInterceptor(DebugBaseUrlInterceptor()) // BaseUrl 运行时切换（release 自动 no-op，debug 通过悬浮窗配置）
+        .addInterceptor(BaseUrlInterceptor()) // release 和 debug 使用不同的资源，debug 提供修改 baseUrl 功能，release 是 引用占位，空壳代码
         .addInterceptor(LoggingInterceptor())
         .addInterceptor(CacheInterceptor())
 //        .addInterceptor(HeaderInterceptor())
