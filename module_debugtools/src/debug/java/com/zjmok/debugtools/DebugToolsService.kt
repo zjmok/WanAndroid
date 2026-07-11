@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlarmManager
 import android.app.AlertDialog
+import android.app.Application
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
@@ -12,6 +13,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.PixelFormat
 import android.os.Build
+import android.os.Bundle
 import android.os.IBinder
 import android.provider.Settings
 import android.util.ArrayMap
@@ -81,6 +83,12 @@ class DebugToolsService : Service(), DebugActionsContext {
 
     private val serviceJob = Job()
     override val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
+
+    /**
+     * 权限请求期间监听 Activity onResume，用户从设置页返回时立即触发权限检测。
+     */
+    private var permissionLifecycle: Application.ActivityLifecycleCallbacks? = null
+    private var permissionPollingJob: Job? = null
 
     @SuppressLint("SetTextI18n")
     private fun setupViews() {
@@ -199,22 +207,65 @@ class DebugToolsService : Service(), DebugActionsContext {
             .show()
     }
 
+    /**
+     * 权限轮询：作为兜底机制。用户从设置页返回时由 ActivityLifecycleCallbacks 立即触发检测。
+     */
     private fun startPermissionPolling() {
-        serviceScope.launch {
+        // 监听 Activity onResume，用户从设置页返回时立即检测权限
+        registerPermissionLifecycle()
+
+        // 兜底轮询：万一生命周期回调未触发（如用户停留在设置页超过 MAX_RETRY_COUNT * POLL_INTERVAL）
+        permissionPollingJob = serviceScope.launch {
             var currentRetryCount = 0
-            while (currentRetryCount < MAX_RETRY_COUNT) {
+            while (currentRetryCount < MAX_RETRY_COUNT && !Settings.canDrawOverlays(this@DebugToolsService)) {
+                currentRetryCount++
+                delay(POLL_INTERVAL)
+            }
+            if (Settings.canDrawOverlays(this@DebugToolsService)) {
+                onPermissionGranted()
+            } else {
+                stopSelf()
+            }
+        }
+    }
+
+    private fun registerPermissionLifecycle() {
+        if (permissionLifecycle != null) return
+        val app = applicationContext as? Application ?: return
+        val cb = object : Application.ActivityLifecycleCallbacks {
+            override fun onActivityResumed(activity: Activity) {
                 if (Settings.canDrawOverlays(this@DebugToolsService)) {
-                    // 已授权
-                    initFloatButton()
-                    break
-                } else {
-                    // 未授权，等待后继续检查
-                    currentRetryCount++
-                    delay(POLL_INTERVAL)
+                    onPermissionGranted()
                 }
             }
-            // 超出最大重试次数，结束 Service
-            stopSelf()
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
+            override fun onActivityStarted(activity: Activity) {}
+            override fun onActivityPaused(activity: Activity) {}
+            override fun onActivityStopped(activity: Activity) {}
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+            override fun onActivityDestroyed(activity: Activity) {}
+        }
+        app.registerActivityLifecycleCallbacks(cb)
+        permissionLifecycle = cb
+    }
+
+    private fun unregisterPermissionLifecycle() {
+        permissionLifecycle?.let {
+            (applicationContext as? Application)?.unregisterActivityLifecycleCallbacks(it)
+            permissionLifecycle = null
+        }
+    }
+
+    /**
+     * 权限已授予：初始化悬浮按钮并清理监听。
+     * 重复调用安全（[initFloatButton] 内部检查 [floatButton] 是否已 attach）。
+     */
+    private fun onPermissionGranted() {
+        unregisterPermissionLifecycle()
+        permissionPollingJob?.cancel()
+        permissionPollingJob = null
+        if (!floatButton.isAttachedToWindow) {
+            initFloatButton()
         }
     }
 
@@ -394,6 +445,7 @@ class DebugToolsService : Service(), DebugActionsContext {
     override fun onDestroy() {
         // 取消所有协程
         serviceJob.cancel()
+        unregisterPermissionLifecycle()
 
         if (floatButton.isAttachedToWindow) {
             windowManager.removeView(floatButton)
