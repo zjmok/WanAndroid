@@ -47,6 +47,15 @@ apply from: "../config_source.gradle"
 //    def composeBoMVersion = "2026.01.01"
 //    def composeBoMVersion = "2026.02.00"
 //    def composeBoMVersion = "2026.02.01"
+//    def composeBoMVersion = "2026.03.00"
+//    def composeBoMVersion = "2026.03.01"
+//    def composeBoMVersion = "2026.04.00"
+//    def composeBoMVersion = "2026.04.01"
+//    def composeBoMVersion = "2026.05.00"
+//    def composeBoMVersion = "2026.05.01"
+//    def composeBoMVersion = "2026.06.00"
+//    def composeBoMVersion = "2026.06.01"
+//    def composeBoMVersion = "2026.08.00"
 //
 def composeBoMVersion = "2025.11.01"
 
@@ -102,33 +111,11 @@ static def executeCmd(String cmd) {
     }
 }
 
-// 兼容本地开发和 workflow 脚本
-def getEnvOrLocal(String key) {
-    def value = System.getenv(key) // github secrets >  CI > gradle
-    if (value == null || value.isEmpty()) {
-        // 尝试从 local.properties 中获取
-        def localProperties = new Properties()
-        def localPropertiesFile = rootProject.file("local.properties")
-        if (localPropertiesFile.exists()) {
-            localPropertiesFile.withInputStream { stream ->
-                localProperties.load(stream)
-            }
-        } else {
-            throw new FileNotFoundException("local.properties 文件不存在，请求队友助攻")
-        }
-        // 获取 key 的 value
-        value = localProperties.getProperty(key)
-    }
-    if (value == null || value.isEmpty()) {
-        throw new IllegalArgumentException("环境变量 或 local.properties 中缺少 ${key} 的值，请求队友助攻")
-    }
-    return value
-}
-
 android {
     namespace "org.example.wan.android"
     // 确定编译应用时，项目代码可以使用哪些 API。不影响应用运行时的行为，只影响编译时可以访问到哪些类和方法
     compileSdk 36
+    compileSdkMinor 1 // 36.1
 //    compileSdkExtension 19 // 36.0-ext19
 
     defaultConfig {
@@ -174,12 +161,24 @@ android {
 //    ndkVersion project.properties.ndkVersion
 
     signingConfigs {
-        // https://developer.android.com/studio/publish/app-signing#secure_key
-        release {
-            storeFile rootProject.file("zjmok.jks") // 密钥库文件路径，本地开发直接放到此路径，CI 环境脚本解密输出到此路径
-            storePassword getEnvOrLocal("KEYSTORE_PASSWORD")
-            keyAlias getEnvOrLocal("KEY_ALIAS")
-            keyPassword getEnvOrLocal("KEY_PASSWORD")
+        // 从 release.jks.properties 文件加载签名配置
+        def releasePropsFile = rootProject.file("release.jks.properties")
+        def releaseProps = null
+        if (releasePropsFile.exists()) {
+            releaseProps = new Properties()
+            releaseProps.load(releasePropsFile.newDataInputStream())
+        }
+        // 从环境变量加载签名配置
+        def env = { String key -> System.getenv(key) }
+        // 若 release.jks.properties 文件存在或环境变量中包含 RELEASE_STORE_FILE_BASE64，创建 release 签名配置
+        if (releaseProps != null || env("RELEASE_STORE_FILE_BASE64") != null) {
+            // https://developer.android.com/studio/publish/app-signing#secure_key
+            release {
+                storeFile rootProject.file(releaseProps?.getProperty("storeFile") ?: env("RELEASE_STORE_FILE") ?: "release.jks")
+                storePassword releaseProps?.getProperty("storePassword") ?: env("RELEASE_STORE_PASSWORD") ?: ""
+                keyAlias releaseProps?.getProperty("keyAlias") ?: env("RELEASE_KEY_ALIAS") ?: ""
+                keyPassword releaseProps?.getProperty("keyPassword") ?: env("RELEASE_KEY_PASSWORD") ?: ""
+            }
         }
         // Android 自动生成的 debug.keystore 签名，或直接用 debug
         debugAsRelease {
@@ -192,10 +191,17 @@ android {
 
     // flavorDimensions（维度） + productFlavors（风味） + buildTypes（构建类型），最终组合生成变体
     // https://developer.android.com/build/build-variants
-    flavorDimensions = ["channel"/*, "debug"*//*, "abi"*/] // 维度，每个风味都需要指定一个维度名称，不同维度的风味可以组合，再加上 buildTypes，
-    productFlavors { // 风味
+
+    // 定义 维度
+    flavorDimensions = ["channel"/*, "debug"*//*, "abi"*/]
+
+    // 定义 风味
+    // 每个风味都需要指定一个维度名称，不同风味和维度可以组合，再分别组合 buildTypes，就是最终组合
+    productFlavors {
+        // app 需保留，否则会报错：The SourceSet 'app' is not recognized by the Android Gradle Plugin. Perhaps you misspelled something?
         app {
-            isDefault = true
+            // official
+            isDefault = true // variant 组合的默认 flavor
             dimension "channel"
             manifestPlaceholders = [app_channel: "\"${name}\""]
             buildConfigField "String", "APP_CHANNEL", "\"${name}\""
@@ -242,17 +248,17 @@ android {
 //        }
     }
 
-    // 构建类型 buildTypes
-    // https://developer.android.com/build/build-variants
+    // 定义 构建类型
     buildTypes {
         debug {
-            isDefault = true
+            isDefault = true // variant 组合的默认 buildType
             versionNameSuffix "_${gitCommitId}"
             debuggable true // 可调试
             minifyEnabled false // 代码压缩 (R8/ProGuard)
             shrinkResources false // 资源压缩 (shrinkResources)
 //            signingConfig signingConfigs.debugAsRelease
-            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
+            signingConfig signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
         }
         release {
             debuggable false
@@ -260,7 +266,8 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
 //            signingConfig signingConfigs.debugAsRelease
-            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
+            signingConfig signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
         }
     }
 
@@ -389,6 +396,8 @@ dependencies {
 //    lintChecks project(":module_lint")
 
     implementation project(":module_utils")
+    // 调试工具模块（BaseUrl 拦截 + 悬浮窗），debug 真实实现，release 占位实现
+    implementation project(":module_debugtools")
 
     // Test
     testImplementation "junit:junit:4.13.2"

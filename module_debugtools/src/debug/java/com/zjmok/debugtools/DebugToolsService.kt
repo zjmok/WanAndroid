@@ -1,14 +1,19 @@
-package org.example.wan.android
+package com.zjmok.debugtools
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlarmManager
 import android.app.AlertDialog
+import android.app.Application
+import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.PixelFormat
 import android.os.Build
+import android.os.Bundle
 import android.os.IBinder
 import android.provider.Settings
 import android.util.ArrayMap
@@ -16,7 +21,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -24,15 +28,7 @@ import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.core.content.edit
 import androidx.core.net.toUri
-import com.blankj.utilcode.util.ActivityUtils
-import com.blankj.utilcode.util.AppUtils
-import org.example.wan.android.constant.AppConst
-import org.example.wan.android.databinding.DebugWindowBinding
-import org.example.wan.android.presentation.compose.ComposeActivity
-import org.example.wan.android.presentation.feature.MainActivity
-import org.example.wan.android.presentation.feature.dialog.AppDetailDialog
-import org.example.wan.android.presentation.feature.setting.SettingActivity
-import org.example.wan.android.util.gson.toJson
+import com.zjmok.debugtools.databinding.DebugBaseUrlViewBinding
 import com.zjmok.util.toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -41,187 +37,122 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
-@RequiresApi(api = Build.VERSION_CODES.M)
-class FloatButtonService : Service() {
+/**
+ * 提供给 actions 视图的能力上下文。
+ */
+interface DebugActionsContext {
+    /** 隐藏调试悬浮窗 */
+    fun hideWindow()
+
+    /** 获取栈顶 Activity，应用在后台时返回 null */
+    val topActivity: Activity?
+
+    /** 应用级协程作用域，用于在 actions 中启动协程 */
+    val serviceScope: CoroutineScope
+}
+
+@RequiresApi(Build.VERSION_CODES.M)
+class DebugToolsService : Service(), DebugActionsContext {
 
     companion object {
         private const val POLL_INTERVAL = 3000L // 3秒轮询间隔
         private const val MAX_RETRY_COUNT = 20 // 最大重试次数
+
+        /**
+         * 静态注入点：由 app 在 [DebugTools.init] 之前设置，返回 actions 视图。
+         * 返回 null 表示不展示 actions 区块。
+         *
+         * [DebugActionsContext] 提供 hideWindow() / topActivity / serviceScope 等能力，
+         * 让注入的 actions 视图可以与悬浮窗交互。
+         */
+        var actionsViewFactory: ((DebugActionsContext, LayoutInflater) -> View?)? = null
     }
 
     private val windowManager: WindowManager by lazy { getSystemService(WINDOW_SERVICE) as WindowManager }
     private val floatButton: View by lazy {
-        // 创建悬浮按钮
         ImageView(this).apply {
             setImageResource(android.R.drawable.ic_menu_preferences)
             setBackgroundResource(android.R.color.holo_blue_bright)
         }
     }
     private var isDebugWindowShown = false
-    private val debugWindowBinding: DebugWindowBinding by lazy { DebugWindowBinding.inflate(LayoutInflater.from(this)) }
-    private val debugWindow: View by lazy { debugWindowBinding.root }
+    private val binding: DebugBaseUrlViewBinding by lazy { DebugBaseUrlViewBinding.inflate(LayoutInflater.from(this)) }
+    private val debugWindow: View by lazy { binding.root }
 
-    private val prefs: SharedPreferences by lazy { getSharedPreferences("float_window_prefs", MODE_PRIVATE) }
+    private val prefs: SharedPreferences by lazy { getSharedPreferences("debug_base_url_prefs", MODE_PRIVATE) }
 
     private val serviceJob = Job()
-    private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
+    override val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
 
-    private fun saveUrl(scheme: String, host: String, port: String = "") {
-        prefs.edit { putString("scheme", scheme) }
-        prefs.edit { putString("host", host) }
-        prefs.edit { putString("port", port) }
-    }
+    /**
+     * 权限请求期间监听 Activity onResume，用户从设置页返回时立即触发权限检测。
+     */
+    private var permissionLifecycle: Application.ActivityLifecycleCallbacks? = null
+    private var permissionPollingJob: Job? = null
 
     @SuppressLint("SetTextI18n")
-    private fun setDebugWindow() {
-        val defaultUri = AppConst.BASE_URL.toUri()
-        val scheme = prefs.getString("scheme", defaultUri.scheme)
-        val host = prefs.getString("host", defaultUri.host)
-        val port = prefs.getString("port", "${defaultUri.port.takeIf { it > 0 } ?: ""}")
+    private fun setupViews() {
+        refreshViews()
 
-        debugWindowBinding.etScheme.setText(scheme)
-        debugWindowBinding.etHost.setText(host)
-        debugWindowBinding.etPort.setText(port)
-
-        debugWindowBinding.btnSave.setOnClickListener {
-            val resultScheme = debugWindowBinding.etScheme.text.toString().trim()
-            val resultIp = debugWindowBinding.etHost.text.toString().trim()
-            val resultPort = debugWindowBinding.etPort.text.toString().trim()
-
-            saveUrl(resultScheme, resultIp, resultPort)
-
+        binding.btnSave.setOnClickListener {
+            val resultScheme = binding.etScheme.text.toString().trim()
+            val resultIp = binding.etHost.text.toString().trim()
+            val resultPort = binding.etPort.text.toString().trim()
+            DebugBaseUrl.saveUrl(resultScheme, resultIp, resultPort)
             hideKeyboard()
             toast("已保存")
         }
 
-        // Clear
-        debugWindowBinding.btnClear.setOnClickListener {
-            saveUrl("", "")
+        binding.btnClear.setOnClickListener {
+            DebugBaseUrl.clearUrl()
             hideKeyboard()
-            setDebugWindow()
+            refreshViews()
             toast("已清除修改")
         }
 
-        // profile1
-        debugWindowBinding.btnProfile1.setOnClickListener {
-            saveUrl("https", "www.wanandroid.com", "")
+        binding.btnProfile1.setOnClickListener {
+            DebugBaseUrl.saveUrl("https", "www.wanandroid.com", "")
             hideKeyboard()
-            setDebugWindow()
+            refreshViews()
             toast("已切换到 Profile1")
         }
 
-        // profile2
-        debugWindowBinding.btnProfile2.setOnClickListener {
-            saveUrl("http", "192.168.1.1", "8080")
+        binding.btnProfile2.setOnClickListener {
+            DebugBaseUrl.saveUrl("http", "192.168.1.1", "8080")
             hideKeyboard()
-            setDebugWindow()
+            refreshViews()
             toast("已切换到 Profile2")
         }
 
-        // profile3
-        debugWindowBinding.btnProfile3.setOnClickListener {
-            saveUrl("https", "192.168.1.254", "8443")
+        binding.btnProfile3.setOnClickListener {
+            DebugBaseUrl.saveUrl("https", "192.168.1.254", "8443")
             hideKeyboard()
-            setDebugWindow()
+            refreshViews()
             toast("已切换到 Profile3")
         }
 
-        // feature1
-        debugWindowBinding.btnFeature1.text = "应用详情"
-        debugWindowBinding.btnFeature1.setOnClickListener {
-            hideDebugWindow()
-            val activity = topActivity
-            if (activity == null || activity.isFinishing) {
-                // 如果当前应用在后台，直接跳转到 MainActivity
-                // 并在 1 秒后显示 AppDetailDialog
-
-                ActivityUtils.startActivity(MainActivity::class.java)
-                serviceScope.launch {
-                    delay(1000)
-                    val newActivity = topActivity
-                    if (newActivity != null) {
-                        AppDetailDialog(newActivity).show()
-                    }
-                }
-            } else {
-                AppDetailDialog(activity).show()
-            }
+        // 关闭窗口重新打开时，setupViews 会再次调用，先清空容器避免重复添加
+        binding.llActions.removeAllViews()
+        actionsViewFactory?.invoke(this, LayoutInflater.from(this))?.let {
+            binding.llActions.addView(it)
         }
+    }
 
-        // feature2
-        debugWindowBinding.btnFeature2.text = "Compose"
-        debugWindowBinding.btnFeature2.setOnClickListener {
-            hideDebugWindow()
-            ActivityUtils.startActivity(ComposeActivity::class.java)
-        }
-
-        // feature3
-        debugWindowBinding.btnFeature3.setOnClickListener {
-
-        }
-
-        // feature4
-        debugWindowBinding.btnFeature4.text = "Setting"
-        debugWindowBinding.btnFeature4.setOnClickListener {
-            hideDebugWindow()
-            ActivityUtils.startActivity(SettingActivity::class.java)
-        }
-
-        // feature5
-        debugWindowBinding.btnFeature5.text = "AtyList"
-        debugWindowBinding.btnFeature5.setOnClickListener {
-            val activityList = ActivityUtils.getActivityList()
-            val list = activityList.map {
-                it.javaClass.simpleName
-            }.toList()
-            toast("activityList size: ${activityList.size}\n${list.toJson()}")
-        }
-
-        // feature6
-        debugWindowBinding.btnFeature6.setOnClickListener {
-            // 在后台时，
-            val a = topActivity // null
-            val b = ActivityUtils.getTopActivity() // 有值
-            toast(
-                """
-                    TopActivity: 
-                    $a
-                    ActivityUtils.getTopActivity: 
-                    $b
-                    isActivityAlive = ${ActivityUtils.isActivityAlive(b)}
-                    """.trimIndent()
-            )
-            AppDetailDialog(b).show()
-        }
-
-        // feature7
-        debugWindowBinding.btnFeature7.setOnClickListener {
-            val a = topActivity
-            val b = ActivityUtils.getTopActivity()
-            toast(
-                """
-                    TopActivity: 
-                    $a
-                    ActivityUtils.getTopActivity: 
-                    $b
-                    isActivityAlive = ${ActivityUtils.isActivityAlive(b)}
-                    """.trimIndent()
-            )
-            AppDetailDialog(b).show()
-        }
-
-        // feature8
-        debugWindowBinding.btnFeature8.setOnClickListener { }
+    /**
+     * 重新从 [DebugBaseUrl] 读取并回填表单。
+     */
+    fun refreshViews() {
+        binding.etScheme.setText(DebugBaseUrl.scheme)
+        binding.etHost.setText(DebugBaseUrl.host)
+        binding.etPort.setText(DebugBaseUrl.port)
     }
 
     private fun hideKeyboard() {
-        val focusedView = debugWindow.findFocus() ?: return
-        // 清除焦点
+        val focusedView: View = binding.root.findFocus() ?: return
         focusedView.clearFocus()
-        // 关闭软键盘
         if (focusedView is EditText) {
-            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(focusedView.getWindowToken(), 0)
+            val imm = binding.root.context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(focusedView.windowToken, 0)
         }
     }
 
@@ -276,22 +207,65 @@ class FloatButtonService : Service() {
             .show()
     }
 
+    /**
+     * 权限轮询：作为兜底机制。用户从设置页返回时由 ActivityLifecycleCallbacks 立即触发检测。
+     */
     private fun startPermissionPolling() {
-        serviceScope.launch {
+        // 监听 Activity onResume，用户从设置页返回时立即检测权限
+        registerPermissionLifecycle()
+
+        // 兜底轮询：万一生命周期回调未触发（如用户停留在设置页超过 MAX_RETRY_COUNT * POLL_INTERVAL）
+        permissionPollingJob = serviceScope.launch {
             var currentRetryCount = 0
-            while (currentRetryCount < MAX_RETRY_COUNT) {
-                if (Settings.canDrawOverlays(this@FloatButtonService)) {
-                    // 已授权
-                    initFloatButton()
-                    break
-                } else {
-                    // 未授权，等待后继续检查
-                    currentRetryCount++
-                    delay(POLL_INTERVAL)
+            while (currentRetryCount < MAX_RETRY_COUNT && !Settings.canDrawOverlays(this@DebugToolsService)) {
+                currentRetryCount++
+                delay(POLL_INTERVAL)
+            }
+            if (Settings.canDrawOverlays(this@DebugToolsService)) {
+                onPermissionGranted()
+            } else {
+                stopSelf()
+            }
+        }
+    }
+
+    private fun registerPermissionLifecycle() {
+        if (permissionLifecycle != null) return
+        val app = applicationContext as? Application ?: return
+        val cb = object : Application.ActivityLifecycleCallbacks {
+            override fun onActivityResumed(activity: Activity) {
+                if (Settings.canDrawOverlays(this@DebugToolsService)) {
+                    onPermissionGranted()
                 }
             }
-            // 超出最大重试次数，结束 Service
-            stopSelf()
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
+            override fun onActivityStarted(activity: Activity) {}
+            override fun onActivityPaused(activity: Activity) {}
+            override fun onActivityStopped(activity: Activity) {}
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+            override fun onActivityDestroyed(activity: Activity) {}
+        }
+        app.registerActivityLifecycleCallbacks(cb)
+        permissionLifecycle = cb
+    }
+
+    private fun unregisterPermissionLifecycle() {
+        permissionLifecycle?.let {
+            (applicationContext as? Application)?.unregisterActivityLifecycleCallbacks(it)
+            permissionLifecycle = null
+        }
+    }
+
+    /**
+     * 权限已授予：初始化悬浮按钮并清理监听。
+     * 重复调用安全（[initFloatButton] 内部检查 [floatButton] 是否已 attach）。
+     */
+    private fun onPermissionGranted() {
+        unregisterPermissionLifecycle()
+        permissionPollingJob?.cancel()
+        permissionPollingJob = null
+        if (!floatButton.isAttachedToWindow) {
+            initFloatButton()
         }
     }
 
@@ -323,13 +297,13 @@ class FloatButtonService : Service() {
         )
 
         params.gravity = Gravity.TOP or Gravity.END
-        params.x = prefs.getInt("pos_x", dpToPx(20))
-        params.y = prefs.getInt("pos_y", dpToPx(100))
+        params.x = prefs.getInt("pos_x", dpToPx(0))
+        params.y = prefs.getInt("pos_y", dpToPx(0))
 
         windowManager.addView(floatButton, params)
 
         // 设置拖动和点击事件
-        (floatButton as? ImageView)?.setOnTouchListener(object : OnTouchListener {
+        (floatButton as? ImageView)?.setOnTouchListener(object : View.OnTouchListener {
             private var initialX = 0
             private var initialY = 0
             private var initialTouchX = 0f
@@ -400,21 +374,21 @@ class FloatButtonService : Service() {
         )
 
         debugParams.gravity = Gravity.TOP
-        debugParams.y = dpToPx(100)
+        debugParams.y = dpToPx(0)
 
         // 设置调试窗口内容
-        debugWindowBinding.tvAppInfo.text = this.appInfo
+        binding.tvAppInfo.text = this.appInfo
 
-        debugWindowBinding.btnRestart.setOnClickListener {
+        binding.btnRestart.setOnClickListener {
             hideDebugWindow()
-            AppUtils.relaunchApp()
+            relaunchApp()
         }
 
-        debugWindowBinding.btnCloseTool.setOnClickListener { stopSelf() }
+        binding.btnCloseTool.setOnClickListener { stopSelf() }
 
-        debugWindowBinding.btnCloseDialog.setOnClickListener { hideDebugWindow() }
+        binding.btnCloseDialog.setOnClickListener { hideDebugWindow() }
 
-        setDebugWindow()
+        setupViews()
 
         windowManager.addView(debugWindow, debugParams)
         isDebugWindowShown = true
@@ -425,6 +399,8 @@ class FloatButtonService : Service() {
         isDebugWindowShown = false
     }
 
+    override fun hideWindow() = hideDebugWindow()
+
     private val appInfo: String
         get() {
             try {
@@ -434,7 +410,7 @@ class FloatButtonService : Service() {
                 return """
                     App: ${packageInfo.packageName}
                     Version: ${packageInfo.versionName} (${if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else packageInfo.versionCode})
-                    Android: ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})
+                    Android: ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})
                     Device: ${Build.MANUFACTURER} ${Build.MODEL}
                 """.trimIndent()
             } catch (e: PackageManager.NameNotFoundException) {
@@ -442,9 +418,34 @@ class FloatButtonService : Service() {
             }
         }
 
+    /**
+     * 原生实现：杀进程重启 App（等价于 utilcodex 的 AppUtils.relaunchApp）。
+     * 通过 AlarmManager 延迟 100ms 触发启动 Intent，再 System.exit(0) 终止当前进程。
+     */
+    private fun relaunchApp() {
+        val intent = packageManager.getLaunchIntentForPackage(packageName)
+        if (intent == null) {
+            stopSelf()
+            return
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        } else {
+            PendingIntent.FLAG_CANCEL_CURRENT
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent, pendingIntentFlags
+        )
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent)
+        System.exit(0)
+    }
+
     override fun onDestroy() {
         // 取消所有协程
         serviceJob.cancel()
+        unregisterPermissionLifecycle()
 
         if (floatButton.isAttachedToWindow) {
             windowManager.removeView(floatButton)
@@ -456,7 +457,7 @@ class FloatButtonService : Service() {
         super.onDestroy()
     }
 
-    private val topActivity: Activity?
+    override val topActivity: Activity?
         /**
          * 获取栈顶 Activity 的工具方法
          * AndroidUtilCode 的 ActivityUtils.getTopActivity 应用无论是在前台还是后台时都会返回 topActivity

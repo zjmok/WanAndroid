@@ -3,16 +3,19 @@
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
-    <!-- 主清单声明 tools:replace 表示允许被覆盖，其它清单 tools:replace 表示请求要覆盖，必须双方都要声明 -->
-    <application
-        android:name=".FloatButtonApp"
-        tools:ignore="MissingApplicationIcon"
-        tools:replace="android:name">
+    <application tools:ignore="MissingApplicationIcon">
 
-        <service
-            android:name=".FloatButtonService"
+        <!--
+        ContentProvider 注入器
+        由系统在 Application 实例创建后、Application.onCreate() 之前调用 onCreate()
+        负责向模块的 DebugToolsService 注入 actions 视图工厂
+        -->
+        <provider
+            android:name=".DebugWindowInitializer"
+            android:authorities="${applicationId}.floatbutton.initializer"
             android:enabled="true"
             android:exported="false"
+            android:initOrder="100"
             tools:targetApi="23" />
 
     </application>

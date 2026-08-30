@@ -12,6 +12,7 @@ import com.blankj.utilcode.util.SPUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.zjmok.debugtools.DebugTools
 import com.zjmok.util.UtilLib
 import com.zjmok.util.getViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -19,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.example.wan.android.config.CoilConfig
 import org.example.wan.android.constant.AppConst
+import org.example.wan.android.data.repository.WanRepository
 import org.litepal.LitePal
 import java.text.SimpleDateFormat
 
@@ -58,6 +60,8 @@ open class App : MultiDexApplication() {
         initSmartRefreshLayout()
         initLitePal()
         initCoil() // compose
+        initWanRepository()
+        initDebugTools()
         /*
                 initToaster()
         */
@@ -92,6 +96,10 @@ open class App : MultiDexApplication() {
         Coil.setImageLoader(CoilConfig.getImageLoader(this))
     }
 
+    private fun initWanRepository() {
+        WanRepository.init(this)
+    }
+
     private fun initLitePal() {
         LitePal.initialize(this)
     }
@@ -118,6 +126,10 @@ open class App : MultiDexApplication() {
 
     private fun initUtil() {
         UtilLib.init(this)
+    }
+
+    private fun initDebugTools() {
+        DebugTools.init(this, AppConst.BASE_URL)
     }
 
 }
