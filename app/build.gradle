@@ -47,6 +47,15 @@ apply from: "../config_source.gradle"
 //    def composeBoMVersion = "2026.01.01"
 //    def composeBoMVersion = "2026.02.00"
 //    def composeBoMVersion = "2026.02.01"
+//    def composeBoMVersion = "2026.03.00"
+//    def composeBoMVersion = "2026.03.01"
+//    def composeBoMVersion = "2026.04.00"
+//    def composeBoMVersion = "2026.04.01"
+//    def composeBoMVersion = "2026.05.00"
+//    def composeBoMVersion = "2026.05.01"
+//    def composeBoMVersion = "2026.06.00"
+//    def composeBoMVersion = "2026.06.01"
+//    def composeBoMVersion = "2026.08.00"
 //
 def composeBoMVersion = "2025.11.01"
 
@@ -106,6 +115,7 @@ android {
     namespace "org.example.wan.android"
     // 确定编译应用时，项目代码可以使用哪些 API。不影响应用运行时的行为，只影响编译时可以访问到哪些类和方法
     compileSdk 36
+    compileSdkMinor 1 // 36.1
 //    compileSdkExtension 19 // 36.0-ext19
 
     defaultConfig {
